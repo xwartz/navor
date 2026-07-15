@@ -1,0 +1,23 @@
+name: Feature request
+description: Propose a language, toolchain, or Reader improvement.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected public surface
+      options:
+        - Language
+        - CLI
+        - Reader
+        - Static site
+        - Documentation

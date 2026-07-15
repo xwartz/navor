@@ -1,0 +1,22 @@
+name: Bug report
+description: Report an incorrect language, CLI, Reader, or static-build behavior.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Navor and Node versions
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Minimal .nav reproduction
+      description: Remove private holdings, account identifiers, and personal notes first.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true

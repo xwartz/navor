@@ -1,0 +1,38 @@
+{
+  "name": "@navor/workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsdown --config-loader unrun",
+    "check": "biome check packages apps test vite.config.ts tsdown.config.ts && tsc --noEmit",
+    "dev": "NAVOR_WORKSPACE=example vite --config packages/reader-ui/vite.config.ts",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "build:example": "node packages/cli/dist/index.mjs build example --out dist/site",
+    "build:demo": "pnpm --filter @navor/demo build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.3",
+    "@changesets/cli": "^2.31.0",
+    "@navor/adapters": "workspace:*",
+    "@navor/cli": "workspace:*",
+    "@navor/contract": "workspace:*",
+    "@navor/core": "workspace:*",
+    "@navor/reader-ui": "workspace:*",
+    "@navor/renderer": "workspace:*",
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.2",
+    "tsdown": "^0.22.4",
+    "typescript": "^7.0.2",
+    "unrun": "^0.3.1",
+    "vite": "^8.1.4",
+    "vitest": "^4.1.10"
+  }
+}
