@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node ../../packages/cli/dist/index.mjs build ../../example --out dist",
     "preview": "wrangler pages dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler pages deploy dist --project-name=navor-demo"
   },
   "dependencies": {
     "@navor/adapters": "workspace:*"

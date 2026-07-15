@@ -18,13 +18,16 @@
     "types": ["node", "vitest/globals"],
     "paths": {
       "@navor/adapters": ["./packages/adapters/src/index.ts"],
+      "@navor/adapters/browser": ["./packages/adapters/src/browser.ts"],
       "@navor/cli": ["./packages/cli/src/index.ts"],
       "@navor/cli/serve": ["./packages/cli/src/serve.ts"],
       "@navor/cli/static-site": ["./packages/cli/src/static-site.ts"],
       "@navor/contract": ["./packages/contract/src/index.ts"],
       "@navor/core": ["./packages/core/src/index.ts"],
+      "@navor/core/browser": ["./packages/core/src/browser.ts"],
       "@navor/reader-ui": ["./packages/reader-ui/src/index.ts"],
-      "@navor/renderer": ["./packages/renderer/src/index.ts"]
+      "@navor/renderer": ["./packages/renderer/src/index.ts"],
+      "@navor/renderer/apply-live-prices": ["./packages/renderer/src/apply-live-prices.ts"]
     }
   },
   "include": ["packages", "apps", "test", "vite.config.ts", "tsdown.config.ts"]
