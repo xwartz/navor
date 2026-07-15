@@ -103,7 +103,6 @@ function verifyRegistryDistribution(version) {
         '--yes',
         `@navor/cli@${version}`,
         '--',
-        'nav',
         'build',
         'fixtures/core',
         '--out',
