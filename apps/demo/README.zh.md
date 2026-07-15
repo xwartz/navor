@@ -9,6 +9,6 @@ pnpm --filter @navor/demo preview   # 可选：本地 Pages + Functions
 pnpm --filter @navor/demo deploy    # 需要 Cloudflare 登录
 ```
 
-若使用 Git 连接的 Pages：项目根目录设为 `apps/demo`，构建命令为 `cd ../.. && pnpm install --frozen-lockfile && pnpm build && pnpm --filter @navor/demo build`，输出目录为 `dist`。
+若使用 Git 连接的 Workers Builds：路径设为 `apps/demo`，构建命令为 `cd ../.. && pnpm install --frozen-lockfile && pnpm build && pnpm --filter @navor/demo build`，部署命令为 `npx wrangler deploy`，非生产分支部署命令为 `npx wrangler versions upload`。
 
 公开实时行情前，请阅读[部署](../../docs/operations/deployment.zh.md)与[行情数据与隐私](../../docs/operations/market-data-and-privacy.zh.md)。

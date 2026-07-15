@@ -9,6 +9,6 @@ pnpm --filter @navor/demo preview   # optional local Pages + Functions
 pnpm --filter @navor/demo deploy    # requires Cloudflare auth
 ```
 
-For Git-connected Pages, set the project root directory to `apps/demo`, build command to `cd ../.. && pnpm install --frozen-lockfile && pnpm build && pnpm --filter @navor/demo build`, and output directory to `dist`.
+For Git-connected Workers Builds, set the path to `apps/demo`, build command to `cd ../.. && pnpm install --frozen-lockfile && pnpm build && pnpm --filter @navor/demo build`, deploy command to `npx wrangler deploy`, and non-production deploy command to `npx wrangler versions upload`.
 
 Read [deployment](../../docs/operations/deployment.md) and [market data and privacy](../../docs/operations/market-data-and-privacy.md) before exposing live prices.
