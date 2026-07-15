@@ -13,8 +13,8 @@ function assertFile(path) {
 }
 
 run('pnpm', ['check'])
-run('pnpm', ['test'])
 run('pnpm', ['build'])
+run('pnpm', ['test'])
 run('pnpm', ['build:example'])
 assertFile(resolve('dist/site/index.html'))
 assertFile(resolve('dist/site/navor-data.json'))

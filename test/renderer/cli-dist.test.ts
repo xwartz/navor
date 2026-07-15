@@ -1,15 +1,22 @@
-import { execFile } from 'node:child_process'
+import { execFile, execFileSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { mkdtemp, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { promisify } from 'node:util'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 const execFileAsync = promisify(execFile)
+const cliEntry = resolve('packages/cli/dist/index.mjs')
+
+beforeAll(() => {
+  if (!existsSync(cliEntry)) {
+    execFileSync('pnpm', ['build'], { cwd: process.cwd(), stdio: 'inherit' })
+  }
+})
 
 describe('compiled nav cli', () => {
   it('builds a static site from dist without bundling vite internals', async () => {
-    const cliEntry = resolve('packages/cli/dist/index.mjs')
     const outDir = await mkdtemp(join(tmpdir(), 'navor-cli-dist-'))
 
     const { stdout } = await execFileAsync(
@@ -28,7 +35,7 @@ describe('compiled nav cli', () => {
 
   it('runs through the packaged nav entry point', async () => {
     const packageManifest = JSON.parse(await readFile('packages/cli/package.json', 'utf8'))
-    const cliShim = resolve('packages/cli/dist/index.mjs')
+    const cliShim = cliEntry
     const outDir = await mkdtemp(join(tmpdir(), 'navor-cli-shim-'))
 
     expect(packageManifest.bin).toEqual({ nav: './dist/index.mjs' })
