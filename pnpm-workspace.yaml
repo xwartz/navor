@@ -2,14 +2,18 @@ packages:
   - "."
   - "packages/*"
   - "apps/*"
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
 
 supportedArchitectures:
-  os:
-    - current
-    - linux
   cpu:
     - current
     - x64
   libc:
     - current
     - glibc
+  os:
+    - current
+    - linux
