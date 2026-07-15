@@ -1,0 +1,28 @@
+2026-02-10 research Asset:Crypto:BTC "ETF inflow remains strong"
+  source: Market data
+  reliability: Secondary
+  tags: ETF,Flow
+  ---
+  Spot ETF inflow remains a structural source of demand.
+  ---
+
+2026-02-11 thesis Asset:Crypto:BTC "Digital reserve asset"
+  horizon: 5y
+  sentiment: Bullish
+  confidence: High
+  status: Active
+  invalid_if: ETF flow reverses for 2 quarters
+  review_by: 2026-05-11
+  ---
+  BTC is treated as the core reserve asset in the crypto account.
+  ---
+
+2026-03-01 decision Asset:Crypto:BTC "Start accumulation"
+  action: Buy
+  target_weight: 20%
+  based_on: 2026-02-11
+  confidence: High
+
+2026-07-08 research Market:Crypto "ETF flow remains positive"
+  source: Market data
+  tags: ETF,Flow

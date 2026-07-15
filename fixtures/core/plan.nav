@@ -1,0 +1,17 @@
+2026-01-03 plan Account:US "US account allocation"
+  target: 50%
+  min: 45%
+  max: 55%
+
+2026-01-03 plan Account:Crypto "Crypto account allocation"
+  target: 30%
+  min: 25%
+  max: 35%
+
+2026-01-03 plan Asset:Crypto:BTC "Bitcoin target weight"
+  target: 25%
+  min: 20%
+  max: 30%
+  rebalance: quarterly
+  action_when_below: accumulate
+  action_when_above: trim

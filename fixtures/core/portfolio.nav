@@ -1,0 +1,6 @@
+2026-01-01 capital Portfolio:Core "Initial investable capital"
+  amount: 100,000 USD
+
+2026-01-01 option Portfolio:Core "Base settings"
+  base_currency: USD
+  timezone: Asia/Shanghai

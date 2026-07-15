@@ -1,0 +1,51 @@
+2026-02-01 txn Asset:Crypto:BTC "Crypto allocation test buy"
+  Assets:Crypto:BTC        0.45114488 BTC @ 15,516.08 USD
+  Assets:Cash:USD         -7,000 USD
+
+2026-02-01 txn Asset:Crypto:ETH "Crypto allocation test buy"
+  Assets:Crypto:ETH        7.03298698 ETH @ 881.56 USD
+  Assets:Cash:USD         -6,200 USD
+
+2026-02-01 txn Asset:Crypto:SOL "Crypto allocation test buy"
+  Assets:Crypto:SOL      750 SOL @ 8.00 USD
+  Assets:Cash:USD        -6,000 USD
+
+2026-02-01 txn Asset:Crypto:LINK "Crypto allocation test buy"
+  Assets:Crypto:LINK   15,972.22222222 LINK @ 0.36 USD
+  Assets:Cash:USD        -5,750 USD
+
+2026-02-01 txn Asset:Crypto:BNB "Crypto allocation test buy"
+  Assets:Crypto:BNB       11.45038168 BNB @ 183.40 USD
+  Assets:Cash:USD        -2,100 USD
+
+2026-02-01 txn Asset:Crypto:VIRTUAL "Crypto allocation test buy"
+  Assets:Crypto:VIRTUAL 8,571.42857143 VIRTUAL @ 0.28 USD
+  Assets:Cash:USD        -2,400 USD
+
+2026-02-01 txn Asset:Crypto:PEPE "Crypto allocation test buy"
+  Assets:Crypto:PEPE 2,400,000,000 PEPE @ 0.000001 USD
+  Assets:Cash:USD        -2,400 USD
+
+2026-02-02 txn Asset:Equity:CN:513130 "HKCN allocation test buy"
+  Assets:Equity:CN:513130 30,769.23076923 513130 @ 0.39 CNY
+  Assets:Cash:CNY        -12,000 CNY
+
+2026-02-02 txn Asset:Equity:HK:1810 "HKCN allocation test buy"
+  Assets:Equity:HK:1810 1,111.11111111 1810.HK @ 9.00 HKD
+  Assets:Cash:HKD       -10,000 HKD
+
+2026-02-02 txn Asset:Equity:CN:600036 "HKCN allocation test buy"
+  Assets:Equity:CN:600036 141.26394052 600036 @ 26.90 CNY
+  Assets:Cash:CNY         -3,800 CNY
+
+2026-02-02 txn Asset:Equity:HK:0700 "HKCN allocation test buy"
+  Assets:Equity:HK:0700 292.96875 0700.HK @ 256.00 HKD
+  Assets:Cash:HKD       -75,000 HKD
+
+2026-02-02 txn Asset:Equity:HK:2097 "HKCN allocation test buy"
+  Assets:Equity:HK:2097 273.4375 2097.HK @ 256.00 HKD
+  Assets:Cash:HKD       -70,000 HKD
+
+2026-02-02 txn Asset:Equity:CN:600900 "HKCN allocation test buy"
+  Assets:Equity:CN:600900 800 600900 @ 20.00 CNY
+  Assets:Cash:CNY        -16,000 CNY

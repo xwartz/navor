@@ -1,0 +1,30 @@
+{
+  "name": "@navor/core",
+  "version": "0.1.0",
+  "description": "Parser and semantic engine for the Navor investment language.",
+  "license": "Apache-2.0",
+  "repository": "github:xwartz/navor",
+  "homepage": "https://github.com/xwartz/navor#readme",
+  "bugs": "https://github.com/xwartz/navor/issues",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.mts",
+      "import": "./dist/browser.mjs"
+    }
+  },
+  "types": "./dist/index.d.mts"
+}

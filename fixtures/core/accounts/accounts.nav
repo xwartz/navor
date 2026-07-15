@@ -1,0 +1,16 @@
+2026-01-01 open Account:US "US equities"
+  category: Equity
+  market: US
+  target: 30%
+  budget: 100,000 USD
+
+2026-01-01 open Account:Crypto "Digital assets"
+  category: Crypto
+  target: 30%
+  total: 250,000 USD
+
+2026-01-01 open Account:HKA "HK and A shares"
+  category: Equity
+  market: HK,CN
+  target: 40%
+  total: 500,000 CNY
