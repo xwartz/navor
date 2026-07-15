@@ -1,0 +1,68 @@
+import type { NavorRendererAppState } from '@navor/contract'
+
+type AssetWorkspaceFacts = {
+  execution: NavorRendererAppState['dashboard']['assetExecutions'][number] | null
+  holding: NavorRendererAppState['portfolio']['holdings'][number] | null
+  market: NavorRendererAppState['market']['portfolioValues'][number] | null
+  drift: NavorRendererAppState['drift']['entries'][number] | null
+  policy: NavorRendererAppState['plan']['entries'][number] | null
+  watchlist: NavorRendererAppState['process']['watchlist'][number] | null
+  actions: NavorRendererAppState['dashboard']['actionInbox']
+  research: NavorRendererAppState['knowledge']['research']
+  theses: NavorRendererAppState['knowledge']['theses']
+  decisions: NavorRendererAppState['knowledge']['decisions']
+}
+
+export interface AssetWorkspaceIndex {
+  get: (subject: string) => AssetWorkspaceFacts | null
+  has: (subject: string | null | undefined) => boolean
+}
+
+export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWorkspaceIndex {
+  const subjects = new Set<string>()
+  const add = (subject: string | null | undefined) => {
+    if (subject?.startsWith('Asset:')) subjects.add(subject)
+  }
+
+  for (const item of state.allocation.assets) add(item.subject)
+  for (const item of state.dashboard.assetExecutions) add(item.subject)
+  for (const item of state.portfolio.holdings) add(item.asset)
+  for (const item of state.drift.entries) add(item.subject)
+  for (const item of state.plan.entries) add(item.subject)
+  for (const item of state.process.watchlist) add(item.subject)
+  for (const item of state.knowledge.research) add(item.subject)
+  for (const item of state.knowledge.theses) add(item.subject)
+  for (const item of state.knowledge.decisions) add(item.subject)
+
+  const executionBySubject = new Map(
+    state.dashboard.assetExecutions.map((item) => [item.subject, item]),
+  )
+  const holdingBySubject = new Map(state.portfolio.holdings.map((item) => [item.asset, item]))
+  const marketBySubject = new Map(state.market.portfolioValues.map((item) => [item.subject, item]))
+  const driftBySubject = new Map(state.drift.entries.map((item) => [item.subject, item]))
+  const watchlistBySubject = new Map(state.process.watchlist.map((item) => [item.subject, item]))
+  const latestPolicyBySubject = new Map<string, NavorRendererAppState['plan']['entries'][number]>()
+  for (const policy of state.plan.entries) {
+    const current = latestPolicyBySubject.get(policy.subject)
+    if (!current || policy.date > current.date) latestPolicyBySubject.set(policy.subject, policy)
+  }
+
+  return {
+    has: (subject) => Boolean(subject && subjects.has(subject)),
+    get: (subject) => {
+      if (!subjects.has(subject)) return null
+      return {
+        execution: executionBySubject.get(subject) ?? null,
+        holding: holdingBySubject.get(subject) ?? null,
+        market: marketBySubject.get(subject) ?? null,
+        drift: driftBySubject.get(subject) ?? null,
+        policy: latestPolicyBySubject.get(subject) ?? null,
+        watchlist: watchlistBySubject.get(subject) ?? null,
+        actions: state.dashboard.actionInbox.filter((item) => item.subject === subject),
+        research: state.knowledge.research.filter((item) => item.subject === subject),
+        theses: state.knowledge.theses.filter((item) => item.subject === subject),
+        decisions: state.knowledge.decisions.filter((item) => item.subject === subject),
+      }
+    },
+  }
+}
