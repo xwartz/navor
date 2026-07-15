@@ -1,0 +1,35 @@
+{
+  "name": "@navor/renderer",
+  "version": "0.1.0",
+  "description": "Compiler and Reader state builder for Navor workspaces.",
+  "license": "Apache-2.0",
+  "repository": "github:xwartz/navor",
+  "homepage": "https://github.com/xwartz/navor#readme",
+  "bugs": "https://github.com/xwartz/navor/issues",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "dependencies": {
+    "@navor/adapters": "workspace:*",
+    "@navor/contract": "workspace:*",
+    "@navor/core": "workspace:*"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./apply-live-prices": {
+      "types": "./dist/apply-live-prices.d.mts",
+      "import": "./dist/apply-live-prices.mjs"
+    }
+  },
+  "types": "./dist/index.d.mts"
+}
