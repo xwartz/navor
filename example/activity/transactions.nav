@@ -1,0 +1,455 @@
+2026-01-01 txn Account:Crypto "Deploy Crypto cash"
+  Assets:Cash:USD        500,000 USD
+  Equity:Capital        -500,000 USD
+
+2026-01-01 txn Account:US "Deploy US cash"
+  Assets:Cash:USD        250,000 USD
+  Equity:Capital        -250,000 USD
+
+2026-01-01 txn Account:CN "Deploy CN cash"
+  Assets:Cash:CNY      1,050,000 CNY
+  Equity:Capital      -1,050,000 CNY
+
+2026-01-01 txn Account:HK "Deploy HK cash"
+  Assets:Cash:HKD        784,000 HKD
+  Equity:Capital        -784,000 HKD
+
+2026-01-09 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     3.97254174 MSTR @ 157.33 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-01-23 txn Asset:Equity:CN:600900 "周线 RSI 超卖，买入 600900"
+  Assets:Equity:CN:600900   252 600900.SS @ 26.00 CNY
+  Assets:Cash:CNY           -6,557 CNY
+  Expenses:Fee                 5 CNY
+
+2026-01-23 txn Asset:Equity:HK:1810 "周线 KD 超卖，买入 1810"
+  Assets:Equity:HK:1810     811 1810.HK @ 36.24 HKD
+  Assets:Cash:HKD           -29,401 HKD
+  Expenses:Fee                 10 HKD
+
+2026-01-23 txn Asset:Equity:US:NFLX "周线 RSI/KD 超卖，买入 NFLX"
+  Assets:Equity:US:NFLX     7.25731514 NFLX @ 86.12 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-01-30 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.17473764 MSTR @ 149.71 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-01-30 txn Asset:Equity:US:NFLX "周线 RSI 超卖，买入 NFLX"
+  Assets:Equity:US:NFLX     7.48592665 NFLX @ 83.49 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Crypto:ETH "周线 KD 超卖，买入 ETH"
+  Assets:Crypto:ETH         3.02900043 ETH @ 2,063.39 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Crypto:LINK "周线 KD 超卖，买入 LINK"
+  Assets:Crypto:LINK        211.16170838 LINK @ 8.88 USD
+  Assets:Cash:USD           -1,876.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Crypto:SOL "周线 KD 超卖，买入 SOL"
+  Assets:Crypto:SOL         35.72866902 SOL @ 87.46 USD
+  Assets:Cash:USD           -3,126.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Equity:US:HOOD "周线 KD 超卖，买入 HOOD"
+  Assets:Equity:US:HOOD     7.54648638 HOOD @ 82.82 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Equity:US:MSFT "周线 RSI 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     15.58059473 MSFT @ 401.14 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Equity:US:MSTR "周线 RSI/KD 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.63203168 MSTR @ 134.93 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-06 txn Asset:Equity:US:NFLX "周线 RSI/KD 超卖，买入 NFLX"
+  Assets:Equity:US:NFLX     7.60340661 NFLX @ 82.20 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-13 txn Asset:Crypto:BTC "周线 RSI 超卖，买入 BTC"
+  Assets:Crypto:BTC         0.20876344 BTC @ 68,857.84 USD
+  Assets:Cash:USD           -14,376.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-13 txn Asset:Crypto:VIRTUAL "周线 KD 超卖，买入 VIRTUAL"
+  Assets:Crypto:VIRTUAL     1,565.0458 VIRTUAL @ 0.599024 USD
+  Assets:Cash:USD           -938.50 USD
+  Expenses:Fee                 1 USD
+
+2026-02-13 txn Asset:Equity:US:MSFT "周线 RSI/KD 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     15.57360681 MSFT @ 401.32 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-13 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.66835955 MSTR @ 133.88 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-13 txn Asset:Equity:US:NFLX "周线 RSI 超卖，买入 NFLX"
+  Assets:Equity:US:NFLX     8.13060983 NFLX @ 76.87 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-13 txn Asset:Equity:US:PLTR "周线 KD 超卖，买入 PLTR"
+  Assets:Equity:US:PLTR     9.51221342 PLTR @ 131.41 USD
+  Assets:Cash:USD           -1,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-20 txn Asset:Crypto:BNB "周线 KD 超卖，买入 BNB"
+  Assets:Crypto:BNB         2.99681851 BNB @ 625.66 USD
+  Assets:Cash:USD           -1,876.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-20 txn Asset:Crypto:BTC "周线 RSI 超卖，买入 BTC"
+  Assets:Crypto:BTC         0.2113802 BTC @ 68,005.42 USD
+  Assets:Cash:USD           -14,376.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-20 txn Asset:Equity:US:MSFT "周线 RSI 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     15.73395722 MSFT @ 397.23 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-20 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.76917196 MSTR @ 131.05 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-20 txn Asset:Equity:US:NFLX "周线 RSI/KD 超卖，买入 NFLX"
+  Assets:Equity:US:NFLX     7.9445788 NFLX @ 78.67 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-27 txn Asset:Crypto:BTC "周线 RSI 超卖，买入 BTC"
+  Assets:Crypto:BTC         0.21819381 BTC @ 65,881.80 USD
+  Assets:Cash:USD           -14,376.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-27 txn Asset:Equity:HK:0700 "周线 KD 超卖，买入 0700"
+  Assets:Equity:HK:0700     94 0700.HK @ 518.00 HKD
+  Assets:Cash:HKD           -48,702 HKD
+  Expenses:Fee                 10 HKD
+
+2026-02-27 txn Asset:Equity:US:HOOD "周线 KD 超卖，买入 HOOD"
+  Assets:Equity:US:HOOD     8.23994743 HOOD @ 75.85 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-27 txn Asset:Equity:US:MSFT "周线 RSI/KD 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     15.91383652 MSFT @ 392.74 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-02-27 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.82625483 MSTR @ 129.50 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-06 txn Asset:Crypto:BNB "周线 KD 超卖，买入 BNB"
+  Assets:Crypto:BNB         2.98912705 BNB @ 627.27 USD
+  Assets:Cash:USD           -1,876.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-06 txn Asset:Crypto:ETH "周线 KD 超卖，买入 ETH"
+  Assets:Crypto:ETH         3.15855775 ETH @ 1,978.75 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-06 txn Asset:Equity:CN:513130 "周线 KD 超卖，买入 513130"
+  Assets:Equity:CN:513130   10,416 513130.SS @ 0.63 CNY
+  Assets:Cash:CNY           -6,567 CNY
+  Expenses:Fee                 5 CNY
+
+2026-03-06 txn Asset:Equity:HK:1810 "周线 KD 超卖，买入 1810"
+  Assets:Equity:HK:1810     879 1810.HK @ 33.42 HKD
+  Assets:Cash:HKD           -29,386 HKD
+  Expenses:Fee                 10 HKD
+
+2026-03-06 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.68059616 MSTR @ 133.53 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-20 txn Asset:Equity:CN:513130 "周线 RSI 超卖，买入 513130"
+  Assets:Equity:CN:513130   10,618 513130.SS @ 0.61799997 CNY
+  Assets:Cash:CNY           -6,567 CNY
+  Expenses:Fee                 5 CNY
+
+2026-03-20 txn Asset:Equity:US:GOOGL "周线 KD 超卖，买入 GOOGL"
+  Assets:Equity:US:GOOGL    20.7641196 GOOGL @ 301.00 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-20 txn Asset:Equity:US:MSFT "周线 RSI 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     16.36682662 MSFT @ 381.87 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-20 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.60710588 MSTR @ 135.66 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-20 txn Asset:Equity:US:SPY "周线 KD 超卖，买入 SPY"
+  Assets:Equity:US:SPY      9.63658499 SPY @ 648.57 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-27 txn Asset:Equity:CN:512760 "周线 RSI 超卖，买入 512760"
+  Assets:Equity:CN:512760   16,447 512760.SS @ 0.79799998 CNY
+  Assets:Cash:CNY           -13,130 CNY
+  Expenses:Fee                 5 CNY
+
+2026-03-27 txn Asset:Equity:CN:513130 "周线 RSI 超卖，买入 513130"
+  Assets:Equity:CN:513130   10,758 513130.SS @ 0.61000001 CNY
+  Assets:Cash:CNY           -6,567 CNY
+  Expenses:Fee                 5 CNY
+
+2026-03-27 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     890 1810.HK @ 33.00 HKD
+  Assets:Cash:HKD           -29,380 HKD
+  Expenses:Fee                 10 HKD
+
+2026-03-27 txn Asset:Equity:US:MSFT "周线 RSI 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     17.51828963 MSFT @ 356.77 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-03-27 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     4.95913676 MSTR @ 126.03 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-04-03 txn Asset:Equity:CN:512760 "周线 RSI 超卖，买入 512760"
+  Assets:Equity:CN:512760   17,112 512760.SS @ 0.76700002 CNY
+  Assets:Cash:CNY           -13,130 CNY
+  Expenses:Fee                 5 CNY
+
+2026-04-03 txn Asset:Equity:CN:513130 "周线 RSI 超卖，买入 513130"
+  Assets:Equity:CN:513130   11,160 513130.SS @ 0.588 CNY
+  Assets:Cash:CNY           -6,567 CNY
+  Expenses:Fee                 5 CNY
+
+2026-04-03 txn Asset:Equity:HK:0700 "周线 KD 超卖，买入 0700"
+  Assets:Equity:HK:0700     100 0700.HK @ 489.20 HKD
+  Assets:Cash:HKD           -48,930 HKD
+  Expenses:Fee                 10 HKD
+
+2026-04-03 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     952 1810.HK @ 30.88 HKD
+  Assets:Cash:HKD           -29,408 HKD
+  Expenses:Fee                 10 HKD
+
+2026-04-03 txn Asset:Equity:US:HOOD "周线 KD 超卖，买入 HOOD"
+  Assets:Equity:US:HOOD     9.07111736 HOOD @ 68.90 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-04-03 txn Asset:Equity:US:MSFT "周线 KD 超卖，买入 MSFT"
+  Assets:Equity:US:MSFT     16.73539373 MSFT @ 373.46 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-04-03 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     5.21572219 MSTR @ 119.83 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-04-03 txn Asset:Equity:US:TSLA "周线 KD 超卖，买入 TSLA"
+  Assets:Equity:US:TSLA     17.33270491 TSLA @ 360.59 USD
+  Assets:Cash:USD           -6,251.00 USD
+  Expenses:Fee                 1 USD
+
+2026-04-10 txn Asset:Crypto:BNB "周线 KD 超卖，买入 BNB"
+  Assets:Crypto:BNB         3.09410272 BNB @ 605.99 USD
+  Assets:Cash:USD           -1,876.00 USD
+  Expenses:Fee                 1 USD
+
+2026-04-10 txn Asset:Equity:CN:512760 "周线 RSI/KD 超卖，买入 512760"
+  Assets:Equity:CN:512760   15,514 512760.SS @ 0.84600002 CNY
+  Assets:Cash:CNY           -13,130 CNY
+  Expenses:Fee                 5 CNY
+
+2026-04-10 txn Asset:Equity:CN:513130 "周线 KD 超卖，买入 513130"
+  Assets:Equity:CN:513130   10,723 513130.SS @ 0.61199999 CNY
+  Assets:Cash:CNY           -6,567 CNY
+  Expenses:Fee                 5 CNY
+
+2026-04-10 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     951 1810.HK @ 30.90 HKD
+  Assets:Cash:HKD           -29,396 HKD
+  Expenses:Fee                 10 HKD
+
+2026-04-17 txn Asset:Equity:CN:512760 "周线 RSI 超卖，买入 512760"
+  Assets:Equity:CN:512760   14,897 512760.SS @ 0.88099998 CNY
+  Assets:Cash:CNY           -13,129 CNY
+  Expenses:Fee                 5 CNY
+
+2026-04-17 txn Asset:Equity:HK:1810 "周线 KD 超卖，买入 1810"
+  Assets:Equity:HK:1810     918 1810.HK @ 32.00 HKD
+  Assets:Cash:HKD           -29,386 HKD
+  Expenses:Fee                 10 HKD
+
+2026-04-24 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     942 1810.HK @ 31.20 HKD
+  Assets:Cash:HKD           -29,400 HKD
+  Expenses:Fee                 10 HKD
+
+2026-05-01 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,013 1810.HK @ 29.02 HKD
+  Assets:Cash:HKD           -29,407 HKD
+  Expenses:Fee                 10 HKD
+
+2026-05-01 txn Asset:Equity:US:GOOGL "周线 RSI 超买，减仓 GOOGL"
+  Assets:Equity:US:GOOGL    -0.2076412 GOOGL @ 385.69 USD
+  Assets:Cash:USD           79.09 USD
+  Expenses:Fee                 1 USD
+
+2026-05-01 txn Asset:Equity:US:SPY "周线 KD 超买，减仓 SPY"
+  Assets:Equity:US:SPY      -0.09636585 SPY @ 720.65 USD
+  Assets:Cash:USD           68.45 USD
+  Expenses:Fee                 1 USD
+
+2026-05-08 txn Asset:Equity:HK:0700 "周线 KD 超卖，买入 0700"
+  Assets:Equity:HK:0700     103 0700.HK @ 471.40 HKD
+  Assets:Cash:HKD           -48,564 HKD
+  Expenses:Fee                 10 HKD
+
+2026-05-08 txn Asset:Equity:US:GOOGL "周线 RSI 超买，减仓 GOOGL"
+  Assets:Equity:US:GOOGL    -0.20556478 GOOGL @ 400.80 USD
+  Assets:Cash:USD           81.39 USD
+  Expenses:Fee                 1 USD
+
+2026-05-15 txn Asset:Equity:US:GOOGL "周线 RSI/KD 超买，减仓 GOOGL"
+  Assets:Equity:US:GOOGL    -0.20350914 GOOGL @ 396.78 USD
+  Assets:Cash:USD           79.75 USD
+  Expenses:Fee                 1 USD
+
+2026-05-15 txn Asset:Equity:US:SPY "周线 KD 超买，减仓 SPY"
+  Assets:Equity:US:SPY      -0.09540219 SPY @ 739.17 USD
+  Assets:Cash:USD           69.52 USD
+  Expenses:Fee                 1 USD
+
+2026-05-22 txn Asset:Equity:HK:0700 "周线 RSI 超卖，买入 0700"
+  Assets:Equity:HK:0700     111 0700.HK @ 441.40 HKD
+  Assets:Cash:HKD           -49,005 HKD
+  Expenses:Fee                 10 HKD
+
+2026-05-22 txn Asset:Equity:US:SPY "周线 RSI 超买，减仓 SPY"
+  Assets:Equity:US:SPY      -0.09444817 SPY @ 745.64 USD
+  Assets:Cash:USD           69.42 USD
+  Expenses:Fee                 1 USD
+
+2026-05-29 txn Asset:Equity:HK:0700 "周线 RSI/KD 超卖，买入 0700"
+  Assets:Equity:HK:0700     114 0700.HK @ 427.20 HKD
+  Assets:Cash:HKD           -48,711 HKD
+  Expenses:Fee                 10 HKD
+
+2026-05-29 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,048 1810.HK @ 28.04 HKD
+  Assets:Cash:HKD           -29,396 HKD
+  Expenses:Fee                 10 HKD
+
+2026-05-29 txn Asset:Equity:US:SPY "周线 RSI 超买，减仓 SPY"
+  Assets:Equity:US:SPY      -0.09350369 SPY @ 756.48 USD
+  Assets:Cash:USD           69.73 USD
+  Expenses:Fee                 1 USD
+
+2026-06-05 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,057 1810.HK @ 27.80 HKD
+  Assets:Cash:HKD           -29,395 HKD
+  Expenses:Fee                 10 HKD
+
+2026-06-05 txn Asset:Equity:US:SPY "周线 KD 超买，减仓 SPY"
+  Assets:Equity:US:SPY      -0.09256865 SPY @ 737.55 USD
+  Assets:Cash:USD           67.27 USD
+  Expenses:Fee                 1 USD
+
+2026-06-12 txn Asset:Crypto:SOL "周线 KD 超卖，买入 SOL"
+  Assets:Crypto:SOL         46.81698775 SOL @ 66.75 USD
+  Assets:Cash:USD           -3,126.00 USD
+  Expenses:Fee                 1 USD
+
+2026-06-12 txn Asset:Equity:HK:1810 "周线 RSI/KD 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,122 1810.HK @ 26.20 HKD
+  Assets:Cash:HKD           -29,406 HKD
+  Expenses:Fee                 10 HKD
+
+2026-06-19 txn Asset:Crypto:BTC "周线 KD 超卖，买入 BTC"
+  Assets:Crypto:BTC         0.22623247 BTC @ 63,540.84 USD
+  Assets:Cash:USD           -14,376.00 USD
+  Expenses:Fee                 1 USD
+
+2026-06-19 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,196 1810.HK @ 24.58 HKD
+  Assets:Cash:HKD           -29,408 HKD
+  Expenses:Fee                 10 HKD
+
+2026-06-26 txn Asset:Crypto:PEPE "周线 RSI 超卖，买入 PEPE"
+  Assets:Crypto:PEPE        468,750,001 PEPE @ 0.000001999999995 USD
+  Assets:Cash:USD           -938.50 USD
+  Expenses:Fee                 1 USD
+
+2026-06-26 txn Asset:Equity:CN:513130 "周线 RSI 超卖，买入 513130"
+  Assets:Equity:CN:513130   12,289 513130.SS @ 0.53399998 CNY
+  Assets:Cash:CNY           -6,567 CNY
+  Expenses:Fee                 5 CNY
+
+2026-06-26 txn Asset:Equity:HK:1810 "周线 RSI 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,372 1810.HK @ 21.42 HKD
+  Assets:Cash:HKD           -29,398 HKD
+  Expenses:Fee                 10 HKD
+
+2026-06-26 txn Asset:Equity:US:MSTR "周线 RSI 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     7.59324527 MSTR @ 82.31 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-06-26 txn Asset:Equity:US:NFLX "周线 KD 超卖，买入 NFLX"
+  Assets:Equity:US:NFLX     8.46768759 NFLX @ 73.81 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD
+
+2026-07-03 txn Asset:Crypto:BNB "周线 KD 超卖，买入 BNB"
+  Assets:Crypto:BNB         3.26972797 BNB @ 573.44 USD
+  Assets:Cash:USD           -1,876.00 USD
+  Expenses:Fee                 1 USD
+
+2026-07-03 txn Asset:Crypto:BTC "周线 KD 超卖，买入 BTC"
+  Assets:Crypto:BTC         0.22983746 BTC @ 62,544.20 USD
+  Assets:Cash:USD           -14,376.00 USD
+  Expenses:Fee                 1 USD
+
+2026-07-03 txn Asset:Crypto:VIRTUAL "周线 KD 超卖，买入 VIRTUAL"
+  Assets:Crypto:VIRTUAL     1,617.5702 VIRTUAL @ 0.57957298 USD
+  Assets:Cash:USD           -938.50 USD
+  Expenses:Fee                 1 USD
+
+2026-07-03 txn Asset:Equity:HK:0700 "周线 KD 超卖，买入 0700"
+  Assets:Equity:HK:0700     113 0700.HK @ 431.20 HKD
+  Assets:Cash:HKD           -48,736 HKD
+  Expenses:Fee                 10 HKD
+
+2026-07-03 txn Asset:Equity:HK:1810 "周线 RSI/KD 超卖，买入 1810"
+  Assets:Equity:HK:1810     1,280 1810.HK @ 22.96 HKD
+  Assets:Cash:HKD           -29,399 HKD
+  Expenses:Fee                 10 HKD
+
+2026-07-03 txn Asset:Equity:US:MSTR "周线 KD 超卖，买入 MSTR"
+  Assets:Equity:US:MSTR     6.20224294 MSTR @ 100.77 USD
+  Assets:Cash:USD           -626.00 USD
+  Expenses:Fee                 1 USD

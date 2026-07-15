@@ -1,0 +1,23 @@
+2026-01-03 plan Account:US "美股账户"
+  target: 25%
+  min: 20%
+  max: 30%
+  rebalance: Quarterly
+
+2026-01-03 plan Account:Crypto "数字货币账户"
+  target: 50%
+  min: 40%
+  max: 60%
+  rebalance: Quarterly
+
+2026-01-03 plan Account:CN "A 股账户"
+  target: 15%
+  min: 10%
+  max: 20%
+  rebalance: Quarterly
+
+2026-01-03 plan Account:HK "港股账户"
+  target: 10%
+  min: 5%
+  max: 15%
+  rebalance: Quarterly

@@ -1,0 +1,7 @@
+2026-01-01 capital Portfolio:Example "Initial investable capital"
+  amount: 1,000,000 USD
+
+2026-01-01 option Portfolio:Example "Base settings"
+  base_currency: USD
+  fx_rates: CNY=7.00, HKD=7.84
+  timezone: Asia/Shanghai

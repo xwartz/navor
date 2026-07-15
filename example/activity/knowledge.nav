@@ -1,0 +1,232 @@
+2026-01-18 research Asset:Equity:US:NVDA "数据中心指引仍强"
+  source: Company earnings
+  reliability: Primary
+  tags: AI,DataCenter
+  ---
+  管理层强调加速器供给仍是瓶颈，软件与网络收入同步抬升。
+  ---
+
+2026-02-05 research Asset:Crypto:ETH "L2 费用与质押收益"
+  source: On-chain data
+  reliability: Secondary
+  tags: L2,Staking
+  ---
+  主网费用回落但 L2 活跃地址上升，质押收益率仍具吸引力。
+  ---
+
+2026-02-10 research Asset:Crypto:BTC "ETF 流入放缓"
+  source: Market data
+  reliability: Secondary
+  tags: ETF,Flow
+  ---
+  现货 ETF 流入放缓，周线 RSI 处于超买区。
+  ---
+
+2026-02-21 research Market:US "DeepSeek 冲击科技股"
+  source: News
+  tags: AI,Volatility
+  ---
+  科技股周线波动加大，部分标的 KD 进入超卖。
+  ---
+
+2026-03-08 research Asset:Crypto:SOL "生态活跃度回升"
+  source: Market data
+  reliability: Secondary
+  tags: SOL,DeFi
+  ---
+  DEX 成交与新发币热度回升，波动仍高，适合分批而非一把梭。
+  ---
+
+2026-03-18 research Asset:Equity:HK:1810 "小米汽车交付预期"
+  source: Company update
+  reliability: Secondary
+  tags: EV,HK
+  ---
+  交付指引上修带动情绪，估值已计入较多乐观假设。
+  ---
+
+2026-04-09 research Market:CN "政策预期与成长风格"
+  source: Macro note
+  tags: CN,Policy
+  ---
+  成长风格占优，银行与红利相对落后；招商银行仍处估值低位。
+  ---
+
+2026-04-22 research Asset:Equity:US:MSFT "云与 AI 捆绑销售"
+  source: Sell-side
+  reliability: Secondary
+  tags: Cloud,AI
+  ---
+  Azure AI 附带率提升，但资本开支指引令市场短期紧张。
+  ---
+
+2026-05-20 research Asset:Private:US:ANTHROPIC "模型竞争与融资窗口"
+  source: Industry note
+  tags: Private,AI
+  ---
+  融资传闻频繁，二级通道仍窄，适合观察不适合追高估值。
+  ---
+
+2026-06-12 research Asset:Crypto:HYPE "Perp 份额与代币解锁"
+  source: Market data
+  tags: Perp,Unlock
+  ---
+  交易份额靠前，但解锁与竞争加剧，等待更深回撤再评估。
+  ---
+
+2026-06-28 research Asset:Equity:US:SPCX "折价收敛观察"
+  source: Fund filings
+  reliability: Secondary
+  tags: SPAC,NAV
+  ---
+  相对 NAV 折价仍在，催化剂不明确，继续列入观察。
+  ---
+
+2026-07-08 research Market:Crypto "BTC 超买但无仓位"
+  source: Market data
+  tags: RSI,Discipline
+  ---
+  BTC 周线 RSI>70，账户无 BTC 持仓，卖出规则未触发。
+  ---
+
+2026-01-20 thesis Asset:Equity:US:NVDA "AI 基础设施复合体"
+  account: Account:US
+  horizon: 3-5y
+  sentiment: Bullish
+  confidence: Medium
+  status: Active
+  invalid_if: 数据中心收入连续两季下滑
+  review_by: 2026-06-01
+  ---
+  若软件、网络与加速器需求互相强化，NVDA 仍可保持基础设施核心地位。
+  ---
+
+2026-02-08 thesis Asset:Crypto:ETH "熊市分批建仓"
+  horizon: 4y
+  sentiment: Bullish
+  confidence: High
+  status: Active
+  invalid_if: L2 叙事证伪
+  review_by: 2026-11-01
+  ---
+  按周线超卖信号分批建仓，不预测底部。
+  ---
+
+2026-02-12 thesis Asset:Crypto:BTC "储备资产但不追高"
+  horizon: 5y
+  sentiment: Bullish
+  confidence: High
+  status: Active
+  invalid_if: ETF 净流出持续两个季度
+  review_by: 2026-05-01
+  ---
+  长期视为储备资产，但超买区不新开仓，等待周线超卖。
+  ---
+
+2026-03-10 thesis Asset:Crypto:SOL "高 beta 生态仓"
+  horizon: 2-3y
+  sentiment: Bullish
+  confidence: Medium
+  status: Active
+  invalid_if: 生态活跃度持续萎缩
+  review_by: 2026-09-01
+  ---
+  作为 Crypto 账户的高波动卫星仓，严格按目标权重封顶。
+  ---
+
+2026-03-20 thesis Asset:Equity:HK:1810 "消费电子 + 汽车期权"
+  account: Account:HK
+  horizon: 2-4y
+  sentiment: Bullish
+  confidence: Medium
+  status: Active
+  invalid_if: 汽车毛利持续恶化
+  review_by: 2026-08-15
+  ---
+  手机基本盘托底，汽车是不对称上行期权；港股账户内控制在目标带。
+  ---
+
+2026-05-22 thesis Asset:Private:US:ANTHROPIC "观察级 AI 私募"
+  account: Account:US
+  horizon: 5y+
+  sentiment: Bullish
+  confidence: Low
+  status: Active
+  invalid_if: 无法获得合规可投通道
+  review_by: 2026-12-01
+  ---
+  叙事强但流动性差，保持 Watch，不占用可交易预算。
+  ---
+
+2026-01-22 decision Asset:Equity:US:MSFT "Prepare cloud sleeve"
+  account: Account:US
+  action: Buy
+  target_weight: 10%
+  trigger: Await volatility entry
+  confidence: Medium
+
+2026-02-09 decision Asset:Crypto:ETH "Start DCA after L2 research"
+  account: Account:Crypto
+  action: Buy
+  target_weight: 20%
+  trigger: Weekly oversold
+  based_on: 2026-02-08
+  confidence: High
+
+2026-02-22 decision Asset:Equity:US:MSFT "Add on DeepSeek volatility"
+  account: Account:US
+  action: Buy
+  target_weight: 10%
+  trigger: KD oversold after AI scare
+  based_on: 2026-02-21
+  confidence: Medium
+
+2026-03-01 decision Asset:Crypto:BTC "Do not chase ETF FOMO"
+  account: Account:Crypto
+  action: Hold
+  trigger: Weekly RSI > 70
+  based_on: 2026-02-12
+  confidence: High
+
+2026-03-12 decision Asset:Crypto:SOL "Open satellite sleeve"
+  account: Account:Crypto
+  action: Buy
+  target_weight: 10%
+  trigger: Ecosystem activity rebound
+  based_on: 2026-03-10
+  confidence: Medium
+
+2026-03-22 decision Asset:Equity:HK:1810 "Build HK core sleeve"
+  account: Account:HK
+  action: Buy
+  target_weight: 30%
+  trigger: Delivery narrative + pullback
+  based_on: 2026-03-20
+  confidence: Medium
+
+2026-04-25 decision Asset:Equity:US:MSFT "Continue cloud compounder"
+  account: Account:US
+  action: Buy
+  target_weight: 10%
+  based_on: 2026-04-22
+  confidence: Medium
+
+2026-05-25 decision Asset:Private:US:ANTHROPIC "Keep on watchlist only"
+  account: Account:US
+  action: Hold
+  trigger: No liquid entry path
+  based_on: 2026-05-22
+  confidence: Low
+
+2026-06-15 decision Asset:Crypto:HYPE "Wait for deeper drawdown"
+  account: Account:Crypto
+  action: Hold
+  trigger: Unlock overhang
+  based_on: 2026-06-12
+  confidence: Medium
+
+2026-06-30 decision Asset:Equity:US:SPCX "No allocation until catalyst"
+  account: Account:US
+  action: Hold
+  based_on: 2026-06-28
+  confidence: Low

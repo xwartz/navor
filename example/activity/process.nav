@@ -1,0 +1,104 @@
+2026-02-14 review Account:Crypto "季度回顾"
+  status: On Track
+  action: Hold
+  ---
+  周线超卖触发 ETH 分批建仓，未追高 BTC；与「不追 ETF FOMO」决策一致。
+  ---
+
+2026-03-28 review Asset:Crypto:ETH "DCA 执行检查"
+  status: On Track
+  action: Hold
+  ---
+  按 thesis 分批执行，未一次性打满目标权重。
+  ---
+
+2026-04-04 review Account:US "关税波动回顾"
+  status: Drifted
+  action: Hold
+  ---
+  DeepSeek 冲击后在超卖区加了 MSFT；NVDA thesis 临近 review_by，需复盘。
+  ---
+
+2026-04-18 review Account:HK "小米建仓回顾"
+  status: On Track
+  action: Hold
+  ---
+  按港股账户目标推进 1810，蜜雪冰城仍 Watch，未参与新股追高。
+  ---
+
+2026-05-30 review Account:CN "成长风格占优"
+  status: Drifted
+  action: Rebalance
+  ---
+  ETF 与成长仓推进快于银行；招商银行保持 Watch，暂不抢跑。
+  ---
+
+2026-06-05 review Asset:Equity:US:NVDA "逾期复盘"
+  status: Drifted
+  action: Hold
+  ---
+  review_by 已过，仓位与目标仍需对照；暂不因叙事加码。
+  ---
+
+2026-07-01 review Account:Crypto "半年回顾"
+  status: On Track
+  action: Hold
+  ---
+  ETH、SOL 按计划建仓；BTC 上半年无超卖信号，零买入；HYPE 仍观察。
+  ---
+
+2026-07-08 review Portfolio:Example "纪律检查"
+  status: On Track
+  action: Hold
+  ---
+  FOMO 日记与 Hold BTC 决策互相印证，规则有效。
+  ---
+
+2026-02-16 journal Portfolio:Example "Calm after first ETH tranche"
+  mood: Calm
+  related: Asset:Crypto:ETH
+  ---
+  按计划买完第一笔，没有因为日内波动加仓。
+  ---
+
+2026-03-02 journal Portfolio:Example "Felt FOMO after BTC ETF headlines"
+  mood: FOMO
+  related: Asset:Crypto:BTC
+  ---
+  想追涨，但 thesis 与 Hold 决策挡住了冲动。
+  ---
+
+2026-04-05 journal Account:US "Anxiety during tariff headlines"
+  mood: Anxiety
+  related: Asset:Equity:US:MSFT
+  ---
+  关税新闻让人想清仓科技，回看 DeepSeek 研究后选择按计划持有/加仓。
+  ---
+
+2026-04-20 journal Account:HK "Patience on Mixue IPO"
+  mood: Patience
+  related: Asset:Equity:HK:2097
+  ---
+  周围有人打新，自己坚持 Watch，等定价稳定。
+  ---
+
+2026-05-26 journal Asset:Private:US:ANTHROPIC "Curiosity without urgency"
+  mood: Curiosity
+  related: Asset:Private:US:ANTHROPIC
+  ---
+  私募叙事很炫，但没有通道就不占用现金。
+  ---
+
+2026-06-16 journal Asset:Crypto:HYPE "Avoid unlock lottery"
+  mood: Discipline
+  related: Asset:Crypto:HYPE
+  ---
+  解锁临近，选择继续观察而不是赌短线。
+  ---
+
+2026-07-08 journal Portfolio:Example "Felt FOMO after BTC breakout"
+  mood: FOMO
+  related: Asset:Crypto:BTC
+  ---
+  周线 RSI 超买但未持仓，规则阻止了追涨。
+  ---

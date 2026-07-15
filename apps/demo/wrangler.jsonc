@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "navor-demo",
+  "compatibility_date": "2026-07-15",
+  "pages_build_output_dir": "./dist"
+}

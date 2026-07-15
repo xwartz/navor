@@ -1,0 +1,197 @@
+2026-01-02 open Asset:Equity:US:NVDA "NVIDIA"
+  symbol: NVDA
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:AAPL "Apple"
+  symbol: AAPL
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:MSFT "Microsoft"
+  symbol: MSFT
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:GOOGL "Alphabet"
+  symbol: GOOGL
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:TSLA "Tesla"
+  symbol: TSLA
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:AMZN "Amazon"
+  symbol: AMZN
+  account: Account:US
+  target: 5%
+
+2026-01-02 open Asset:Equity:US:SPCX "SPCX"
+  symbol: SPCX
+  account: Account:US
+  target: 10%
+  status: Watch
+  watch_reason: SPAC 折价与 NAV 收敛
+
+2026-01-02 open Asset:Private:US:ANTHROPIC "Anthropic"
+  symbol: Anthropic
+  account: Account:US
+  target: 5%
+  status: Watch
+  watch_reason: 等待可投二级或基金通道
+
+2026-01-02 open Asset:Private:US:OPENAI "OpenAI"
+  symbol: OpenAI
+  account: Account:US
+  target: 5%
+  status: Watch
+  watch_reason: 估值与锁定期不确定
+
+2026-01-02 open Asset:Equity:US:QQQ "Invesco QQQ"
+  symbol: QQQ
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:SPY "SPDR S&P 500 ETF"
+  symbol: SPY
+  account: Account:US
+  target: 10%
+
+2026-01-02 open Asset:Equity:US:PLTR "Palantir"
+  symbol: PLTR
+  account: Account:US
+  target: 2%
+
+2026-01-02 open Asset:Equity:US:NFLX "Netflix"
+  symbol: NFLX
+  account: Account:US
+  target: 1%
+
+2026-01-02 open Asset:Equity:US:MSTR "MicroStrategy"
+  symbol: MSTR
+  account: Account:US
+  target: 1%
+
+2026-01-02 open Asset:Equity:US:HOOD "Robinhood"
+  symbol: HOOD
+  account: Account:US
+  target: 1%
+
+2026-01-02 open Asset:Crypto:BTC "Bitcoin"
+  symbol: BTC
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 46%
+
+2026-01-02 open Asset:Crypto:ETH "Ethereum"
+  symbol: ETH
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 20%
+
+2026-01-02 open Asset:Crypto:SOL "Solana"
+  symbol: SOL
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 10%
+
+2026-01-02 open Asset:Crypto:LINK "LINK"
+  symbol: LINK
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 6%
+
+2026-01-02 open Asset:Crypto:BNB "BNB"
+  symbol: BNB
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 6%
+
+2026-01-02 open Asset:Crypto:HYPE "Hyperliquid"
+  symbol: HYPE
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 6%
+  status: Watch
+  watch_reason: Perp DEX 叙事强，等待周线超卖
+
+2026-01-02 open Asset:Crypto:VIRTUAL "Virtuals Protocol"
+  symbol: VIRTUAL
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 3%
+
+2026-01-02 open Asset:Crypto:PEPE "Pepe"
+  symbol: PEPE
+  account: Account:Crypto
+  type: Crypto
+  currency: USD
+  target: 3%
+
+2026-01-02 open Asset:Equity:CN:159915 "创业板 ETF"
+  symbol: 159915.SZ
+  account: Account:CN
+  target: 15%
+
+2026-01-02 open Asset:Equity:CN:588000 "科创 50 ETF"
+  symbol: 588000.SS
+  account: Account:CN
+  target: 15%
+
+2026-01-02 open Asset:Equity:CN:512500 "中证 500 ETF"
+  symbol: 512500.SS
+  account: Account:CN
+  target: 30%
+
+2026-01-02 open Asset:Equity:CN:515070 "人工智能 ETF"
+  symbol: 515070.SS
+  account: Account:CN
+  target: 10%
+
+2026-01-02 open Asset:Equity:CN:512760 "芯片 ETF"
+  symbol: 512760.SS
+  account: Account:CN
+  target: 10%
+
+2026-01-02 open Asset:Equity:CN:513130 "恒生科技 ETF"
+  symbol: 513130.SS
+  account: Account:CN
+  target: 5%
+
+2026-01-02 open Asset:Equity:CN:600036 "招商银行"
+  symbol: 600036.SS
+  account: Account:CN
+  target: 5%
+  status: Watch
+  watch_reason: 银行股估值压缩，等政策催化
+
+2026-01-02 open Asset:Equity:CN:600900 "长江电力"
+  symbol: 600900.SS
+  account: Account:CN
+  target: 5%
+
+2026-01-02 open Asset:Equity:HK:1810 "小米"
+  symbol: 1810.HK
+  account: Account:HK
+  target: 30%
+
+2026-01-02 open Asset:Equity:HK:0700 "腾讯"
+  symbol: 0700.HK
+  account: Account:HK
+  target: 50%
+
+2026-01-02 open Asset:Equity:HK:2097 "蜜雪冰城"
+  symbol: 2097.HK
+  account: Account:HK
+  target: 20%
+  status: Watch
+  watch_reason: 新股定价未稳，观察成交与回撤

@@ -1,0 +1,43 @@
+{
+  "name": "@navor/cli",
+  "version": "0.1.0",
+  "description": "CLI implementation for the Navor investment-language toolchain.",
+  "license": "Apache-2.0",
+  "repository": "github:xwartz/navor",
+  "homepage": "https://github.com/xwartz/navor#readme",
+  "bugs": "https://github.com/xwartz/navor/issues",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "bin": {
+    "nav": "./dist/index.mjs"
+  },
+  "dependencies": {
+    "@navor/reader-ui": "workspace:*",
+    "@navor/renderer": "workspace:*"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./serve": {
+      "types": "./dist/serve.d.mts",
+      "import": "./dist/serve.mjs"
+    },
+    "./static-site": {
+      "types": "./dist/static-site.d.mts",
+      "import": "./dist/static-site.mjs"
+    }
+  },
+  "types": "./dist/index.d.mts"
+}

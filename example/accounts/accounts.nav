@@ -1,0 +1,18 @@
+2026-01-01 open Account:US "美股账户"
+  category: Equity
+  market: US
+  target: 25%
+
+2026-01-01 open Account:Crypto "数字货币账户"
+  category: Crypto
+  target: 50%
+
+2026-01-01 open Account:CN "A 股账户"
+  category: Equity
+  market: CN
+  target: 15%
+
+2026-01-01 open Account:HK "港股账户"
+  category: Equity
+  market: HK
+  target: 10%
