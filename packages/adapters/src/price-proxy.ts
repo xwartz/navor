@@ -20,9 +20,20 @@ export interface PriceProxyResponseBody {
 export interface PriceProxyHandlerOptions {
   fetch?: typeof fetch
   cacheTtlMs?: number
+  batchDelayMs?: number
+  sleep?: (ms: number) => Promise<void>
 }
 
+const SYMBOL_CACHE_PREFIX = 'https://navor-price-cache.invalid/symbol/'
 const defaultCache = new Map<string, { expiresAt: number; quote: MarketPrice }>()
+
+function getDefaultCache() {
+  const cacheStorage = globalThis.caches as CacheStorage & {
+    default?: Cache
+  }
+
+  return cacheStorage.default ?? null
+}
 
 export async function handlePriceProxyRequest(
   request: Request,
@@ -60,7 +71,7 @@ export async function handlePriceProxyRequest(
       continue
     }
 
-    const cached = readCache(defaultCache, entry.yahooSymbol, cacheTtlMs)
+    const cached = await readSymbolCache(entry.yahooSymbol, cacheTtlMs)
 
     if (cached) {
       prices.push({
@@ -75,7 +86,11 @@ export async function handlePriceProxyRequest(
 
   const fetched =
     symbolsToFetch.size > 0
-      ? await fetchYahooQuotes([...symbolsToFetch], { fetch: fetchFn })
+      ? await fetchYahooQuotes([...symbolsToFetch], {
+          fetch: fetchFn,
+          batchDelayMs: options.batchDelayMs,
+          sleep: options.sleep,
+        })
       : { quotes: new Map(), failures: [] }
 
   for (const entry of body.entries) {
@@ -97,7 +112,7 @@ export async function handlePriceProxyRequest(
         asOf: quote.asOf,
       }
       prices.push(price)
-      writeCache(defaultCache, entry.yahooSymbol, cacheTtlMs, price)
+      await writeSymbolCache(entry.yahooSymbol, cacheTtlMs, price)
       continue
     }
 
@@ -115,15 +130,77 @@ export async function handlePriceProxyRequest(
   return jsonResponse(payload, 200)
 }
 
-function readCache(
-  cache: Map<string, { expiresAt: number; quote: MarketPrice }>,
-  symbol: string,
-  cacheTtlMs: number,
-) {
-  const entry = cache.get(symbol)
+async function readSymbolCache(symbol: string, cacheTtlMs: number) {
+  const memory = readMemoryCache(symbol, cacheTtlMs)
+
+  if (memory) {
+    return memory
+  }
+
+  if (typeof caches === 'undefined') {
+    return null
+  }
+
+  const cache = getDefaultCache()
+
+  if (!cache) {
+    return null
+  }
+
+  try {
+    const response = await cache.match(`${SYMBOL_CACHE_PREFIX}${encodeURIComponent(symbol)}`)
+
+    if (!response) {
+      return null
+    }
+
+    const cachedAt = Number(response.headers.get('x-cached-at') ?? '0')
+
+    if (!cachedAt || Date.now() - cachedAt > cacheTtlMs) {
+      return null
+    }
+
+    const quote = (await response.json()) as MarketPrice
+    writeMemoryCache(symbol, cacheTtlMs, quote)
+    return quote
+  } catch {
+    return null
+  }
+}
+
+async function writeSymbolCache(symbol: string, cacheTtlMs: number, quote: MarketPrice) {
+  writeMemoryCache(symbol, cacheTtlMs, quote)
+
+  if (typeof caches === 'undefined') {
+    return
+  }
+
+  const cache = getDefaultCache()
+
+  if (!cache) {
+    return
+  }
+
+  try {
+    await cache.put(
+      `${SYMBOL_CACHE_PREFIX}${encodeURIComponent(symbol)}`,
+      new Response(JSON.stringify(quote), {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-cached-at': String(Date.now()),
+        },
+      }),
+    )
+  } catch {
+    // Ignore cache write failures.
+  }
+}
+
+function readMemoryCache(symbol: string, cacheTtlMs: number) {
+  const entry = defaultCache.get(symbol)
 
   if (!entry || entry.expiresAt <= Date.now()) {
-    cache.delete(symbol)
+    defaultCache.delete(symbol)
     return null
   }
 
@@ -134,13 +211,8 @@ function readCache(
   return entry.quote
 }
 
-function writeCache(
-  cache: Map<string, { expiresAt: number; quote: MarketPrice }>,
-  symbol: string,
-  cacheTtlMs: number,
-  quote: MarketPrice,
-) {
-  cache.set(symbol, {
+function writeMemoryCache(symbol: string, cacheTtlMs: number, quote: MarketPrice) {
+  defaultCache.set(symbol, {
     expiresAt: Date.now() + cacheTtlMs,
     quote,
   })

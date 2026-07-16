@@ -1,26 +1,20 @@
 import { fetchYahooQuotes } from '@navor/adapters'
 import { describe, expect, it } from 'vitest'
 
-import { createYahooSparkResponse } from './yahoo-spark-fixture'
+import { createYahooSpark429Fetch } from './yahoo-spark-fixture'
 
 describe('fetchYahooQuotes 429 retry', () => {
-  it('retries a 429 batch and succeeds', async () => {
+  it('retries a spark 429 batch and succeeds', async () => {
+    const sparkFetch = createYahooSpark429Fetch(1)
     let attempts = 0
 
     const result = await fetchYahooQuotes(['NVDA', 'AAPL'], {
       maxRetriesOn429: 2,
+      batchDelayMs: 0,
       sleep: async () => undefined,
-      fetch: async () => {
+      fetch: async (input, init) => {
         attempts += 1
-
-        if (attempts === 1) {
-          return new Response('Too Many Requests', { status: 429 })
-        }
-
-        return new Response(JSON.stringify(createYahooSparkResponse(['NVDA', 'AAPL'], 123.45)), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        })
+        return sparkFetch(input, init)
       },
     })
 
