@@ -48,6 +48,9 @@ pnpm build:example
 
 - `nav serve <workspace> [--port <port>]` 启动本地 Reader。
 - `nav build <workspace> --out <dir> [--fetch-prices]` 生成静态站点。
+- `nav format <path> [--check]` 格式化 `.nav` 文件（或只检查不写入）。不会重排指令顺序。
+
+`.nav` 的语法高亮与 Format Document 在 [`extensions/vscode`](extensions/vscode/)。每个 GitHub Release 会附带 `.vsix`，用 `cursor --install-extension navor-*.vsix` 或 **Extensions: Install from VSIX…** 安装。
 
 ## 数据边界
 

@@ -1,0 +1,64 @@
+; Syntax fixture for the Navor TextMate grammar.
+2026-01-01 option Portfolio:Core "Base settings"
+  base_currency: USD
+  timezone: Asia/Shanghai
+
+2026-01-01 capital Portfolio:Core "Initial capital"
+  amount: 100,000 USD
+
+2026-01-01 open Account:US "US equities"
+  target: 60%
+
+2026-01-01 close Account:Legacy "Retired sleeve"
+  reason: Consolidated
+
+2026-01-02 plan Account:US "US policy"
+  target: 60%
+  min: 50%
+  max: 70%
+  rebalance: Quarterly
+
+2026-01-02 open Asset:Equity:US:NVDA "NVIDIA"
+  account: Account:US
+  symbol: NVDA
+  target: 15%
+
+2026-01-10 research Asset:Equity:US:NVDA "Data-center demand"
+  source: Company earnings
+  reliability: Primary
+  tags: AI,DataCenter
+  ---
+  Management maintained its data-center outlook.
+  ---
+
+2026-01-12 thesis Asset:Equity:US:NVDA "Compute demand remains durable"
+  horizon: 3y
+  confidence: Medium
+  invalid_if: Data-center revenue declines for two quarters
+  review_by: 2026-04-30
+
+2026-01-13 decision Asset:Equity:US:NVDA "Build the position"
+  action: Buy
+  target_weight: 15%
+  based_on: Asset:Equity:US:NVDA
+
+2026-02-01 txn Asset:Equity:US:NVDA "First purchase"
+  Assets:Equity:US:NVDA      10 NVDA @ 900 USD
+  Assets:Cash:USD        -9,000 USD
+  Expenses:Fee                1 USD
+
+2026-04-30 review Asset:Equity:US:NVDA "Quarterly review"
+  status: On Track
+  action: Hold
+  ---
+  The invalidation condition has not been met.
+  ---
+
+2026-05-01 journal Portfolio:Core "Process note"
+  mood: Calm
+  related: Asset:Equity:US:NVDA
+
+2026-05-02 note Portfolio:Core "Other dated note"
+  ---
+  Free-form Markdown body.
+  ---

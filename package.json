@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsdown --config-loader unrun",
+    "build": "tsdown --config-loader unrun && pnpm bundle:vscode",
+    "bundle:vscode": "node scripts/bundle-vscode-format.mjs",
+    "link:vscode": "pnpm bundle:vscode && node scripts/link-vscode-extension.mjs",
+    "package:vscode": "node scripts/package-vscode.mjs",
     "check": "biome check packages apps test vite.config.ts tsdown.config.ts && tsc --noEmit",
     "dev": "NAVOR_WORKSPACE=example vite --config packages/reader-ui/vite.config.ts",
     "format": "biome format --write .",

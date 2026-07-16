@@ -36,6 +36,35 @@ jobs:
       - run: node scripts/verify-release.mjs
       - run: node scripts/release-plan.mjs publish
       - run: node scripts/verify-distribution.mjs --source=registry --version=${GITHUB_REF_NAME#v}
-      - run: gh release create "$GITHUB_REF_NAME" --generate-notes
+      - name: Package VS Code / Cursor extension
+        run: pnpm package:vscode
+      - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+        run: |
+          VSIX=$(ls extensions/vscode/navor-*.vsix | head -n 1)
+          test -f "$VSIX"
+          VSIX_NAME=$(basename "$VSIX")
+          {
+            echo "## Editor extension"
+            echo ""
+            echo "Install the attached \`${VSIX_NAME}\` in Cursor or VS Code:"
+            echo ""
+            echo '```bash'
+            echo "cursor --install-extension ${VSIX_NAME}"
+            echo "# or"
+            echo "code --install-extension ${VSIX_NAME}"
+            echo '```'
+            echo ""
+            echo "Or use **Extensions: Install from VSIX…** in the Command Palette."
+            echo ""
+            echo "---"
+            echo ""
+            gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+              -f tag_name="$GITHUB_REF_NAME" \
+              -f target_commitish="$GITHUB_SHA" \
+              --jq .body
+          } > /tmp/release-notes.md
+          gh release create "$GITHUB_REF_NAME" "$VSIX" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file /tmp/release-notes.md

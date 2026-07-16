@@ -1,20 +1,6 @@
+import { NAVOR_DIRECTIVE_SET } from './directives'
 import { parsePosting } from './postings'
 import type { NavorAst, NavorDiagnostic, NavorDirective, ParseNavorResult } from './types'
-
-const DIRECTIVES = new Set<string>([
-  'option',
-  'capital',
-  'open',
-  'close',
-  'plan',
-  'research',
-  'thesis',
-  'decision',
-  'txn',
-  'review',
-  'journal',
-  'note',
-])
 
 export function parseNavor(source: string, file?: string): ParseNavorResult {
   const ast: NavorAst = { directives: [] }
@@ -171,7 +157,7 @@ function parseDirectiveLine(
     return null
   }
 
-  if (!DIRECTIVES.has(directive)) {
+  if (!NAVOR_DIRECTIVE_SET.has(directive)) {
     diagnostics.push({
       line: lineNumber,
       file,

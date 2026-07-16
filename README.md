@@ -48,6 +48,9 @@ Start at the [documentation home](docs/README.md): concepts, getting started, la
 
 - `nav serve <workspace> [--port <port>]` starts the local Reader.
 - `nav build <workspace> --out <dir> [--fetch-prices]` writes a static site.
+- `nav format <path> [--check]` formats `.nav` files (or checks formatting without writing). Does not reorder directives.
+
+Editor highlighting and Format Document for `.nav` live in [`extensions/vscode`](extensions/vscode/). Each GitHub Release attaches a `.vsix` — install with `cursor --install-extension navor-*.vsix` or **Extensions: Install from VSIX…**.
 
 ## Data boundary
 

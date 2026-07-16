@@ -1,0 +1,54 @@
+{
+  "name": "navor",
+  "displayName": "Navor",
+  "description": "Syntax highlighting and formatting for Navor (.nav) investment-language files.",
+  "version": "0.1.1",
+  "publisher": "navor",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xwartz/navor.git",
+    "directory": "extensions/vscode"
+  },
+  "homepage": "https://github.com/xwartz/navor#readme",
+  "bugs": {
+    "url": "https://github.com/xwartz/navor/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Programming Languages", "Formatters"],
+  "keywords": ["navor", "nav", "beancount", "investing", "ledger", "syntax"],
+  "activationEvents": [
+    "onLanguage:navor",
+    "onCommand:navor.formatDocument"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "navor.formatDocument",
+        "title": "Format Document",
+        "category": "Navor"
+      }
+    ],
+    "languages": [
+      {
+        "id": "navor",
+        "aliases": ["Navor", "nav"],
+        "extensions": [".nav"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "navor",
+        "scopeName": "source.navor",
+        "path": "./syntaxes/navor.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.markdown": "markdown"
+        }
+      }
+    ]
+  }
+}

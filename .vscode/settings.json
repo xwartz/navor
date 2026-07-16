@@ -9,5 +9,13 @@
     "SPCX",
     "Virtuals",
     "Watchlist"
-  ]
+  ],
+  "files.associations": {
+    "*.nav": "navor"
+  },
+  "[navor]": {
+    "editor.defaultFormatter": "navor.navor",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file"
+  }
 }

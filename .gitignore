@@ -17,3 +17,4 @@ coverage-summary.md
 .env
 *.log
 .DS_Store
+extensions/vscode/*.vsix

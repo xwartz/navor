@@ -16,6 +16,8 @@
 2. The `Version packages` workflow opens a version PR on `main`.
 3. Merge the version PR, then create and push a signed tag matching `packages/cli/package.json`, for example `v0.1.1`.
 4. The Release workflow verifies the tagged commit is on `main`, checks the release plan, runs shared release verification, then publishes through the release plan.
-5. The workflow runs distribution acceptance against the published `@navor/cli` package, then creates the GitHub Release.
+5. The workflow runs distribution acceptance against the published `@navor/cli` package, packages `extensions/vscode` into a `.vsix`, then creates the GitHub Release with that asset attached.
+
+Users can install the editor extension from the Release asset without the VS Marketplace or Open VSX (`cursor --install-extension navor-*.vsix`).
 
 The workflow requires Node.js 22.14+ and npm 11.5.1+. Before the first stable release, run `nav build` against a real, non-sensitive workspace from a clean installation.

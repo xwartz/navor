@@ -72,6 +72,17 @@ nav build portfolio --out dist/site
 
 The output includes `index.html`, browser assets, and `navor-data.json`. Without `--fetch-prices`, it contains facts only. For live browser prices on a hosted site, deploy a same-origin proxy as described in [deployment](../operations/deployment.md).
 
+## Format source files
+
+```bash
+nav format portfolio
+nav format portfolio --check
+```
+
+`nav format` normalizes whitespace (indent, posting columns, blank lines between directives). It does not reorder directives, rewrite number literals, or reflow Markdown bodies. Use `--check` in CI; it exits non-zero when files need formatting.
+
+Editor highlighting for `.nav` lives in [`extensions/vscode`](../../extensions/vscode/). Install it from that folder in Cursor or VS Code after `pnpm build`.
+
 ## Next steps
 
 1. Record buys, sells, and reviews with the [booking guide](../cookbook/booking.md).

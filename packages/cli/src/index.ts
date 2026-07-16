@@ -2,33 +2,38 @@
 import { realpathSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
+import { type FormatNavorPathResult, formatNavorPath, formatNavorPathSummary } from './format'
 import { type ServedNavorWorkspace, serveNavorWorkspace } from './serve'
 import { type BuildNavorStaticSiteResult, buildNavorStaticSite } from './static-site'
 
 export type NavorCliResult =
   | (ServedNavorWorkspace & { command: 'serve' })
   | (BuildNavorStaticSiteResult & { command: 'build' })
+  | FormatNavorPathResult
 
+export type { FormatNavorPathResult } from './format'
 export type { ServedNavorWorkspace, ServeNavorWorkspaceOptions } from './serve'
 export type {
   BuildNavorStaticSiteOptions,
   BuildNavorStaticSiteResult,
 } from './static-site'
-export { buildNavorStaticSite, serveNavorWorkspace }
+export { buildNavorStaticSite, formatNavorPath, serveNavorWorkspace }
 
 export async function runNavorCli(
   args: string[],
   options: { interactive?: boolean } = {},
 ): Promise<NavorCliResult> {
-  const [command, workspace, ...rest] = args
+  const [command, target, ...rest] = args
 
-  if (!command || !workspace) {
-    throw new Error('Usage: nav <serve|build> <workspace> [--out <dir>] [--port <port>]')
+  if (!command || !target) {
+    throw new Error(
+      'Usage: nav <serve|build|format> <workspace> [--out <dir>] [--port <port>] [--check]',
+    )
   }
 
   if (command === 'serve') {
     const port = Number(readOption(rest, '--port') ?? 5173)
-    const served = await serveNavorWorkspace(workspace, { port })
+    const served = await serveNavorWorkspace(target, { port })
 
     if (options.interactive) {
       console.log(`Navor Reader ready at ${served.url}`)
@@ -60,7 +65,7 @@ export async function runNavorCli(
     }
 
     const fetchLivePrices = rest.includes('--fetch-prices')
-    const built = await buildNavorStaticSite(workspace, { outDir, fetchLivePrices })
+    const built = await buildNavorStaticSite(target, { outDir, fetchLivePrices })
 
     console.log(`Navor static site written to ${built.outDir}`)
 
@@ -68,6 +73,19 @@ export async function runNavorCli(
       command,
       ...built,
     }
+  }
+
+  if (command === 'format') {
+    const check = rest.includes('--check')
+    const result = await formatNavorPath(target, { check })
+
+    console.log(formatNavorPathSummary(result))
+
+    if (check && result.changed.length > 0) {
+      process.exitCode = 1
+    }
+
+    return result
   }
 
   throw new Error(`Unknown nav command "${command}".`)

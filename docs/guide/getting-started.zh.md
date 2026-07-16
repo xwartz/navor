@@ -72,6 +72,17 @@ nav build portfolio --out dist/site
 
 输出包含 `index.html`、浏览器资源和 `navor-data.json`。未传 `--fetch-prices` 时只含事实。托管站点若需浏览器侧实时行情，按[部署](../operations/deployment.zh.md)配置同源代理。
 
+## 格式化源文件
+
+```bash
+nav format portfolio
+nav format portfolio --check
+```
+
+`nav format` 只整理空白（缩进、posting 列对齐、指令之间的空行）。不会重排指令、改写数字字面量，也不会重排 Markdown body。CI 用 `--check`；需要格式化时以非零退出码结束。
+
+`.nav` 语法高亮在 [`extensions/vscode`](../../extensions/vscode/)。`pnpm build` 之后，在 Cursor 或 VS Code 里从该目录安装扩展。
+
 ## 下一步
 
 1. 用[记账指南](../cookbook/booking.zh.md)记录买入、卖出与复盘。

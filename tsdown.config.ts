@@ -54,11 +54,12 @@ export default defineConfig([
       'packages/cli/src/index.ts',
       'packages/cli/src/serve.ts',
       'packages/cli/src/static-site.ts',
+      'packages/cli/src/format.ts',
     ],
     outDir: 'packages/cli/dist',
     dts: true,
     format: ['esm'],
     sourcemap: true,
-    external: ['@navor/reader-ui', '@navor/renderer', 'vite'],
+    external: ['@navor/core', '@navor/reader-ui', '@navor/renderer', 'vite'],
   },
 ])

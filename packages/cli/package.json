@@ -22,6 +22,7 @@
     "nav": "./dist/index.mjs"
   },
   "dependencies": {
+    "@navor/core": "workspace:*",
     "@navor/reader-ui": "workspace:*",
     "@navor/renderer": "workspace:*"
   },

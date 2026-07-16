@@ -1,5 +1,10 @@
 export { mergeFxRates } from './core/fx'
 export {
+  NAVOR_DIRECTIVE_SET,
+  NAVOR_DIRECTIVES,
+  type NavorDirectiveName,
+} from './directives'
+export {
   buildDashboardView,
   generateAllocation,
   generateDashboard,
@@ -10,9 +15,10 @@ export {
   generateProcessViews,
   getPortfolioOptions,
 } from './engine'
+export { checkNavorFormat, formatNavor } from './format'
 export { buildMarketView, generateMarketView } from './market'
 export { parseNavor } from './parser'
-export { parsePosting } from './postings'
+export { type ParsedPostingLine, parsePosting, parsePostingLine } from './postings'
 export { validateNavorSemantics } from './semantic'
 export type {
   AllocationAccount,

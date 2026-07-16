@@ -93,6 +93,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@navor/core':
+        specifier: workspace:*
+        version: link:../core
       '@navor/reader-ui':
         specifier: workspace:*
         version: link:../reader-ui

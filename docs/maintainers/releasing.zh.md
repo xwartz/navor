@@ -16,6 +16,8 @@
 2. `Version packages` 工作流会在 `main` 上创建版本 PR。
 3. 合并版本 PR，随后创建并推送与 `packages/cli/package.json` 一致的签名 tag，例如 `v0.1.1`。
 4. Release 工作流会确认 tag 提交位于 `main`、版本匹配并检查发布计划，再执行共享发布验证，并通过发布计划发布。
-5. 工作流会对已发布的 `@navor/cli` 运行分发验收，然后创建 GitHub Release。
+5. 工作流会对已发布的 `@navor/cli` 运行分发验收，打包 `extensions/vscode` 为 `.vsix`，再创建 GitHub Release 并挂上该资源。
+
+用户可从 Release 资源安装编辑器扩展，无需 VS Marketplace 或 Open VSX（`cursor --install-extension navor-*.vsix`）。
 
 该工作流需要 Node.js 22.14+ 和 npm 11.5.1+。首次稳定版发布前，应在干净安装环境中对真实且非敏感的工作区运行 `nav build`。

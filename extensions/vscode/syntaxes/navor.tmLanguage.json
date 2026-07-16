@@ -1,0 +1,118 @@
+{
+  "scopeName": "source.navor",
+  "name": "Navor",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#directive"
+    },
+    {
+      "include": "#orphan-indented"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "match": "^;.*$",
+      "name": "comment.line.navor"
+    },
+    "directive": {
+      "begin": "^(\\d{4}-\\d{2}-\\d{2})\\s+(option|capital|open|close|plan|research|thesis|decision|txn|review|journal|note)\\s+([^\\s\"]+)(?:\\s+(\"(?:[^\"]*)\"))?\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.numeric.date.navor"
+        },
+        "2": {
+          "name": "keyword.control.directive.navor"
+        },
+        "3": {
+          "name": "entity.name.subject.navor"
+        },
+        "4": {
+          "name": "string.quoted.double.navor"
+        }
+      },
+      "end": "^(?=\\S)",
+      "name": "meta.directive.navor",
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#body"
+        },
+        {
+          "include": "#metadata"
+        },
+        {
+          "include": "#posting"
+        }
+      ]
+    },
+    "body": {
+      "begin": "^(  ---)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.raw.navor"
+        }
+      },
+      "end": "^(  ---)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.raw.navor"
+        }
+      },
+      "name": "meta.body.navor",
+      "contentName": "meta.embedded.block.markdown",
+      "patterns": [
+        {
+          "include": "text.html.markdown"
+        }
+      ]
+    },
+    "metadata": {
+      "match": "^(  )([A-Za-z_][A-Za-z0-9_]*)(:)(\\s+)(.+)$",
+      "captures": {
+        "2": {
+          "name": "variable.other.metadata.key.navor"
+        },
+        "3": {
+          "name": "punctuation.separator.key-value.navor"
+        },
+        "5": {
+          "name": "string.unquoted.metadata.value.navor"
+        }
+      },
+      "name": "meta.metadata.navor"
+    },
+    "posting": {
+      "match": "^(  )(\\S+)(\\s+)(-?[\\d,]+(?:\\.\\d+)?)(\\s+)(\\S+)(?:(\\s+)(@)(\\s+)([\\d,]+(?:\\.\\d+)?)(\\s+)(\\S+))?\\s*$",
+      "captures": {
+        "2": {
+          "name": "variable.other.account.navor"
+        },
+        "4": {
+          "name": "constant.numeric.quantity.navor"
+        },
+        "6": {
+          "name": "entity.name.type.commodity.navor"
+        },
+        "8": {
+          "name": "keyword.operator.price.navor"
+        },
+        "10": {
+          "name": "constant.numeric.price.navor"
+        },
+        "12": {
+          "name": "entity.name.type.currency.navor"
+        }
+      },
+      "name": "meta.posting.navor"
+    },
+    "orphan-indented": {
+      "match": "^\\s+.*$",
+      "name": "invalid.illegal.unrecognized.navor"
+    }
+  }
+}

@@ -8,6 +8,7 @@
       "!packages/reader-ui/dist-app",
       "!packages/*/dist",
       "!apps/*/dist",
+      "!extensions",
       "!node_modules",
       "!pnpm-lock.yaml"
     ]
