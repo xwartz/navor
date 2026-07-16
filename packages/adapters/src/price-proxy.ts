@@ -75,7 +75,7 @@ export async function handlePriceProxyRequest(
 
   const fetched =
     symbolsToFetch.size > 0
-      ? await fetchYahooQuotes([...symbolsToFetch], fetchFn)
+      ? await fetchYahooQuotes([...symbolsToFetch], { fetch: fetchFn })
       : { quotes: new Map(), failures: [] }
 
   for (const entry of body.entries) {
