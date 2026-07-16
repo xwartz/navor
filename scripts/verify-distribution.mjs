@@ -95,23 +95,21 @@ function verifyRegistryDistribution(version) {
   const root = mkdtempSync(join(tmpdir(), 'navor-registry-'))
 
   try {
+    const installDirectory = join(root, 'install')
     const siteDirectory = join(root, 'site')
+    mkdirSync(installDirectory)
+    run('npm', ['init', '--yes'], { cwd: installDirectory })
     run(
       'npm',
-      [
-        'exec',
-        '--yes',
-        `@navor/cli@${version}`,
-        '--',
-        'build',
-        'fixtures/core',
-        '--out',
-        siteDirectory,
-      ],
-      {
-        stdio: 'inherit',
-      },
+      ['install', '--ignore-scripts', `@navor/cli@${version}`],
+      { cwd: installDirectory, stdio: 'inherit' },
     )
+    run(join(installDirectory, 'node_modules/.bin/nav'), [
+      'build',
+      'fixtures/core',
+      '--out',
+      siteDirectory,
+    ])
     assertFile(join(siteDirectory, 'index.html'))
     assertFile(join(siteDirectory, 'navor-data.json'))
   } finally {
