@@ -1,6 +1,6 @@
 {
   "name": "@navor/contract",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Public contracts for Navor workspace compilation and Reader state.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",

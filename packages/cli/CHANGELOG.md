@@ -1,5 +1,14 @@
 # @navor/cli
 
+## 0.3.1
+
+### Patch Changes
+
+- Republish the CLI release after fixing the release workflow's registry distribution verification.
+  - @navor/core@0.3.1
+  - @navor/renderer@0.3.1
+  - @navor/reader-ui@0.3.1
+
 ## 0.3.0
 
 ### Minor Changes

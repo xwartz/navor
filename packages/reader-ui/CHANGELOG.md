@@ -1,5 +1,13 @@
 # @navor/reader-ui
 
+## 0.3.1
+
+### Patch Changes
+
+- @navor/contract@0.3.1
+- @navor/adapters@0.3.1
+- @navor/renderer@0.3.1
+
 ## 0.3.0
 
 ### Patch Changes
