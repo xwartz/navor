@@ -2,7 +2,7 @@
   "name": "navor",
   "displayName": "Navor",
   "description": "Syntax highlighting and formatting for Navor (.nav) investment state documents.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "publisher": "navor",
   "license": "Apache-2.0",
   "repository": {
@@ -17,8 +17,18 @@
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Programming Languages", "Formatters"],
-  "keywords": ["navor", "nav", "beancount", "investing", "ledger", "syntax"],
+  "categories": [
+    "Programming Languages",
+    "Formatters"
+  ],
+  "keywords": [
+    "navor",
+    "nav",
+    "beancount",
+    "investing",
+    "ledger",
+    "syntax"
+  ],
   "activationEvents": [
     "onLanguage:navor",
     "onCommand:navor.formatDocument"
@@ -35,8 +45,13 @@
     "languages": [
       {
         "id": "navor",
-        "aliases": ["Navor", "nav"],
-        "extensions": [".nav"],
+        "aliases": [
+          "Navor",
+          "nav"
+        ],
+        "extensions": [
+          ".nav"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],

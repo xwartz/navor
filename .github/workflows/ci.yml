@@ -21,4 +21,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: node scripts/release-plan.mjs --check
       - run: node scripts/verify-release.mjs
-      - run: node scripts/verify-distribution.mjs --source=workspace
+      - run: node scripts/verify-distribution.mjs

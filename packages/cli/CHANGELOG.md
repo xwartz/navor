@@ -1,5 +1,14 @@
 # @navor/cli
 
+## 0.3.2
+
+### Patch Changes
+
+- Remove post-publish registry distribution verification from the release workflow. CI already covers pack and install smoke tests; waiting on npm registry propagation was fragile and redundant.
+  - @navor/core@0.3.2
+  - @navor/renderer@0.3.2
+  - @navor/reader-ui@0.3.2
+
 ## 0.3.1
 
 ### Patch Changes

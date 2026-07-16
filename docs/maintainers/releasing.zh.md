@@ -16,7 +16,7 @@
 2. `Version packages` 工作流会在 `main` 上创建版本 PR。
 3. 合并版本 PR，随后创建并推送与 `packages/cli/package.json` 一致的签名 tag，例如 `v0.1.1`。
 4. Release 工作流会确认 tag 提交位于 `main`、版本匹配并检查发布计划，再执行共享发布验证，并通过发布计划发布。
-5. 工作流会对已发布的 `@navor/cli` 运行分发验收，打包 `extensions/vscode` 为 `.vsix`，再创建 GitHub Release 并挂上该资源。
+5. 工作流会打包 `extensions/vscode` 为 `.vsix`，再创建 GitHub Release 并挂上该资源。包打包与 CLI 安装冒烟测试由 CI 通过 `scripts/verify-distribution.mjs` 覆盖。
 
 用户可从 Release 资源安装编辑器扩展，无需 VS Marketplace 或 Open VSX（`cursor --install-extension navor-*.vsix`）。
 

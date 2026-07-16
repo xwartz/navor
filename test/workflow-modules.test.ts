@@ -27,11 +27,10 @@ describe('workflow modules', () => {
     const release = readFileSync('.github/workflows/release.yml', 'utf8')
 
     expect(ci).toContain('node scripts/verify-release.mjs')
-    expect(ci).toContain('node scripts/verify-distribution.mjs --source=workspace')
+    expect(ci).toContain('node scripts/verify-distribution.mjs')
+    expect(ci).not.toContain('--source=registry')
     expect(release).toContain('node scripts/release-plan.mjs publish')
-    expect(release).toContain(
-      'node scripts/verify-distribution.mjs --source=registry --version=${GITHUB_REF_NAME' + '#v}',
-    )
+    expect(release).not.toContain('verify-distribution.mjs')
   })
 
   it('installs packed packages before the workspace CLI smoke test', () => {
@@ -41,5 +40,6 @@ describe('workflow modules', () => {
     expect(distribution).toContain("'install'")
     expect(distribution).toContain("'--ignore-scripts'")
     expect(distribution).toContain("join(installDirectory, 'node_modules/.bin/nav')")
+    expect(distribution).not.toContain('registry')
   })
 })
