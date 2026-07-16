@@ -23,5 +23,3 @@ Top-level index for Navor. Start with the user documents, then the cookbook when
 - [Release process](maintainers/releasing.md): publishing and release verification.
 - [Contributing](../CONTRIBUTING.md): how to propose changes.
 - [Reader UI design](../DESIGN.md): visual and interaction rules for the Reader.
-
-[中文](README.zh.md)

@@ -23,5 +23,3 @@ Navor 文档总索引，先读用户文档，再在常见记账场景中查阅 C
 - [发布流程](maintainers/releasing.zh.md)：发布与验证。
 - [贡献指南](../CONTRIBUTING.md)：如何提交变更。
 - [Reader UI 设计](../DESIGN.md)：Reader 的视觉与交互规则。
-
-[English](README.md)
