@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { App } from './App'
 import { PriceStatusBar } from './components/PriceStatusBar'
 import { WorkspaceMetaBar } from './components/WorkspaceMetaBar'
+import { documentTitleFromState } from './document-title'
 import { readerLocale } from './i18n'
 import { useLivePrices } from './use-live-prices'
 
@@ -16,6 +17,10 @@ export function ReaderApp({ initialState }: ReaderAppProps) {
   }, [])
 
   const { state, loading, error, liveEnabled, refresh } = useLivePrices(initialState)
+
+  useEffect(() => {
+    document.title = documentTitleFromState(state)
+  }, [state])
 
   if (!state) {
     return <App state={null} />

@@ -6,6 +6,7 @@ import type { CompileNavorWorkspaceOptions } from '@navor/renderer'
 import { compileNavorWorkspace } from '@navor/renderer'
 import { build } from 'vite'
 
+import { documentTitleFromState } from './document-title'
 import { createNavorReaderViteConfig } from './vite-config'
 
 export interface BuildNavorReaderAppOptions extends CompileNavorWorkspaceOptions {
@@ -45,12 +46,14 @@ export async function buildNavorReaderApp(
 
   const indexPath = join(outDir, 'index.html')
   const html = await readFile(indexPath, 'utf8')
-  const patchedHtml = html.includes('data-navor-source')
+  const withDataSource = html.includes('data-navor-source')
     ? html
     : html.replace(
         '</head>',
         '    <script type="application/json" data-navor-source="./navor-data.json"></script>\n  </head>',
       )
+  const title = escapeHtml(documentTitleFromState(state))
+  const patchedHtml = withDataSource.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
 
   if (patchedHtml !== html) {
     await writeFile(indexPath, patchedHtml)
@@ -61,4 +64,12 @@ export async function buildNavorReaderApp(
     files: ['index.html', 'favicon.svg', 'assets/app.js', 'assets/app.css', 'navor-data.json'],
     state,
   }
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
 }

@@ -29,7 +29,7 @@ describe('buildNavorStaticSite', () => {
       'assets/app.css',
       'navor-data.json',
     ])
-    expect(html).toContain('<title>Navor</title>')
+    expect(html).toContain('<title>Core - Navor</title>')
     expect(html).toContain('navor-data.json')
     expect(js.length).toBeGreaterThan(100)
     expect(css.length).toBeGreaterThan(100)

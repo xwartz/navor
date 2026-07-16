@@ -26,7 +26,9 @@ describe('compiled nav cli', () => {
     )
 
     expect(stdout).toContain(`Navor static site written to ${outDir}`)
-    expect(await readFile(join(outDir, 'index.html'), 'utf8')).toContain('<title>Navor</title>')
+    expect(await readFile(join(outDir, 'index.html'), 'utf8')).toContain(
+      '<title>Core - Navor</title>',
+    )
     expect(await readFile(join(outDir, 'navor-data.json'), 'utf8')).toContain('Account:Crypto')
     const appJs = await readFile(join(outDir, 'assets', 'app.js'), 'utf8')
     expect(appJs).not.toContain('node:fs/promises')
@@ -45,6 +47,8 @@ describe('compiled nav cli', () => {
     })
 
     expect(stdout).toContain(`Navor static site written to ${outDir}`)
-    expect(await readFile(join(outDir, 'index.html'), 'utf8')).toContain('<title>Navor</title>')
+    expect(await readFile(join(outDir, 'index.html'), 'utf8')).toContain(
+      '<title>Core - Navor</title>',
+    )
   })
 })
