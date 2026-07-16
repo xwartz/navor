@@ -2,6 +2,8 @@ import { handlePriceProxyRequest } from '@navor/adapters'
 import { applyLivePrices, compileNavorWorkspace } from '@navor/renderer'
 import { describe, expect, it } from 'vitest'
 
+import { createYahooSparkFetch } from '../adapters/yahoo-spark-fixture'
+
 describe('applyLivePrices', () => {
   it('recomputes market, drift, and dashboard from proxy prices', async () => {
     const baseState = await compileNavorWorkspace('fixtures/core', {
@@ -61,22 +63,7 @@ describe('handlePriceProxyRequest', () => {
       }),
       {
         cacheTtlMs: 0,
-        fetch: async () =>
-          new Response(
-            JSON.stringify({
-              chart: {
-                result: [
-                  {
-                    meta: {
-                      regularMarketPrice: 100000,
-                      currency: 'USD',
-                      regularMarketTime: 1_752_000_000,
-                    },
-                  },
-                ],
-              },
-            }),
-          ),
+        fetch: createYahooSparkFetch(100000),
       },
     )
 

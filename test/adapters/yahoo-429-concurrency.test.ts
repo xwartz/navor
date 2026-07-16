@@ -1,14 +1,13 @@
 /**
- * Regression: Cloudflare Yahoo Finance 429s from unbounded concurrent chart fetches.
+ * Regression: Cloudflare Yahoo Finance 429s and subrequest limits on large portfolios.
  *
- * Models a provider that returns 429 when concurrent in-flight requests exceed 1
- * (shared Cloudflare egress often behaves this way). fetchYahooQuotes must keep
- * concurrency ≤ 1 so the proxy can succeed for a multi-symbol portfolio request.
- *
- * Run: pnpm exec vitest run test/adapters/yahoo-429-concurrency.test.ts
+ * Uses batched spark requests (not per-symbol chart fetches) so a 30+ symbol
+ * portfolio stays within Worker subrequest limits and Yahoo rate limits.
  */
 import { handlePriceProxyRequest } from '@navor/adapters'
 import { describe, expect, it } from 'vitest'
+
+import { createYahooSparkFetch } from './yahoo-spark-fixture'
 
 const ENTRIES = [
   { subject: 'Asset:Equity:US:NVDA', yahooSymbol: 'NVDA' },
@@ -19,50 +18,13 @@ const ENTRIES = [
   { subject: 'Asset:Equity:US:AMZN', yahooSymbol: 'AMZN' },
 ]
 
-function createRateLimitedYahooFetch(maxConcurrent: number) {
-  let inFlight = 0
-  let peak = 0
-
-  const fetchFn: typeof fetch = async () => {
-    inFlight += 1
-    peak = Math.max(peak, inFlight)
-
-    await new Promise((resolve) => setTimeout(resolve, 20))
-
-    const overLimit = inFlight > maxConcurrent
-    inFlight -= 1
-
-    if (overLimit) {
-      return new Response('Too Many Requests', { status: 429 })
+describe('yahoo quote batching under rate limits', () => {
+  it('fetches multi-symbol proxy requests in a single Yahoo batch', async () => {
+    let fetchCount = 0
+    const fetchFn: typeof fetch = async (input, init) => {
+      fetchCount += 1
+      return createYahooSparkFetch()(input, init)
     }
-
-    return new Response(
-      JSON.stringify({
-        chart: {
-          result: [
-            {
-              meta: {
-                regularMarketPrice: 100,
-                currency: 'USD',
-                regularMarketTime: 1_752_000_000,
-              },
-            },
-          ],
-        },
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    )
-  }
-
-  return {
-    fetchFn,
-    peak: () => peak,
-  }
-}
-
-describe('yahoo quote concurrency under rate limits', () => {
-  it('fetches multi-symbol proxy requests without Yahoo 429 failures', async () => {
-    const { fetchFn, peak } = createRateLimitedYahooFetch(1)
 
     const response = await handlePriceProxyRequest(
       new Request('http://localhost/api/prices', {
@@ -84,6 +46,37 @@ describe('yahoo quote concurrency under rate limits', () => {
 
     expect(failures429).toEqual([])
     expect(payload.prices).toHaveLength(ENTRIES.length)
-    expect(peak()).toBeLessThanOrEqual(1)
+    expect(fetchCount).toBe(1)
+  })
+
+  it('chunks large portfolios into at most two Yahoo batch requests', async () => {
+    const symbols = Array.from({ length: 34 }, (_, index) => `SYM${index}`)
+    const entries = symbols.map((symbol, index) => ({
+      subject: `Asset:Equity:US:${index}`,
+      yahooSymbol: symbol,
+    }))
+    let fetchCount = 0
+    const fetchFn: typeof fetch = async (input, init) => {
+      fetchCount += 1
+      return createYahooSparkFetch()(input, init)
+    }
+
+    const response = await handlePriceProxyRequest(
+      new Request('http://localhost/api/prices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entries }),
+      }),
+      { cacheTtlMs: 0, fetch: fetchFn },
+    )
+
+    const payload = (await response.json()) as {
+      prices: unknown[]
+      failures: unknown[]
+    }
+
+    expect(payload.failures).toEqual([])
+    expect(payload.prices).toHaveLength(entries.length)
+    expect(fetchCount).toBe(2)
   })
 })

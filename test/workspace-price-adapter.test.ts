@@ -2,6 +2,8 @@ import { buildPricePlan, createWorkspacePriceAdapter, resolveYahooSymbol } from 
 import { parseNavor } from '@navor/core'
 import { describe, expect, it } from 'vitest'
 
+import { createYahooSparkFetch } from './adapters/yahoo-spark-fixture'
+
 describe('createWorkspacePriceAdapter', () => {
   it('uses workspace static prices before attempting Yahoo Finance', async () => {
     const ast = parseNavor(`2026-01-02 open Asset:Crypto:BTC "Bitcoin"
@@ -48,22 +50,7 @@ describe('createWorkspacePriceAdapter', () => {
 `).ast
     const adapter = createWorkspacePriceAdapter({
       ast,
-      fetch: async () =>
-        new Response(
-          JSON.stringify({
-            chart: {
-              result: [
-                {
-                  meta: {
-                    regularMarketPrice: 123.45,
-                    currency: 'USD',
-                    regularMarketTime: 1_720_000_000,
-                  },
-                },
-              ],
-            },
-          }),
-        ),
+      fetch: createYahooSparkFetch(123.45),
     })
 
     const result = await adapter.fetchPrices(['Asset:Equity:US:NVDA'])

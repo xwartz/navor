@@ -12,16 +12,16 @@ export interface YahooQuoteFailure {
 
 export interface FetchYahooQuotesOptions {
   fetch?: typeof fetch
-  /** Max in-flight Yahoo chart requests. Cloudflare egress is rate-limited; keep this low. */
-  concurrency?: number
+  /** Max symbols per Yahoo spark batch request (Yahoo rejects >20). */
+  batchSize?: number
   /** Retries after a 429 (not counting the first attempt). */
   maxRetriesOn429?: number
   sleep?: (ms: number) => Promise<void>
 }
 
-const DEFAULT_CONCURRENCY = 1
+const MAX_SPARK_BATCH_SIZE = 20
 const DEFAULT_MAX_RETRIES_ON_429 = 2
-const RETRY_BASE_DELAY_MS = 250
+const RETRY_BASE_DELAY_MS = 500
 
 export async function fetchYahooQuote(symbol: string, fetchFn: typeof fetch = fetch) {
   const fetched = await fetchYahooQuotes([symbol], { fetch: fetchFn })
@@ -41,49 +41,60 @@ export async function fetchYahooQuotes(
 ) {
   const resolved = typeof options === 'function' ? { fetch: options } : options
   const fetchFn = resolved.fetch ?? fetch
-  const concurrency = Math.max(1, resolved.concurrency ?? DEFAULT_CONCURRENCY)
+  const batchSize = Math.max(
+    1,
+    Math.min(resolved.batchSize ?? MAX_SPARK_BATCH_SIZE, MAX_SPARK_BATCH_SIZE),
+  )
   const maxRetriesOn429 = resolved.maxRetriesOn429 ?? DEFAULT_MAX_RETRIES_ON_429
   const sleep = resolved.sleep ?? defaultSleep
 
   const quotes = new Map<string, YahooQuoteResult>()
   const failures: YahooQuoteFailure[] = []
-  let nextIndex = 0
+  const uniqueSymbols = [...new Set(symbols)]
 
-  async function worker() {
-    while (nextIndex < symbols.length) {
-      const index = nextIndex
-      nextIndex += 1
-      const symbol = symbols[index]
+  for (let index = 0; index < uniqueSymbols.length; index += batchSize) {
+    const batch = uniqueSymbols.slice(index, index + batchSize)
 
-      if (!symbol) {
-        continue
-      }
+    try {
+      const batchQuotes = await fetchYahooSparkBatch(batch, fetchFn, maxRetriesOn429, sleep)
 
-      try {
-        const quote = await fetchYahooQuoteInternal(symbol, fetchFn, maxRetriesOn429, sleep)
+      for (const [symbol, quote] of batchQuotes) {
         quotes.set(symbol, quote)
-      } catch (error) {
-        failures.push({
-          symbol,
-          message: error instanceof Error ? error.message : String(error),
-        })
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+
+      for (const symbol of batch) {
+        failures.push({ symbol, message })
       }
     }
   }
 
-  const workers = Array.from({ length: Math.min(concurrency, symbols.length) }, () => worker())
-  await Promise.all(workers)
+  for (const symbol of uniqueSymbols) {
+    if (quotes.has(symbol)) {
+      continue
+    }
+
+    if (failures.some((failure) => failure.symbol === symbol)) {
+      continue
+    }
+
+    failures.push({
+      symbol,
+      message: `Yahoo Finance returned no quote for "${symbol}".`,
+    })
+  }
 
   return { quotes, failures }
 }
 
-async function fetchYahooQuoteInternal(
-  symbol: string,
+async function fetchYahooSparkBatch(
+  symbols: string[],
   fetchFn: typeof fetch,
   maxRetriesOn429: number,
   sleep: (ms: number) => Promise<void>,
 ) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`
+  const url = `https://query1.finance.yahoo.com/v7/finance/spark?symbols=${symbols.map(encodeURIComponent).join(',')}&range=1d&interval=1d`
   let attempt = 0
 
   while (true) {
@@ -99,20 +110,27 @@ async function fetchYahooQuoteInternal(
       throw new Error(`Yahoo Finance request failed with ${response.status}.`)
     }
 
-    const payload = (await response.json()) as YahooChartResponse
-    const result = payload.chart?.result?.[0]
-    const price = result?.meta?.regularMarketPrice
-    const currency = result?.meta?.currency
-    const asOfSeconds = result?.meta?.regularMarketTime
+    const payload = (await response.json()) as YahooSparkResponse
+    const quotes = new Map<string, YahooQuoteResult>()
 
-    if (price === undefined || !currency || !asOfSeconds) {
-      throw new Error(`Yahoo Finance returned no quote for "${symbol}".`)
+    for (const item of payload.spark?.result ?? []) {
+      const symbol = item.symbol
+      const meta = item.response?.[0]?.meta
+      const price = meta?.regularMarketPrice
+      const currency = meta?.currency
+      const asOfSeconds = meta?.regularMarketTime
+
+      if (!symbol || price === undefined || !currency || !asOfSeconds) {
+        continue
+      }
+
+      quotes.set(symbol, {
+        price: { amount: price, currency },
+        asOf: new Date(asOfSeconds * 1000).toISOString(),
+      })
     }
 
-    return {
-      price: { amount: price, currency },
-      asOf: new Date(asOfSeconds * 1000).toISOString(),
-    }
+    return quotes
   }
 }
 
@@ -122,14 +140,17 @@ function defaultSleep(ms: number) {
   })
 }
 
-interface YahooChartResponse {
-  chart?: {
+interface YahooSparkResponse {
+  spark?: {
     result?: Array<{
-      meta?: {
-        regularMarketPrice?: number
-        currency?: string
-        regularMarketTime?: number
-      }
+      symbol?: string
+      response?: Array<{
+        meta?: {
+          regularMarketPrice?: number
+          currency?: string
+          regularMarketTime?: number
+        }
+      }>
     }>
   }
 }
