@@ -9,4 +9,4 @@ pnpm test
 pnpm build
 ```
 
-Language changes must update both language references, add or update a parser or semantic fixture, and preserve the boundary between source facts and derived enrichment. Prefer metadata on an existing directive over a new directive when it expresses the same fact.
+Language changes must update [reference/syntax.md](docs/reference/syntax.md) and the relevant [language/](docs/language/overview.md) pages, add or update a parser or semantic fixture, and preserve the boundary between source facts and derived enrichment. Prefer metadata on an existing directive over a new directive when it expresses the same fact.

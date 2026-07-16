@@ -1,9 +1,12 @@
 # Navor terminology
 
-Shared vocabulary for documentation, implementation, and interface copy. [中文](CONTEXT.zh.md)
+Shared vocabulary for documentation, implementation, and interface copy. Navor models **investment state** as human-readable `.nav` documents in a Git-friendly **repository**. [中文](CONTEXT.zh.md)
 
 | Term | Meaning |
 | --- | --- |
+| Investment state | Objective facts (holdings, transactions) plus cognitive facts (research, thesis, decisions, reviews). |
+| Repository | A directory tree of `.nav` files that describes investment state. Preferred term in prose. |
+| Workspace | The CLI path argument `<workspace>`: the repository root. Not related to VS Code workspace settings. |
 | Navor file | A plain-text `.nav` file containing dated investment facts. |
 | Directive | One dated record. Navor 0.1 supports `option`, `capital`, `open`, `close`, `plan`, `research`, `thesis`, `decision`, `txn`, `review`, `journal`, and `note`. |
 | Subject | A stable identifier such as `Portfolio:Core`, `Account:US`, or `Asset:Equity:US:NVDA`. |
@@ -21,14 +24,14 @@ Shared vocabulary for documentation, implementation, and interface copy. [中文
 | Review | Periodic or event-driven assessment of an Asset, Account, Thesis, Decision, or Portfolio. |
 | Journal | Subjective process record of emotion, discipline, mistakes, or reflection. |
 | Engine | The layer that validates facts, derives portfolio state, applies enrichment, and generates views. |
-| Workspace | A directory tree of `.nav` files and optional renderer configuration. |
-| Reader | The local application that renders a workspace. |
+| Reader | The local application that renders a repository. |
 | Static-site compiler | The build path that writes static HTML, assets, and serialized view data. |
 | Price adapter | A provider integration for optional prices, FX rates, and market metadata. Its output is not source truth. |
 
 ## Usage rules
 
-- Use `Account`, not bucket or category, for a top-level allocation container.
+- Prefer **repository** for the `.nav` folder in prose; use **workspace** for the CLI `<workspace>` argument.
+- Use `Account` (also sleeve), not bucket or category, for a top-level allocation container.
 - Use `Asset`, not ticker, for an investable object managed by Navor.
 - Use `derived portfolio weight` only for the calculated whole-portfolio value.
 - Use `decision` for intent and `txn` only for an executed fact.

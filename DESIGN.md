@@ -1,4 +1,6 @@
-# Navor reader UI
+# Navor Reader UI
+
+Navor is an open specification for investment state as human-readable documents. The Reader is one implementation: a local and static-site view over your `.nav` repository.
 
 ## 1. Visual theme and atmosphere
 

@@ -1,30 +1,30 @@
 # Navor
 
-Navor is a plain-text language and toolchain for recording investment knowledge, portfolio policy, decisions, transactions, and reviews. A workspace is reviewable in Git, rendered locally in Navor Reader, and exportable as a static site.
+**An open specification for representing investment state as human-readable documents.**
 
-Its text format follows the durable parts of Beancount: dated directives, indented metadata, postings, comments, and append-only history. Navor is not a Beancount dialect or an accounting replacement. Research, theses, decisions, reviews, and journals are first-class facts.
+Navor is a plain-text language and toolchain for investment knowledge, portfolio policy, decisions, transactions, and reviews. A repository is reviewable in Git, readable in the local Navor Reader, and exportable as a static site.
 
-[中文文档](README.zh.md)
+Research, theses, decisions, reviews, and journals are first-class facts alongside holdings. The portfolio is derived; reasoning is the source of truth.
+
+[中文文档](README.zh.md) · [Manifesto](docs/manifesto.md) · [Documentation](docs/README.md)
 
 ## Install
 
-Navor requires Node.js 22.14 or later.
+Node.js 22.14 or later.
 
 ```bash
 npm install --global @navor/cli
-nav serve ./portfolio
-nav build ./portfolio --out ./site
+nav serve example
 ```
 
-From a source checkout:
+From source:
 
 ```bash
-pnpm install
-pnpm build
-pnpm build:example
+pnpm install && pnpm build
+nav serve example
 ```
 
-## Minimal workspace
+## Minimal example
 
 ```nav
 2026-01-01 open Account:US "US equities"
@@ -40,22 +40,20 @@ pnpm build:example
   ---
 ```
 
-## Documentation
-
-Start at the [documentation home](docs/README.md): concepts, getting started, language reference, booking cookbook, then operations and maintainer notes.
-
 ## Commands
 
-- `nav serve <workspace> [--port <port>]` starts the local Reader.
-- `nav build <workspace> --out <dir> [--fetch-prices]` writes a static site.
-- `nav format <path> [--check]` formats `.nav` files (or checks formatting without writing). Does not reorder directives.
+| Command | Purpose |
+| --- | --- |
+| `nav serve <workspace>` | Local Reader (`<workspace>` is the repository path) |
+| `nav build <workspace> --out <dir>` | Static site |
+| `nav format <path> [--check]` | Format `.nav` files |
 
-Editor highlighting and Format Document for `.nav` live in [`extensions/vscode`](extensions/vscode/). Each GitHub Release attaches a `.vsix` — install with `cursor --install-extension navor-*.vsix` or **Extensions: Install from VSIX…**.
+Editor highlighting and format-on-save: [`extensions/vscode`](extensions/vscode/). Install `navor-*.vsix` from [Releases](https://github.com/xwartz/navor/releases/latest).
 
 ## Data boundary
 
-Navor does not upload a workspace or require an account. Live prices are optional enrichment. When you deploy a price proxy, it sends requested symbols to its configured provider. Read [market data and privacy](docs/operations/market-data-and-privacy.md) before exposing a proxy.
+Navor does not upload a repository or require an account. Live prices are optional enrichment. Read [market data and privacy](docs/operations/market-data-and-privacy.md) before exposing a price proxy.
 
-## Contributing and security
+## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a change. Report vulnerabilities through [SECURITY.md](SECURITY.md), not a public issue.
+Read [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues via [SECURITY.md](SECURITY.md).

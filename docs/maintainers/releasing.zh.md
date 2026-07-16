@@ -1,6 +1,6 @@
 # 发布 Navor
 
-`@navor/cli` 是面向用户的 npm 包，并提供 `nav` 命令。其余五个 `@navor/*` 包按依赖顺序发布以支撑它，其导入 API 不是公开契约。
+`@navor/cli` 是面向用户的 npm 包并提供 `nav` 命令，其余五个 `@navor/*` 包按依赖顺序发布以支撑它，其导入 API 不是公开契约。
 
 ## 一次性配置
 
@@ -20,4 +20,4 @@
 
 用户可从 Release 资源安装编辑器扩展，无需 VS Marketplace 或 Open VSX（`cursor --install-extension navor-*.vsix`）。
 
-该工作流需要 Node.js 22.14+ 和 npm 11.5.1+。首次稳定版发布前，应在干净安装环境中对真实且非敏感的工作区运行 `nav build`。
+该工作流需要 Node.js 22.14+ 和 npm 11.5.1+，首次稳定版发布前应在干净安装环境中对真实且非敏感的工作区运行 `nav build`。

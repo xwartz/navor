@@ -1,25 +1,63 @@
-# Navor 文档
+# 文档
 
-Navor 文档总索引，先读用户文档，再在常见记账场景中查阅 Cookbook。
+Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** → **参考**。
 
-## 用户文档
+[English](README.md)
 
-- [核心概念](guide/concepts.zh.md)：Navor 记录什么、与 Beancount 的关系，以及源事实与派生视图的边界。
-- [快速开始](guide/getting-started.zh.md)：创建工作区、组织文件、开立账户与标的，并打开本地 Reader。
-- [语言参考](guide/language.zh.md)：语法、指令、posting 与语义诊断。`.nav` 语言的主参考。
-- [示例工作区](../example/)：多账户样例，可用 `nav serve example` 打开。
+## 为什么
 
-## Cookbook 与示例
+- [宣言](manifesto.zh.md)：Navor 为何存在
+- [设计哲学](philosophy.zh.md)：设计原则和边界
 
-- [记账指南](cookbook/booking.zh.md)：如何记录注资、买入、卖出、分红、目标权重与复盘。
+## 快速开始
+
+- [安装](getting-started/installation.zh.md)
+- [第一个 `.nav` 文件](getting-started/your-first-nav.zh.md)
+- [组织仓库](getting-started/organize-your-repository.zh.md)
+- [编辑器支持](getting-started/editor-support.zh.md)
+
+## 语言
+
+- [概览](language/overview.zh.md)
+- [文件](language/files.zh.md)
+- [指令](language/directives.zh.md)
+- [元数据](language/metadata.zh.md)
+- [交易](language/transactions.zh.md)
+- [研究与推理](language/research.zh.md)
+- [组合](language/portfolio.zh.md)
+- [注释与正文](language/comments.zh.md)
+
+## CLI
+
+- [概览](cli/overview.zh.md)
+- [`nav serve`](cli/serve.zh.md)
+- [`nav build`](cli/build.zh.md)
+- [`nav format`](cli/format.zh.md)
+
+## 概念
+
+- [投资仓库](concepts/investment-repository.zh.md)
+- [推理链](concepts/reasoning.zh.md)
+- [纯文本](concepts/plain-text.zh.md)
+- [版本控制](concepts/version-control.zh.md)
+- [AI 与 Navor](concepts/ai.zh.md)
+
+## 参考
+
+- [文法](reference/grammar.zh.md)
+- [语法](reference/syntax.zh.md)
+- [诊断](reference/diagnostics.zh.md)
+- [文件格式](reference/file-format.zh.md)
 
 ## 运维
 
-- [行情数据与隐私](operations/market-data-and-privacy.zh.md)：可选的价格与汇率增强，以及托管代理会转发什么。
-- [部署](operations/deployment.zh.md)：托管静态站点，并配置同源价格代理。仓库演示应用见 [`apps/demo`](../apps/demo/)。
+- [部署](operations/deployment.zh.md)
+- [行情数据与隐私](operations/market-data-and-privacy.zh.md)
 
-## 维护者文档
+## 其他
 
-- [发布流程](maintainers/releasing.zh.md)：发布与验证。
-- [贡献指南](../CONTRIBUTING.md)：如何提交变更。
-- [Reader UI 设计](../DESIGN.md)：Reader 的视觉与交互规则。
+- [路线图](roadmap.zh.md)
+- [术语表](../CONTEXT.zh.md)
+- [示例投资仓库](../example/)
+- [贡献指南](../CONTRIBUTING.md)
+- [维护者：发布](maintainers/releasing.zh.md)

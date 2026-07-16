@@ -1,5 +1,7 @@
 # Deployment
 
+Publish a static Navor Reader site from your investment repository. For the build command, see [`nav build`](../cli/build.md).
+
 `nav build` writes a static site to `--out`. By default it compiles workspace facts and does not call a market-data provider.
 
 ```bash

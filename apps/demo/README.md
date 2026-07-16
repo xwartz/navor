@@ -1,5 +1,7 @@
 # Navor demo site
 
+Public demo for [Navor](https://github.com/xwartz/navor): an open specification for investment state as human-readable `.nav` documents.
+
 Cloudflare Pages app that builds the repository [`example/`](../../example/) workspace and serves it with a same-origin `/api/prices` proxy.
 
 ```bash

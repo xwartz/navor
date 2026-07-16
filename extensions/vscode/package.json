@@ -1,7 +1,7 @@
 {
   "name": "navor",
   "displayName": "Navor",
-  "description": "Syntax highlighting and formatting for Navor (.nav) investment-language files.",
+  "description": "Syntax highlighting and formatting for Navor (.nav) investment state documents.",
   "version": "0.1.1",
   "publisher": "navor",
   "license": "Apache-2.0",

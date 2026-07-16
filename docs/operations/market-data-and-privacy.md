@@ -1,6 +1,6 @@
 # Market data and privacy
 
-Navor does not upload a workspace, collect telemetry, or require an account. `nav serve` reads the workspace on your machine.
+Navor does not upload a repository, collect telemetry, or require an account. `nav serve` reads the workspace path on your machine. See [AI and Navor](../concepts/ai.md) for how context stays under your control.
 
 Prices and FX rates are optional enrichment, not source facts. Reader marks missing, stale, and failed enrichment instead of treating it as authoritative.
 

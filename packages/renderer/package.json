@@ -1,7 +1,7 @@
 {
   "name": "@navor/renderer",
   "version": "0.2.0",
-  "description": "Compiler and Reader state builder for Navor workspaces.",
+  "description": "Compiler and Reader state builder for Navor investment repositories.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",
   "homepage": "https://github.com/xwartz/navor#readme",

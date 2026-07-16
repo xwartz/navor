@@ -1,6 +1,6 @@
 # Deployment templates
 
-This directory contains same-origin price-proxy templates for hosted Navor sites. Read the user-facing [deployment guide](../docs/operations/deployment.md) before copying a template.
+This directory contains same-origin price-proxy templates for hosted Navor sites. Navor stores investment state as plain-text `.nav` files; hosted sites are derived views. Read the [deployment guide](../docs/operations/deployment.md) before copying a template.
 
 - `vercel/`: Vercel function and optional SPA-routing configuration.
 - `cloudflare/`: Cloudflare Pages function.

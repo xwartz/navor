@@ -1,30 +1,30 @@
 # Navor
 
-Navor 是一门纯文本投资语言及其工具链，用于记录投资知识、组合政策、决策、交易和复盘。工作区可在 Git 中审阅，可在本地 Navor Reader 中查看，也可导出为静态站点。
+**用人类可读的文档表达投资状态的开放规范。**
 
-它借鉴 Beancount 的稳健文本形式：带日期的指令、缩进元数据、posting、注释和追加式历史。Navor 不是 Beancount 方言，也不替代会计账本。研究、观点、决策、复盘和投资日志都是一等事实。
+Navor 是一套纯文本投资语言和工具链，用来记录投资知识、组合政策、决策、交易和复盘。投资仓库可以放进 Git 审阅，在本地 Reader 里查看，也能导出成静态站点。
 
-[English](README.md)
+研究、观点、决策、复盘、日志和持仓一样，都写在源文件里。组合是算出来的，推理才是你要留下来的东西。
+
+[English](README.md) · [宣言](docs/manifesto.zh.md) · [文档](docs/README.zh.md)
 
 ## 安装
 
-Navor 需要 Node.js 22.14 或更高版本。
+需要 Node.js 22.14 或更高版本。
 
 ```bash
 npm install --global @navor/cli
-nav serve ./portfolio
-nav build ./portfolio --out ./site
+nav serve example
 ```
 
-从源码检出运行：
+从源码：
 
 ```bash
-pnpm install
-pnpm build
-pnpm build:example
+pnpm install && pnpm build
+nav serve example
 ```
 
-## 最小工作区
+## 最小示例
 
 ```nav
 2026-01-01 open Account:US "美股"
@@ -40,22 +40,20 @@ pnpm build:example
   ---
 ```
 
-## 文档
-
-从[文档首页](docs/README.zh.md)开始：核心概念、快速开始、语言参考、记账 Cookbook，再到运维与维护者说明。
-
 ## 命令
 
-- `nav serve <workspace> [--port <port>]` 启动本地 Reader。
-- `nav build <workspace> --out <dir> [--fetch-prices]` 生成静态站点。
-- `nav format <path> [--check]` 格式化 `.nav` 文件（或只检查不写入）。不会重排指令顺序。
+| 命令 | 用途 |
+| --- | --- |
+| `nav serve <workspace>` | 本地 Reader（`<workspace>` 为投资仓库路径） |
+| `nav build <workspace> --out <dir>` | 静态站点 |
+| `nav format <path> [--check]` | 格式化 `.nav` |
 
-`.nav` 的语法高亮与 Format Document 在 [`extensions/vscode`](extensions/vscode/)。每个 GitHub Release 会附带 `.vsix`，用 `cursor --install-extension navor-*.vsix` 或 **Extensions: Install from VSIX…** 安装。
+语法高亮和保存时格式化见 [`extensions/vscode`](extensions/vscode/)，从 [Releases](https://github.com/xwartz/navor/releases/latest) 安装 `navor-*.vsix`。
 
 ## 数据边界
 
-Navor 不上传工作区，也不要求注册账户。实时价格是可选增强数据。部署价格代理后，代理会把访客请求的代码发送给配置的数据提供方。公开代理前，请阅读[行情数据与隐私](docs/operations/market-data-and-privacy.zh.md)。
+Navor 不上传投资仓库，也不要求注册账户；实时价格是可选增强。若要公开价格代理，请先读[行情数据与隐私](docs/operations/market-data-and-privacy.zh.md)。
 
-## 贡献与安全
+## 贡献
 
-提交变更前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。安全问题请按 [SECURITY.md](SECURITY.md) 私下报告，不要公开提交 issue。
+提交变更前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)，安全问题请通过 [SECURITY.md](SECURITY.md) 私下报告。

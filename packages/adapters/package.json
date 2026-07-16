@@ -1,7 +1,7 @@
 {
   "name": "@navor/adapters",
   "version": "0.2.0",
-  "description": "Data-enrichment adapters for the Navor investment-language toolchain.",
+  "description": "Optional market-data enrichment for Navor derived views.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",
   "homepage": "https://github.com/xwartz/navor#readme",

@@ -1,25 +1,63 @@
-# Navor documentation
+# 文档
 
-Top-level index for Navor. Start with the user documents, then the cookbook when recording common cases.
+Documentation for Navor. Start with **why**, then **how**, then the **language**, then **reference**.
 
-## Documentation for users
+[中文文档](README.zh.md)
 
-- [Core concepts](guide/concepts.md): what Navor records, how it relates to Beancount, and the boundary between source facts and derived views.
-- [Getting started](guide/getting-started.md): create a workspace, organize files, open accounts and assets, and open the local Reader.
-- [Language reference](guide/language.md): syntax, directives, postings, and semantic diagnostics. Main reference for the `.nav` language.
-- [Example workspace](../example/): a multi-account sample you can serve with `nav serve example`.
+## Why
 
-## Cookbook and examples
+- [Manifesto](manifesto.md): why Navor exists
+- [Philosophy](philosophy.md): design principles
 
-- [Booking guide](cookbook/booking.md): how to record funding, buys, sells, dividends, targets, and reviews.
+## Getting started
+
+- [Installation](getting-started/installation.md)
+- [Your first `.nav` file](getting-started/your-first-nav.md)
+- [Organize your repository](getting-started/organize-your-repository.md)
+- [Editor support](getting-started/editor-support.md)
+
+## Language
+
+- [Overview](language/overview.md)
+- [Files](language/files.md)
+- [Directives](language/directives.md)
+- [Metadata](language/metadata.md)
+- [Transactions](language/transactions.md)
+- [Research and reasoning](language/research.md)
+- [Portfolio](language/portfolio.md)
+- [Comments and bodies](language/comments.md)
+
+## CLI
+
+- [Overview](cli/overview.md)
+- [`nav serve`](cli/serve.md)
+- [`nav build`](cli/build.md)
+- [`nav format`](cli/format.md)
+
+## Concepts
+
+- [Investment repository](concepts/investment-repository.md)
+- [Reasoning](concepts/reasoning.md)
+- [Plain text](concepts/plain-text.md)
+- [Version control](concepts/version-control.md)
+- [AI and Navor](concepts/ai.md)
+
+## Reference
+
+- [Grammar](reference/grammar.md)
+- [Syntax](reference/syntax.md)
+- [Diagnostics](reference/diagnostics.md)
+- [File format](reference/file-format.md)
 
 ## Operations
 
-- [Market data and privacy](operations/market-data-and-privacy.md): optional price and FX enrichment, and what a hosted proxy forwards.
-- [Deployment](operations/deployment.md): host a static site and configure a same-origin price proxy. The repository demo app is [`apps/demo`](../apps/demo/).
+- [Deployment](operations/deployment.md)
+- [Market data and privacy](operations/market-data-and-privacy.md)
 
-## Documentation for maintainers
+## Other
 
-- [Release process](maintainers/releasing.md): publishing and release verification.
-- [Contributing](../CONTRIBUTING.md): how to propose changes.
-- [Reader UI design](../DESIGN.md): visual and interaction rules for the Reader.
+- [Roadmap](roadmap.md)
+- [Terminology](../CONTEXT.md)
+- [Example repository](../example/)
+- [Contributing](../CONTRIBUTING.md)
+- [Maintainers: releasing](maintainers/releasing.md)

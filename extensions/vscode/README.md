@@ -1,6 +1,6 @@
 # Navor
 
-Syntax highlighting and formatting for [Navor](https://github.com/xwartz/navor) `.nav` files — the plain-text investment language for accounts, assets, research, theses, decisions, and transactions.
+Syntax highlighting and formatting for [Navor](https://github.com/xwartz/navor) `.nav` files. Navor is an open specification for investment state: accounts, assets, research, theses, decisions, and transactions as human-readable documents.
 
 ## Features
 

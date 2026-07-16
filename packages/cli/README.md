@@ -10,4 +10,4 @@ nav format ./portfolio
 nav format ./portfolio --check
 ```
 
-See the repository [README](https://github.com/xwartz/navor#readme) for installation, the [language reference](https://github.com/xwartz/navor/blob/main/docs/guide/language.md) for `.nav` syntax, and the [deployment guide](https://github.com/xwartz/navor/blob/main/docs/operations/deployment.md) for static sites.
+See the repository [README](https://github.com/xwartz/navor#readme) for installation, the [syntax reference](https://github.com/xwartz/navor/blob/main/docs/reference/syntax.md) for `.nav` syntax, and the [deployment guide](https://github.com/xwartz/navor/blob/main/docs/operations/deployment.md) for static sites.

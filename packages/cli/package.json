@@ -1,7 +1,7 @@
 {
   "name": "@navor/cli",
   "version": "0.2.0",
-  "description": "CLI implementation for the Navor investment-language toolchain.",
+  "description": "CLI for Navor, an open specification for investment state as human-readable .nav documents.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",
   "homepage": "https://github.com/xwartz/navor#readme",
