@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+
+- Align extension version with the 0.3.0 toolchain release
+- Update marketplace description for investment-state positioning
+
 ## 0.1.1
 
 - Format on save via `onWillSaveTextDocument` (more reliable in Cursor)
