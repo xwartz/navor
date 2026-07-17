@@ -1,0 +1,62 @@
+name: Auto Merge
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: >
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'pull_request'
+      }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR eligibility
+        id: check
+        uses: actions/github-script@v9
+        # 允许依赖更新标签或指定机器人账号触发自动合并
+        env:
+          AUTO_MERGE_ALLOWED_AUTHORS: github-actions[bot],dependabot[bot],renovate[bot]
+        with:
+          script: |
+            // Only handle the first PR attached to this workflow_run event to keep the flow single-PR.
+            const pr = context.payload.workflow_run.pull_requests?.[0];
+            if (!pr) {
+              core.setOutput('eligible', 'false');
+              return;
+            }
+
+            core.setOutput('pr-number', pr.number.toString());
+
+            const { data } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+            });
+
+            const labels = data.labels.map((label) => label.name);
+            const allowedAuthors = (process.env.AUTO_MERGE_ALLOWED_AUTHORS ?? '')
+              .split(',')
+              .map((author) => author.trim())
+              .filter(Boolean);
+            const eligible =
+              labels.includes('dependencies') || allowedAuthors.includes(data.user.login);
+
+            core.setOutput('eligible', eligible ? 'true' : 'false');
+
+      - name: Enable auto-merge
+        if: steps.check.outputs.eligible == 'true'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.check.outputs.pr-number }}
+          merge-method: squash
