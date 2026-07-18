@@ -1,5 +1,14 @@
 # @navor/renderer
 
+## 0.4.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @navor/core@0.4.0
+  - @navor/adapters@0.4.0
+  - @navor/contract@0.4.0
+
 ## 0.3.2
 
 ### Patch Changes

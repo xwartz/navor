@@ -122,6 +122,25 @@ describe('generateAllocation', () => {
     ])
   })
 
+  it('retains stablecoin budgets with four-letter currency codes', () => {
+    const source = `2026-01-01 open Account:Crypto "Digital assets"
+  budget: 25,000 USDT
+
+2026-01-02 open Asset:Crypto:BTC "Bitcoin"
+  account: Account:Crypto
+  target: 20%
+`
+
+    const allocation = generateAllocation(parseNavor(source).ast)
+
+    expect(allocation.accounts).toMatchObject([
+      { subject: 'Account:Crypto', budget: { amount: 25000, currency: 'USDT' } },
+    ])
+    expect(allocation.assets).toMatchObject([
+      { subject: 'Asset:Crypto:BTC', targetAmount: { amount: 5000, currency: 'USDT' } },
+    ])
+  })
+
   it('derives target amount from capital when Account has only target percent', () => {
     const source = `2026-01-01 capital Portfolio:Core "Initial investable capital"
   amount: 100,000 USD

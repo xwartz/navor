@@ -30,6 +30,20 @@ test('DataTable supports a focused mobile scrolling and row-action experience', 
   expect(source).not.toContain('toggleMobileColumn')
 })
 
+test('DataTable applies row hover background through every cell, including sticky cells', async () => {
+  const source = await readFile(dataTablePath, 'utf8')
+
+  expect(source).toContain(
+    'transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper',
+  )
+  expect(source).not.toContain(
+    'transition-colors last:border-b-0 [@media(hover:hover)]:hover:bg-paper',
+  )
+  expect(source).not.toContain(
+    'shadow-[4px_0_8px_rgba(47,43,36,0.06)] [@media(hover:hover)]:group-hover:bg-paper',
+  )
+})
+
 test('holdings retain asset, market, and PnL while opening the asset workspace from a row', async () => {
   const source = await readFile(portfolioViewPath, 'utf8')
 

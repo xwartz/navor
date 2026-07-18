@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Align the extension with the Navor 0.4.0 release.
+
 ## 0.2.0
 
 - Align extension version with the 0.3.0 toolchain release

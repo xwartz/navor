@@ -165,7 +165,7 @@ export function DataTable({
           <tbody>
             {sortedRows.map((row) => (
               <tr
-                className={`group border-b border-border transition-colors last:border-b-0 [@media(hover:hover)]:hover:bg-paper ${
+                className={`group border-b border-border last:border-b-0 ${
                   onRowClick ? 'cursor-pointer' : ''
                 }`}
                 key={row.id}
@@ -179,9 +179,9 @@ export function DataTable({
               >
                 {visibleColumns.map((column) => (
                   <td
-                    className={`px-3 py-2.5 align-middle ${
+                    className={`px-3 py-2.5 align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper ${
                       column.sticky
-                        ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_rgba(47,43,36,0.06)] [@media(hover:hover)]:group-hover:bg-paper'
+                        ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_rgba(47,43,36,0.06)]'
                         : ''
                     } ${
                       column.align === 'right'

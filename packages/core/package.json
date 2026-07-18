@@ -1,6 +1,6 @@
 {
   "name": "@navor/core",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Parser and semantic engine for Navor, an open specification for investment state.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",

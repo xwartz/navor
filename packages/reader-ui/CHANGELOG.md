@@ -1,5 +1,17 @@
 # @navor/reader-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- Keep sticky asset cells and the rest of a table row on the same hover background transition.
+
+### Patch Changes
+
+- @navor/adapters@0.4.0
+- @navor/renderer@0.4.0
+- @navor/contract@0.4.0
+
 ## 0.3.2
 
 ### Patch Changes

@@ -14,7 +14,7 @@ export function parsePercent(value: string | null): number | null {
 }
 
 export function parseMoney(value: string | null): MoneyAmount | null {
-  const match = value?.match(/^([0-9][0-9,]*(?:\.[0-9]+)?)\s+([A-Z]{3})$/)
+  const match = value?.match(/^([0-9][0-9,]*(?:\.[0-9]+)?)\s+([A-Z]{3,})$/)
 
   if (!match) {
     return null
