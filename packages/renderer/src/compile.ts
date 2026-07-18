@@ -105,6 +105,10 @@ async function compileNavorWorkspaceInternal(
   const workspace = await loadNavorWorkspace(root)
   const stalePriceAfterDays = options.stalePriceAfterDays ?? workspace.config.stalePriceAfterDays
   const portfolioOptions = getPortfolioOptions(workspace.ast)
+  const portfolioSubject =
+    workspace.ast.directives.find(
+      (directive) => directive.directive === 'option' && directive.subject.startsWith('Portfolio:'),
+    )?.subject ?? null
   const baseCurrency = portfolioOptions.baseCurrency ?? workspace.config.baseCurrency ?? null
   const fxRates = mergeFxRates(workspace.config.fxRates, portfolioOptions.fxRates)
   const allocation = generateAllocation(workspace.ast, { baseCurrency, fxRates })
@@ -155,6 +159,7 @@ async function compileNavorWorkspaceInternal(
       root,
       files: workspace.files,
       diagnostics: workspace.diagnostics,
+      portfolioSubject,
     },
     dashboard,
     portfolio,

@@ -3680,6 +3680,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       "fixtures/core/plan.nav",
       "fixtures/core/portfolio.nav",
     ],
+    "portfolioSubject": "Portfolio:Core",
     "root": "<workspace-root>",
   },
 }

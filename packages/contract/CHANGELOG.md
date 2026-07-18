@@ -1,5 +1,11 @@
 # @navor/contract
 
+## 0.4.3
+
+### Patch Changes
+
+- Use the workspace `option Portfolio:*` subject as the Reader and static-site document title, with a legacy capital fallback.
+
 ## 0.4.2
 
 ### Patch Changes

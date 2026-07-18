@@ -1,5 +1,15 @@
 # @navor/renderer
 
+## 0.4.3
+
+### Patch Changes
+
+- Use the workspace `option Portfolio:*` subject as the Reader and static-site document title, with a legacy capital fallback.
+- Updated dependencies
+  - @navor/contract@0.4.3
+  - @navor/adapters@0.4.3
+  - @navor/core@0.4.3
+
 ## 0.4.2
 
 ### Patch Changes

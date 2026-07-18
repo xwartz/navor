@@ -1,4 +1,4 @@
-import { mkdtemp, readFile } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { buildNavorStaticSite } from '@navor/cli'
@@ -6,6 +6,25 @@ import type { NavorRendererAppState } from '@navor/contract'
 import { describe, expect, it } from 'vitest'
 
 describe('buildNavorStaticSite', () => {
+  it('uses the Portfolio option subject for the document title before capital', async () => {
+    const workspaceRoot = await mkdtemp(join(tmpdir(), 'navor-title-workspace-'))
+    const outDir = await mkdtemp(join(tmpdir(), 'navor-title-site-'))
+    await writeFile(
+      join(workspaceRoot, 'portfolio.nav'),
+      `2026-01-01 capital Portfolio:Legacy "Initial capital"
+  amount: 1 USD
+
+2026-01-01 option Portfolio:2629 "2629 workspace"
+  base_currency: USD
+`,
+    )
+
+    await buildNavorStaticSite(workspaceRoot, { outDir })
+
+    const html = await readFile(join(outDir, 'index.html'), 'utf8')
+    expect(html).toContain('<title>2629 - Navor</title>')
+  })
+
   it('writes a view-only static site with serialized Navor app state and bundled assets', async () => {
     const outDir = await mkdtemp(join(tmpdir(), 'navor-static-'))
 

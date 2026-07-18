@@ -343,6 +343,7 @@ export interface NavorRendererAppState {
     root: string
     files: string[]
     diagnostics: NavorDiagnostic[]
+    portfolioSubject: string | null
   }
   dashboard: DashboardView
   portfolio: PortfolioResult
