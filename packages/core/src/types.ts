@@ -349,6 +349,9 @@ export interface MarketView {
     subject: string
     marketValue: MoneyAmount
     cost: MoneyAmount | null
+    /** Unrealized PnL in the market price's quote currency, for position-level display. */
+    pnlInMarketCurrency: MoneyAmount | null
+    /** Unrealized PnL normalized to the portfolio base currency, for aggregation and ranking. */
     pnl: MoneyAmount | null
   }>
 }

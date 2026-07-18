@@ -67,6 +67,10 @@ export function buildMarketView({
       amount: holding.quantity * price.price.amount,
       currency: price.price.currency,
     }
+    const pnlInMarketCurrency = calculatePnlInMarketCurrency(holding.cost, marketValue, {
+      baseCurrency,
+      fxRates,
+    })
     const pnl = calculatePnl(holding.cost, marketValue, { baseCurrency, fxRates })
 
     return [
@@ -74,6 +78,7 @@ export function buildMarketView({
         subject: holding.asset,
         marketValue,
         cost: holding.cost,
+        pnlInMarketCurrency,
         pnl,
       },
     ]
@@ -86,6 +91,50 @@ export function buildMarketView({
       source: 'external' as const,
     })),
     portfolioValues,
+  }
+}
+
+function calculatePnlInMarketCurrency(
+  cost: MoneyAmount | null,
+  marketValue: MoneyAmount,
+  options: { baseCurrency: string | null; fxRates: Record<string, number> },
+): MoneyAmount | null {
+  if (!cost) {
+    return null
+  }
+
+  if (cost.currency === marketValue.currency) {
+    return {
+      amount: marketValue.amount - cost.amount,
+      currency: marketValue.currency,
+    }
+  }
+
+  if (!options.baseCurrency) {
+    return null
+  }
+
+  const costInBase = convertToBaseCurrency(cost, options.baseCurrency, options.fxRates)
+
+  if (!costInBase) {
+    return null
+  }
+
+  const marketCurrencyRate = options.fxRates[marketValue.currency]
+  const costInMarketCurrency =
+    marketValue.currency === options.baseCurrency
+      ? costInBase
+      : marketCurrencyRate
+        ? { amount: costInBase.amount * marketCurrencyRate, currency: marketValue.currency }
+        : null
+
+  if (!costInMarketCurrency) {
+    return null
+  }
+
+  return {
+    amount: marketValue.amount - costInMarketCurrency.amount,
+    currency: marketValue.currency,
   }
 }
 

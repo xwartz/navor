@@ -50,12 +50,13 @@ describe('generateMarketView', () => {
         subject: 'Asset:Crypto:BTC',
         marketValue: { amount: 10000, currency: 'USD' },
         cost: { amount: 9000, currency: 'USD' },
+        pnlInMarketCurrency: { amount: 1000, currency: 'USD' },
         pnl: { amount: 1000, currency: 'USD' },
       },
     ])
   })
 
-  it('converts stablecoin cost to the configured base currency before calculating PnL', () => {
+  it('calculates display PnL in the market currency while preserving base PnL', () => {
     const source = `2026-01-01 option Portfolio:Core "Base settings"
   base_currency: USD
   fx_rates: USDT=1
@@ -78,7 +79,94 @@ describe('generateMarketView', () => {
       ],
     })
 
+    expect(market.portfolioValues[0]?.pnlInMarketCurrency?.currency).toBe('USD')
+    expect(market.portfolioValues[0]?.pnlInMarketCurrency?.amount).toBeCloseTo(1452.329, 6)
     expect(market.portfolioValues[0]?.pnl?.currency).toBe('USD')
     expect(market.portfolioValues[0]?.pnl?.amount).toBeCloseTo(1452.329, 6)
+  })
+
+  it('converts cost into the market quote currency for position PnL', () => {
+    const source = `2026-01-01 option Portfolio:Core "Base settings"
+  base_currency: USD
+  fx_rates: HKD=7.84
+
+2026-01-02 open Asset:Equity:HK:2097 "Mixue"
+
+2026-01-03 txn Asset:Equity:HK:2097 "Buy"
+  Assets:Equity:HK:2097 300 2097 @ 266.3333333333 HKD
+  Assets:Cash:HKD -79,900 HKD
+`
+
+    const market = generateMarketView(parseNavor(source).ast, {
+      prices: [
+        {
+          subject: 'Asset:Equity:HK:2097',
+          price: { amount: 214, currency: 'HKD' },
+          provider: 'Fixture',
+          asOf: '2026-01-03T00:00:00Z',
+        },
+      ],
+    })
+
+    expect(market.portfolioValues[0]?.pnlInMarketCurrency?.currency).toBe('HKD')
+    expect(market.portfolioValues[0]?.pnlInMarketCurrency?.amount).toBeCloseTo(-15700, 6)
+    expect(market.portfolioValues[0]?.pnl?.currency).toBe('USD')
+    expect(market.portfolioValues[0]?.pnl?.amount).toBeCloseTo(-2002.5510204082, 6)
+  })
+
+  it('converts base-currency cost into a non-base market quote currency', () => {
+    const source = `2026-01-01 option Portfolio:Core "Base settings"
+  base_currency: USD
+  fx_rates: HKD=7.8
+
+2026-01-02 open Asset:Equity:HK:2097 "Mixue"
+
+2026-01-03 txn Asset:Equity:HK:2097 "Buy"
+  Assets:Equity:HK:2097 1 2097 @ 100 USD
+  Assets:Cash:USD -100 USD
+`
+
+    const market = generateMarketView(parseNavor(source).ast, {
+      prices: [
+        {
+          subject: 'Asset:Equity:HK:2097',
+          price: { amount: 858, currency: 'HKD' },
+          provider: 'Fixture',
+          asOf: '2026-01-03T00:00:00Z',
+        },
+      ],
+    })
+
+    expect(market.portfolioValues[0]?.pnlInMarketCurrency).toEqual({
+      amount: 78,
+      currency: 'HKD',
+    })
+    expect(market.portfolioValues[0]?.pnl).toEqual({ amount: 10, currency: 'USD' })
+  })
+
+  it('does not calculate position PnL when the market quote currency has no FX rate', () => {
+    const source = `2026-01-01 option Portfolio:Core "Base settings"
+  base_currency: USD
+
+2026-01-02 open Asset:Equity:HK:2097 "Mixue"
+
+2026-01-03 txn Asset:Equity:HK:2097 "Buy"
+  Assets:Equity:HK:2097 1 2097 @ 100 USD
+  Assets:Cash:USD -100 USD
+`
+
+    const market = generateMarketView(parseNavor(source).ast, {
+      prices: [
+        {
+          subject: 'Asset:Equity:HK:2097',
+          price: { amount: 858, currency: 'HKD' },
+          provider: 'Fixture',
+          asOf: '2026-01-03T00:00:00Z',
+        },
+      ],
+    })
+
+    expect(market.portfolioValues[0]?.pnlInMarketCurrency).toBeNull()
+    expect(market.portfolioValues[0]?.pnl).toBeNull()
   })
 })

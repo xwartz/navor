@@ -2945,6 +2945,10 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
           "amount": 38114.4879503296,
           "currency": "USD",
         },
+        "pnlInMarketCurrency": {
+          "amount": 38114.4879503296,
+          "currency": "USD",
+        },
         "subject": "Asset:Crypto:BTC",
       },
     ],

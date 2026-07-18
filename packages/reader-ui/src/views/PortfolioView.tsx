@@ -326,7 +326,7 @@ function HoldingsTable({
             ),
             cost: formatMoney(holding.cost),
             market: formatMoney(value?.marketValue),
-            pnl: <MoneyDelta value={value?.pnl} />,
+            pnl: <MoneyDelta value={value?.pnlInMarketCurrency} />,
           },
           sortValues: {
             asset: holding.asset,

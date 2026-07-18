@@ -117,7 +117,7 @@ export function MarketView({
                 asset: <EntityCell interactive subject={value.subject} />,
                 market: formatMoney(value.marketValue),
                 cost: formatMoney(value.cost),
-                pnl: <MoneyDelta value={value.pnl} />,
+                pnl: <MoneyDelta value={value.pnlInMarketCurrency} />,
               },
               sortValues: {
                 asset: value.subject,

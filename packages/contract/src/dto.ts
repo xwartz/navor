@@ -313,6 +313,7 @@ export interface MarketView {
     subject: string
     marketValue: MoneyAmount
     cost: MoneyAmount | null
+    pnlInMarketCurrency: MoneyAmount | null
     pnl: MoneyAmount | null
   }>
 }
