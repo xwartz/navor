@@ -1,5 +1,11 @@
 # @navor/core
 
+## 0.4.1
+
+### Patch Changes
+
+- Calculate market PnL in the configured base currency when cost and live price use different currencies.
+
 ## 0.4.0
 
 ### Minor Changes

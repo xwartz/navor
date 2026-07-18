@@ -37,6 +37,8 @@ export function rebuildReaderDerivedState({
     portfolio: facts.portfolio,
     research: facts.marketResearch,
     prices,
+    baseCurrency: facts.baseCurrency,
+    fxRates: facts.fxRates,
   })
   const drift = generateDrift({
     allocation: facts.allocation,

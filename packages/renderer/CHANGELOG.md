@@ -1,5 +1,15 @@
 # @navor/renderer
 
+## 0.4.1
+
+### Patch Changes
+
+- Calculate market PnL in the configured base currency when cost and live price use different currencies.
+- Updated dependencies
+  - @navor/core@0.4.1
+  - @navor/adapters@0.4.1
+  - @navor/contract@0.4.1
+
 ## 0.4.0
 
 ### Patch Changes

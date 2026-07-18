@@ -54,4 +54,31 @@ describe('generateMarketView', () => {
       },
     ])
   })
+
+  it('converts stablecoin cost to the configured base currency before calculating PnL', () => {
+    const source = `2026-01-01 option Portfolio:Core "Base settings"
+  base_currency: USD
+  fx_rates: USDT=1
+
+2026-01-02 open Asset:Crypto:BTC "Bitcoin"
+
+2026-01-03 txn Asset:Crypto:BTC "Buy"
+  Assets:Crypto:BTC 1 BTC @ 6,991.6 USDT
+  Assets:Cash:USDT -6,991.6 USDT
+`
+
+    const market = generateMarketView(parseNavor(source).ast, {
+      prices: [
+        {
+          subject: 'Asset:Crypto:BTC',
+          price: { amount: 8443.929, currency: 'USD' },
+          provider: 'Fixture',
+          asOf: '2026-01-03T00:00:00Z',
+        },
+      ],
+    })
+
+    expect(market.portfolioValues[0]?.pnl?.currency).toBe('USD')
+    expect(market.portfolioValues[0]?.pnl?.amount).toBeCloseTo(1452.329, 6)
+  })
 })

@@ -1,5 +1,14 @@
 # @navor/reader-ui
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @navor/renderer@0.4.1
+  - @navor/adapters@0.4.1
+  - @navor/contract@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
