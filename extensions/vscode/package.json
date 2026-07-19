@@ -2,7 +2,7 @@
   "name": "navor",
   "displayName": "Navor",
   "description": "Syntax highlighting and formatting for Navor (.nav) investment state documents.",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "publisher": "navor",
   "license": "Apache-2.0",
   "repository": {
