@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { DataTable } from '../components/DataTable'
 import {
+  convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
   formatMoneyList,
@@ -51,7 +52,11 @@ export function PortfolioView({
     state.dashboard.assetExecutions.map((asset) => [asset.subject, asset]),
   )
   const holdingsByAccount = groupHoldingsByAccount(holdings, assetExecutionBySubject)
-  const totalMarketValue = portfolioValues.reduce((sum, value) => sum + value.marketValue.amount, 0)
+  const marketMix = calculateMarketMix(
+    portfolioValues,
+    state.drift.baseCurrency,
+    state.drift.fxRates,
+  )
   const costByCurrency = groupMoneyValues(holdings.map((holding) => holding.cost))
   const costInBase = sumMoneyInBase(
     holdings.map((holding) => holding.cost),
@@ -141,17 +146,22 @@ export function PortfolioView({
 
       <Panel title="Market mix">
         <RankedExposureList
-          items={portfolioValues.map((value) => ({
-            id: value.subject,
+          items={marketMix.values.map(({ source, amount }) => ({
+            id: source.subject,
             label:
-              assetExecutionBySubject.get(value.subject)?.title ??
-              value.subject.replace(/^Asset:/, ''),
-            sublabel: formatSubjectSublabel(labelIndex, value.subject),
-            value: totalMarketValue > 0 ? (value.marketValue.amount / totalMarketValue) * 100 : 0,
+              assetExecutionBySubject.get(source.subject)?.title ??
+              source.subject.replace(/^Asset:/, ''),
+            sublabel: formatSubjectSublabel(labelIndex, source.subject),
+            value: marketMix.total > 0 ? (amount / marketMix.total) * 100 : 0,
           }))}
           limit={10}
           valueLabel="Weight"
         />
+        {marketMix.unconvertedCurrencies.length > 0 ? (
+          <p className="mt-3 text-xs text-ink-faint">
+            {formatUnconvertedCurrencyCount(marketMix.unconvertedCurrencies.length)}
+          </p>
+        ) : null}
       </Panel>
 
       <Panel
@@ -264,6 +274,41 @@ export function PortfolioView({
       </section>
     </div>
   )
+}
+
+export function calculateMarketMix(
+  values: NavorRendererAppState['market']['portfolioValues'],
+  baseCurrency: string | null,
+  fxRates: Record<string, number>,
+) {
+  const currencies = new Set(values.map((value) => value.marketValue.currency))
+  const comparisonCurrency = baseCurrency ?? (currencies.size === 1 ? [...currencies][0] : null)
+  const unconvertedCurrencies = new Set<string>()
+
+  if (!comparisonCurrency) {
+    return {
+      values: [],
+      total: 0,
+      unconvertedCurrencies: [...currencies],
+    }
+  }
+
+  const convertedValues = values.flatMap((source) => {
+    const converted = convertToBaseCurrency(source.marketValue, comparisonCurrency, fxRates)
+
+    if (!converted) {
+      unconvertedCurrencies.add(source.marketValue.currency)
+      return []
+    }
+
+    return [{ source, amount: converted.amount }]
+  })
+
+  return {
+    values: convertedValues,
+    total: convertedValues.reduce((sum, value) => sum + value.amount, 0),
+    unconvertedCurrencies: [...unconvertedCurrencies],
+  }
 }
 
 function FlowTable({ flows }: { flows: NavorRendererAppState['portfolio']['income'] }) {
