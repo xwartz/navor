@@ -1,5 +1,14 @@
 # @navor/reader-ui
 
+## 0.5.1
+
+### Patch Changes
+
+- Keep static-site build dependencies compatible with Cloudflare's frozen pnpm installation.
+  - @navor/contract@0.5.1
+  - @navor/adapters@0.5.1
+  - @navor/renderer@0.5.1
+
 ## 0.5.0
 
 ### Minor Changes

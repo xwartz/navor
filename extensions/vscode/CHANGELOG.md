@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Align the extension with the Navor 0.5.1 release.
+
 ## 0.5.0
 
 - Align the extension with the Navor 0.5.0 release.
