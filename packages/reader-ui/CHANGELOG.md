@@ -1,5 +1,14 @@
 # @navor/reader-ui
 
+## 0.4.4
+
+### Patch Changes
+
+- 1a1cbc0: Calculate Portfolio Market mix weights from market values converted to the configured base currency, and exclude values that cannot be converted.
+  - @navor/contract@0.4.4
+  - @navor/adapters@0.4.4
+  - @navor/renderer@0.4.4
+
 ## 0.4.3
 
 ### Patch Changes

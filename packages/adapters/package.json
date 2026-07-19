@@ -1,6 +1,6 @@
 {
   "name": "@navor/adapters",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Optional market-data enrichment for Navor derived views.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",
