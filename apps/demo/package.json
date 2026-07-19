@@ -13,7 +13,7 @@
     "@navor/adapters": "workspace:*"
   },
   "devDependencies": {
-    "wrangler": "^4.110.0"
+    "wrangler": "^4.112.0"
   },
   "engines": {
     "node": ">=22.14.0"

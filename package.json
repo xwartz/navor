@@ -16,26 +16,26 @@
     "build:demo": "pnpm --filter @navor/demo build"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.3",
-    "@changesets/cli": "^2.31.0",
+    "@biomejs/biome": "^2.5.4",
+    "@changesets/cli": "^2.31.1",
     "@navor/adapters": "workspace:*",
     "@navor/cli": "workspace:*",
     "@navor/contract": "workspace:*",
     "@navor/core": "workspace:*",
     "@navor/reader-ui": "workspace:*",
     "@navor/renderer": "workspace:*",
-    "@tailwindcss/vite": "^4.3.2",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tailwindcss": "^4.3.2",
-    "tsdown": "^0.22.4",
+    "tailwindcss": "^4.3.3",
+    "tsdown": "^0.22.9",
     "typescript": "^7.0.2",
     "unrun": "^0.3.1",
-    "vite": "^8.1.4",
+    "vite": "^8.1.5",
     "vitest": "^4.1.10"
   }
 }
