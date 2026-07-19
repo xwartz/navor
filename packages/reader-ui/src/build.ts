@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
 import type { NavorRendererAppState } from '@navor/contract'
@@ -28,21 +28,24 @@ export async function buildNavorReaderApp(
     ...options,
     fetchLivePrices: options.fetchLivePrices ?? false,
   })
+  const title = documentTitleFromState(state)
+
+  await rm(outDir, { recursive: true, force: true })
   await mkdir(outDir, { recursive: true })
+  await writeFile(join(outDir, 'navor-data.json'), `${JSON.stringify(state, null, 2)}\n`)
 
   await build({
     ...createNavorReaderViteConfig({
       workspaceRoot: options.workspaceRoot,
       compileOptions: options,
+      appName: title,
     }),
     build: {
       outDir,
-      emptyOutDir: true,
+      emptyOutDir: false,
     },
     envDir: false,
   })
-
-  await writeFile(join(outDir, 'navor-data.json'), `${JSON.stringify(state, null, 2)}\n`)
 
   const indexPath = join(outDir, 'index.html')
   const html = await readFile(indexPath, 'utf8')
@@ -52,8 +55,11 @@ export async function buildNavorReaderApp(
         '</head>',
         '    <script type="application/json" data-navor-source="./navor-data.json"></script>\n  </head>',
       )
-  const title = escapeHtml(documentTitleFromState(state))
-  const patchedHtml = withDataSource.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+  const escapedTitle = escapeHtml(title)
+  const patchedHtml = withDataSource.replace(
+    /<title>[^<]*<\/title>/,
+    `<title>${escapedTitle}</title>`,
+  )
 
   if (patchedHtml !== html) {
     await writeFile(indexPath, patchedHtml)
@@ -61,7 +67,17 @@ export async function buildNavorReaderApp(
 
   return {
     outDir,
-    files: ['index.html', 'favicon.svg', 'assets/app.js', 'assets/app.css', 'navor-data.json'],
+    files: [
+      'index.html',
+      'manifest.webmanifest',
+      'sw.js',
+      'favicon.svg',
+      'pwa-192.png',
+      'pwa-512.png',
+      'assets/app.js',
+      'assets/app.css',
+      'navor-data.json',
+    ],
     state,
   }
 }

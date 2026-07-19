@@ -1,5 +1,17 @@
 # @navor/reader-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- Build installable offline Reader sites with a web app manifest, icons, and a Service Worker that precaches the static workspace snapshot without caching live-price requests.
+
+### Patch Changes
+
+- @navor/contract@0.5.0
+- @navor/adapters@0.5.0
+- @navor/renderer@0.5.0
+
 ## 0.4.4
 
 ### Patch Changes

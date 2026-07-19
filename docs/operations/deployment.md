@@ -8,7 +8,25 @@ Publish a static Navor Reader site from your investment repository. For the buil
 nav build portfolio --out dist/site
 ```
 
-Upload the generated directory, including `index.html`, `assets/`, and `navor-data.json`.
+Upload the generated directory, including `index.html`, `assets/`, `navor-data.json`,
+`manifest.webmanifest`, and `sw.js`.
+
+## Installable offline Reader
+
+Every static build is an installable PWA. After a visitor opens the site once,
+the browser can install it and keep the Reader shell plus that build's
+`navor-data.json` available offline. A later deployment updates the installed
+site when the browser activates its new service worker.
+
+The browser does not cache live-price requests. Offline Reader uses the prices
+embedded at build time, or shows the existing unavailable/stale price state.
+The Reader uses its system-font fallback when the optional Google Fonts cannot
+be reached offline.
+
+PWA storage persists a deployed investment snapshot on a visitor's device.
+Only publish sites that audience is allowed to retain; installing a PWA does not
+make a public deployment private. Users can remove the snapshot through their
+browser's site-data controls.
 
 ## Live prices
 

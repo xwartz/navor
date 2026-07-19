@@ -46,6 +46,7 @@ export default defineConfig([
       '@navor/contract',
       '@tailwindcss/vite',
       '@vitejs/plugin-react',
+      'vite-plugin-pwa',
       'tailwindcss',
     ],
   },

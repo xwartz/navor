@@ -1,5 +1,12 @@
 # @navor/adapters
 
+## 0.5.0
+
+### Patch Changes
+
+- @navor/contract@0.5.0
+- @navor/core@0.5.0
+
 ## 0.4.4
 
 ### Patch Changes

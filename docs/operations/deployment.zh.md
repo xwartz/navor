@@ -8,7 +8,22 @@
 nav build portfolio --out dist/site
 ```
 
-上传生成目录，包含 `index.html`、`assets/` 与 `navor-data.json`。
+上传生成目录，包含 `index.html`、`assets/`、`navor-data.json`、
+`manifest.webmanifest` 与 `sw.js`。
+
+## 可安装、离线可读的 Reader
+
+每次静态构建都带有可安装的 PWA。访问者首次打开站点后，可将 Reader
+安装到设备；浏览器会离线保留 Reader 外壳和该次构建的 `navor-data.json`。
+后续部署由浏览器激活新的 Service Worker 后更新已安装站点。
+
+浏览器不会缓存实时行情请求。离线 Reader 使用构建时写入的价格快照；没有
+快照时，沿用现有的缺失或过期状态提示。
+若离线时无法访问可选的 Google Fonts，Reader 会使用已有的系统字体回退。
+
+PWA 存储会将已部署的投资快照持久保留在访问者设备上。只应向允许保留这些
+数据的受众发布站点；安装 PWA 不会把公开部署变成私密站点。用户可通过浏览器
+的网站数据设置删除该快照。
 
 ## 实时行情
 
