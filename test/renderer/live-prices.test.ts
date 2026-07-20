@@ -79,7 +79,7 @@ describe('handlePriceProxyRequest', () => {
       expect.objectContaining({
         subject: 'Asset:Crypto:BTC',
         price: { amount: 100000, currency: 'USD' },
-        provider: 'YahooFinance',
+        provider: 'Yahoo',
         asOf: new Date(1_752_000_000 * 1000).toISOString(),
       }),
     ])

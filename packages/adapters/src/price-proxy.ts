@@ -108,7 +108,7 @@ export async function handlePriceProxyRequest(
       const price: MarketPrice = {
         subject: entry.subject,
         price: quote.price,
-        provider: 'YahooFinance',
+        provider: 'Yahoo',
         asOf: quote.asOf,
       }
       prices.push(price)
@@ -120,7 +120,7 @@ export async function handlePriceProxyRequest(
 
     failures.push({
       subject: entry.subject,
-      provider: 'YahooFinance',
+      provider: 'Yahoo',
       message: failure?.message ?? `Yahoo Finance returned no quote for "${entry.yahooSymbol}".`,
     })
   }

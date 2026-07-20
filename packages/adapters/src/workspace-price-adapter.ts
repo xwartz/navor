@@ -65,7 +65,7 @@ export function createWorkspacePriceAdapter({
           prices.push({
             subject: entry.subject,
             price: quote.price,
-            provider: 'YahooFinance',
+            provider: 'Yahoo',
             asOf: quote.asOf,
           })
           continue
@@ -75,7 +75,7 @@ export function createWorkspacePriceAdapter({
 
         failures.push({
           subject: entry.subject,
-          provider: 'YahooFinance',
+          provider: 'Yahoo',
           message:
             failure?.message ?? `Yahoo Finance returned no quote for "${entry.yahooSymbol}".`,
         })

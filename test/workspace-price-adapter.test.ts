@@ -58,7 +58,7 @@ describe('createWorkspacePriceAdapter', () => {
     expect(result.prices[0]).toMatchObject({
       subject: 'Asset:Equity:US:NVDA',
       price: { amount: 123.45, currency: 'USD' },
-      provider: 'YahooFinance',
+      provider: 'Yahoo',
     })
   })
 })
