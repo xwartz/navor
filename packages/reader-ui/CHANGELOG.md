@@ -1,5 +1,14 @@
 # @navor/reader-ui
 
+## 0.5.3
+
+### Patch Changes
+
+- 722becc: Clarify asset workspace positioning by separating account allocation progress from portfolio drift.
+  - @navor/contract@0.5.3
+  - @navor/adapters@0.5.3
+  - @navor/renderer@0.5.3
+
 ## 0.5.2
 
 ### Patch Changes
