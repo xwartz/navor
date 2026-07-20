@@ -1,5 +1,14 @@
 # @navor/cli
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [7636c92]
+  - @navor/reader-ui@0.5.2
+  - @navor/core@0.5.2
+  - @navor/renderer@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes

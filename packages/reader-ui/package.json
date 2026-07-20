@@ -1,6 +1,6 @@
 {
   "name": "@navor/reader-ui",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Official Reader for Navor investment repositories.",
   "license": "Apache-2.0",
   "repository": "github:xwartz/navor",

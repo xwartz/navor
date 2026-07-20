@@ -1,5 +1,14 @@
 # @navor/reader-ui
 
+## 0.5.2
+
+### Patch Changes
+
+- 7636c92: Improve the asset workspace with localized action guidance, market-status context, and richer position details.
+  - @navor/contract@0.5.2
+  - @navor/adapters@0.5.2
+  - @navor/renderer@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes

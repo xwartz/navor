@@ -1,5 +1,13 @@
 # @navor/renderer
 
+## 0.5.2
+
+### Patch Changes
+
+- @navor/contract@0.5.2
+- @navor/core@0.5.2
+- @navor/adapters@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes
