@@ -1,0 +1,13 @@
+{
+  "symbolMap": {
+    "Asset:Crypto:BNB": "BNB-USD",
+    "Asset:Crypto:BTC": "BTC-USD",
+    "Asset:Crypto:ETH": "ETH-USD",
+    "Asset:Crypto:HYPE": "HYPE32196-USD",
+    "Asset:Crypto:PEPE": "PEPE24478-USD",
+    "Asset:Crypto:SOL": "SOL-USD",
+    "Asset:Crypto:LINK": "LINK-USD",
+    "Asset:Crypto:SUI": "SUI20947-USD",
+    "Asset:Crypto:VIRTUAL": "VIRTUAL-USD"
+  }
+}

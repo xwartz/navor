@@ -33,17 +33,15 @@
   account: Account:US
   target: 10%
   status: Watch
-  watch_reason: SPAC 折价与 NAV 收敛
+  watch_reason: SPCX 折价与 NAV 收敛
 
 2026-01-02 open Asset:Private:US:ANTHROPIC "Anthropic"
-  symbol: Anthropic
   account: Account:US
   target: 5%
   status: Watch
   watch_reason: 等待可投二级或基金通道
 
 2026-01-02 open Asset:Private:US:OPENAI "OpenAI"
-  symbol: OpenAI
   account: Account:US
   target: 5%
   status: Watch
