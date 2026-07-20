@@ -329,6 +329,19 @@ const chinese = {
   'Asset workspace': '资产工作区',
   'Close asset workspace': '关闭资产工作区',
   'Asset workspace views': '资产工作区视图',
+  'Market snapshot': '市场快照',
+  'Price status': '价格状态',
+  'Data source': '数据源',
+  'Price as of': '报价时间',
+  'Price unavailable. Market value falls back to cost basis.': '暂无可用报价，市值将以成本价估算。',
+  stale: '陈旧',
+  missing: '缺失',
+  failed: '失败',
+  'Action below band': '低于区间时操作',
+  'Action above band': '高于区间时操作',
+  'Recent transactions': '近期交易',
+  'No transactions are recorded for this asset.': '该资产暂无交易记录。',
+  'Not available': '暂无',
   'No account assigned': '未分配账户',
   'No funded position or execution target yet.': '尚未建立持仓或执行目标。',
   'No funded position is recorded for this asset.': '该资产尚无持仓记录。',
@@ -470,6 +483,27 @@ export function formatDashboardActionReason(
   return locale === 'zh-CN'
     ? `${price}${exposureText || '，涉及一项持仓资产'}。`
     : `${price}${exposureText || ' for a held asset'}.`
+}
+
+export function formatDashboardActionLabel(
+  type: import('@navor/contract').DashboardActionItem['type'],
+  locale = readerLocale,
+) {
+  switch (type) {
+    case 'review_due':
+    case 'over_invested':
+      return t('Review', locale)
+    case 'above_max':
+      return t('Trim', locale)
+    case 'below_min':
+      return t('Add', locale)
+    case 'currency_mismatch':
+      return t('Check FX', locale)
+    case 'missing_price':
+    case 'stale_price':
+    case 'failed_price':
+      return t('Price', locale)
+  }
 }
 
 export function formatSearchResultCount(count: number, locale = readerLocale) {

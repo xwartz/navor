@@ -76,6 +76,6 @@ describe('reader formatting', () => {
     expect(formatSignedPercent(3.2)).toBe('+3.2%')
     expect(formatSignedPercent(-1.5)).toBe('-1.5%')
     expect(formatSignedPercent(0)).toBe('0.0%')
-    expect(formatSignedPercent(null)).toBe('n/a')
+    expect(formatSignedPercent(null)).toBe('Not available')
   })
 })

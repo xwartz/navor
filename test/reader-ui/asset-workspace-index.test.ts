@@ -14,9 +14,12 @@ describe('Asset workspace index', () => {
     expect(index.has('Asset:Crypto:BTC')).toBe(true)
     expect(index.has('Account:Crypto')).toBe(false)
     expect(facts).toMatchObject({
+      allocation: { subject: 'Asset:Crypto:BTC' },
       execution: { subject: 'Asset:Crypto:BTC' },
       holding: { asset: 'Asset:Crypto:BTC' },
       policy: { subject: 'Asset:Crypto:BTC' },
+      priceStatus: { subject: 'Asset:Crypto:BTC' },
     })
+    expect(facts?.transactions).toEqual(expect.any(Array))
   })
 })

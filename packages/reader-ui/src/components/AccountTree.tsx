@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 
 import {
   formatAssetDisclosure,
+  formatDashboardActionLabel,
   formatFundedPercent,
   formatMarketAmount,
   formatTargetAmount,
@@ -34,7 +35,7 @@ export function AccountTree({
   selectedAssetSubject = null,
   renderAssetDetail,
 }: AccountTreeProps) {
-  const actionsBySubject = new Map(actions.map((item) => [item.subject, item.action]))
+  const actionsBySubject = new Map(actions.map((item) => [item.subject, item.type]))
   const assetsByAccount = new Map<string, DashboardAssetExecution[]>()
 
   for (const asset of assets) {
@@ -96,8 +97,10 @@ export function AccountTree({
               ) : (
                 accountAssets.map((asset) => {
                   const isSelected = selectedAssetSubject === asset.subject
-                  const nextStep =
-                    compactAction(actionsBySubject.get(asset.subject)) ?? statusAction(asset.status)
+                  const actionType = actionsBySubject.get(asset.subject)
+                  const nextStep = actionType
+                    ? formatDashboardActionLabel(actionType)
+                    : statusAction(asset.status)
 
                   return (
                     <div
@@ -306,29 +309,5 @@ function statusAction(status: DashboardAssetExecution['status']) {
       return t('Add')
     case 'currency_mismatch':
       return t('Check FX')
-  }
-}
-
-function compactAction(action: string | undefined) {
-  switch (action) {
-    case 'Start position':
-      return 'Start'
-    case 'Continue building':
-      return 'Build'
-    case 'Hold target':
-      return 'Hold'
-    case 'Review target':
-    case 'Review target amount':
-      return 'Review'
-    case 'Consider trim':
-      return 'Trim'
-    case 'Consider add':
-      return 'Add'
-    case 'Check currency conversion':
-      return 'Check FX'
-    case 'Check price source':
-      return 'Price'
-    default:
-      return action
   }
 }

@@ -2,7 +2,7 @@ import { formatNumber, readerLocale, t } from '../i18n'
 
 export function formatMoney(value: { amount: number; currency: string } | null | undefined) {
   if (!value) {
-    return 'n/a'
+    return t('Not available')
   }
 
   const magnitude = Math.abs(value.amount)
@@ -24,7 +24,7 @@ export function formatQuantityCommodity(quantity: number, commodity: string) {
 
 export function formatSignedMoney(value: { amount: number; currency: string } | null | undefined) {
   if (!value) {
-    return 'n/a'
+    return t('Not available')
   }
 
   const sign = value.amount > 0 ? '+' : value.amount < 0 ? '-' : ''
@@ -36,7 +36,7 @@ export function formatMoneyList(values: Array<{ amount: number; currency: string
   const totals = groupMoneyValues(values)
 
   if (totals.length === 0) {
-    return 'n/a'
+    return t('Not available')
   }
 
   return formatMoneyParts(totals)
@@ -136,7 +136,7 @@ export function formatTimestamp(value: string | null | undefined) {
 
 export function formatCashList(values: Array<{ amount: number; currency: string }>) {
   if (values.length === 0) {
-    return 'n/a'
+    return t('Not available')
   }
 
   return formatMoneyParts(values)
@@ -154,7 +154,7 @@ export function formatBaseMoney(
 
 export function formatPercent(value: number | null | undefined) {
   if (value === null || value === undefined) {
-    return 'n/a'
+    return t('Not available')
   }
 
   return `${value.toFixed(1)}%`
@@ -162,7 +162,7 @@ export function formatPercent(value: number | null | undefined) {
 
 export function formatSignedPercent(value: number | null | undefined) {
   if (value === null || value === undefined) {
-    return 'n/a'
+    return t('Not available')
   }
 
   const sign = value > 0 ? '+' : ''

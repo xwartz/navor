@@ -4,8 +4,20 @@ import { type ReactNode, useEffect, useRef, useState } from 'react'
 import type { AssetWorkspaceIndex } from '../asset-workspace'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel } from '../EntityLabelContext'
-import { formatReviewDeadline, t } from '../i18n'
-import { formatMoney, formatPercent, formatQuantityCommodity, formatSignedMoney } from './format'
+import {
+  formatDashboardActionLabel,
+  formatDashboardActionReason,
+  formatReviewDeadline,
+  t,
+} from '../i18n'
+import {
+  formatMoney,
+  formatPercent,
+  formatQuantityCommodity,
+  formatSignedMoney,
+  formatSignedPercent,
+  formatTimestamp,
+} from './format'
 import { Chip, TimelineFeed } from './ViewScaffold'
 
 export function AssetWorkspaceOverlay() {
@@ -42,10 +54,13 @@ function AssetWorkspacePanel({
   const market = facts?.market ?? null
   const drift = facts?.drift ?? null
   const policy = facts?.policy ?? null
+  const price = facts?.price ?? null
+  const priceStatus = facts?.priceStatus ?? null
   const watchlist = facts?.watchlist ?? null
   const accountTitle = useEntityLabel(execution?.account ?? watchlist?.account)
   const actions = facts?.actions ?? []
-  const timeline = buildTimeline(facts)
+  const researchTimeline = buildResearchTimeline(facts)
+  const decisionsTimeline = buildDecisionsTimeline(facts)
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1279px)')
@@ -165,7 +180,7 @@ function AssetWorkspacePanel({
 
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="space-y-5">
-            <section>
+            <section id="snapshot">
               <div className="flex flex-wrap items-center gap-2">
                 {execution ? (
                   <Chip tone={statusTone(execution.status)}>{statusLabel(execution.status)}</Chip>
@@ -197,7 +212,30 @@ function AssetWorkspacePanel({
               <WorkspaceMetric label="Target" value={formatMoney(execution?.targetAmount)} />
             </section>
 
-            <WorkspaceSection title="Position">
+            <WorkspaceSection id="market" title="Market snapshot">
+              <dl className="grid grid-cols-2 gap-4">
+                <WorkspaceFact label="Price" value={formatMoney(price?.price)} />
+                <WorkspaceFact
+                  label="Price status"
+                  value={priceStatusLabel(priceStatus?.status, price)}
+                />
+                <WorkspaceFact
+                  label="Data source"
+                  value={priceStatus?.provider ?? price?.provider ?? t('No provider')}
+                />
+                <WorkspaceFact
+                  label="Price as of"
+                  value={formatTimestamp(priceStatus?.asOf ?? price?.asOf)}
+                />
+              </dl>
+              {!price ? (
+                <p className="mt-3 text-xs leading-5 text-ink-muted">
+                  {t('Price unavailable. Market value falls back to cost basis.')}
+                </p>
+              ) : null}
+            </WorkspaceSection>
+
+            <WorkspaceSection id="holdings" title="Position">
               {holding ? (
                 <dl className="grid grid-cols-2 gap-4">
                   <WorkspaceFact
@@ -206,14 +244,29 @@ function AssetWorkspacePanel({
                   />
                   <WorkspaceFact label="Cost" value={formatMoney(holding.cost)} />
                   <WorkspaceFact label="Actual weight" value={formatPercent(drift?.actualWeight)} />
-                  <WorkspaceFact label="Drift" value={formatPercent(drift?.drift)} />
+                  <WorkspaceFact label="Drift" value={formatSignedPercent(drift?.drift)} />
                 </dl>
               ) : (
                 <QuietMessage>{t('No funded position is recorded for this asset.')}</QuietMessage>
               )}
             </WorkspaceSection>
 
-            <WorkspaceSection title="Policy">
+            <WorkspaceSection id="drift" title="Drift">
+              <dl className="grid grid-cols-2 gap-4">
+                <WorkspaceFact label="Actual weight" value={formatPercent(drift?.actualWeight)} />
+                <WorkspaceFact
+                  label="Target"
+                  value={formatPercent(policy?.target ?? facts?.allocation?.derivedPortfolioWeight)}
+                />
+                <WorkspaceFact label="Drift" value={formatSignedPercent(drift?.drift)} />
+                <WorkspaceFact
+                  label="Market value"
+                  value={formatMoney(drift?.marketValueInBase ?? drift?.marketValue)}
+                />
+              </dl>
+            </WorkspaceSection>
+
+            <WorkspaceSection id="policy" title="Policy">
               {policy ? (
                 <dl className="grid grid-cols-2 gap-4">
                   <WorkspaceFact label="Target" value={formatPercent(policy.target)} />
@@ -221,8 +274,16 @@ function AssetWorkspacePanel({
                     label="Band"
                     value={`${formatPercent(policy.min)} / ${formatPercent(policy.max)}`}
                   />
-                  <WorkspaceFact label="Rebalance" value={policy.rebalance ?? 'n/a'} />
+                  <WorkspaceFact label="Rebalance" value={policy.rebalance ?? t('Not available')} />
                   <WorkspaceFact label="As of" value={policy.date} />
+                  <WorkspaceFact
+                    label="Action below band"
+                    value={policy.actionWhenBelow ?? t('Not available')}
+                  />
+                  <WorkspaceFact
+                    label="Action above band"
+                    value={policy.actionWhenAbove ?? t('Not available')}
+                  />
                 </dl>
               ) : (
                 <QuietMessage>
@@ -232,17 +293,21 @@ function AssetWorkspacePanel({
             </WorkspaceSection>
 
             {actions.length > 0 ? (
-              <WorkspaceSection title="Open actions">
+              <WorkspaceSection id="actions" title="Open actions">
                 <div className="divide-y divide-border overflow-hidden rounded-md border border-border">
                   {actions.map((item) => (
                     <div className="px-3 py-3" key={item.id}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-ink">{item.action}</p>
-                          <p className="mt-1 text-xs leading-5 text-ink-muted">{item.message}</p>
+                          <p className="text-xs font-semibold text-ink">
+                            {formatDashboardActionLabel(item.type)}
+                          </p>
+                          <p className="mt-1 text-xs leading-5 text-ink-muted">
+                            {formatDashboardActionReason(item.reason)}
+                          </p>
                         </div>
                         <Chip tone={item.severity === 'high' ? 'danger' : 'warning'}>
-                          {item.severity}
+                          {severityLabel(item.severity)}
                         </Chip>
                       </div>
                     </div>
@@ -251,11 +316,36 @@ function AssetWorkspacePanel({
               </WorkspaceSection>
             ) : null}
 
-            <WorkspaceSection title="Investment context">
-              {timeline.length > 0 ? (
-                <TimelineFeed items={timeline} />
+            <WorkspaceSection id="research" title="Investment context">
+              {researchTimeline.length > 0 ? (
+                <TimelineFeed items={researchTimeline} />
               ) : (
                 <QuietMessage>{t('No research, thesis, or decision is linked yet.')}</QuietMessage>
+              )}
+            </WorkspaceSection>
+
+            <WorkspaceSection id="decisions" title="Decisions">
+              {decisionsTimeline.length > 0 ? (
+                <TimelineFeed items={decisionsTimeline} />
+              ) : (
+                <QuietMessage>{t('No research, thesis, or decision is linked yet.')}</QuietMessage>
+              )}
+            </WorkspaceSection>
+
+            <WorkspaceSection id="transactions" title="Recent transactions">
+              {facts?.transactions.length ? (
+                <div className="divide-y divide-border overflow-hidden rounded-md border border-border">
+                  {facts.transactions.slice(0, 3).map((transaction) => (
+                    <div className="px-3 py-3" key={`${transaction.date}:${transaction.line}`}>
+                      <p className="text-xs font-semibold text-ink">
+                        {transaction.title ?? transaction.subject}
+                      </p>
+                      <p className="mt-1 text-xs tabular-nums text-ink-muted">{transaction.date}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <QuietMessage>{t('No transactions are recorded for this asset.')}</QuietMessage>
               )}
             </WorkspaceSection>
           </div>
@@ -303,13 +393,15 @@ function WorkspaceMetric({
 
 function WorkspaceSection({
   children,
+  id,
   title,
 }: {
   children: ReactNode
+  id?: string
   title: import('../i18n').MessageKey
 }) {
   return (
-    <section className="border-t border-border pt-4">
+    <section className="border-t border-border pt-4" id={id}>
       <h3 className="font-ui text-sm font-semibold text-ink">{t(title)}</h3>
       <div className="mt-3">{children}</div>
     </section>
@@ -335,32 +427,55 @@ function QuietMessage({ children }: { children: ReactNode }) {
   )
 }
 
-function buildTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
+function buildResearchTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
   if (!facts) return []
 
   return [
     ...facts.research.map((item) => ({
       id: `research:${item.date}:${item.title}`,
       date: item.date,
-      label: item.source ?? 'Research',
+      label: t('Research'),
       title: item.title ?? item.subject,
       subject: item.tags.join(' · '),
     })),
     ...facts.theses.map((item) => ({
       id: `thesis:${item.date}:${item.title}`,
       date: item.date,
-      label: 'Thesis',
+      label: t('Thesis'),
       title: item.title ?? item.subject,
       subject: item.reviewBy ? formatReviewDeadline(item.reviewBy) : item.status,
     })),
-    ...facts.decisions.map((item) => ({
+  ].sort((left, right) => right.date.localeCompare(left.date))
+}
+
+function buildDecisionsTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
+  if (!facts) return []
+
+  return facts.decisions
+    .map((item) => ({
       id: `decision:${item.date}:${item.title}`,
       date: item.date,
-      label: 'Decision',
+      label: t('Decision'),
       title: item.title ?? item.subject,
       subject: item.action,
-    })),
-  ].sort((left, right) => right.date.localeCompare(left.date))
+    }))
+    .sort((left, right) => right.date.localeCompare(left.date))
+}
+
+function priceStatusLabel(
+  status: NavorRendererAppState['enrichment']['prices'][number]['status'] | undefined,
+  price: NavorRendererAppState['market']['prices'][number] | null,
+) {
+  if (!status) return price ? t('fresh') : t('missing')
+  return t(status)
+}
+
+function severityLabel(
+  severity: NavorRendererAppState['dashboard']['actionInbox'][number]['severity'],
+) {
+  if (severity === 'high') return t('High')
+  if (severity === 'medium') return t('Medium')
+  return t('Low')
 }
 
 function statusTone(

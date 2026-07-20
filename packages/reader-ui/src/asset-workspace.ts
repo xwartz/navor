@@ -1,11 +1,15 @@
 import type { NavorRendererAppState } from '@navor/contract'
 
 type AssetWorkspaceFacts = {
+  allocation: NavorRendererAppState['allocation']['assets'][number] | null
   execution: NavorRendererAppState['dashboard']['assetExecutions'][number] | null
   holding: NavorRendererAppState['portfolio']['holdings'][number] | null
   market: NavorRendererAppState['market']['portfolioValues'][number] | null
   drift: NavorRendererAppState['drift']['entries'][number] | null
   policy: NavorRendererAppState['plan']['entries'][number] | null
+  price: NavorRendererAppState['market']['prices'][number] | null
+  priceStatus: NavorRendererAppState['enrichment']['prices'][number] | null
+  transactions: NavorRendererAppState['portfolio']['transactions']
   watchlist: NavorRendererAppState['process']['watchlist'][number] | null
   actions: NavorRendererAppState['dashboard']['actionInbox']
   research: NavorRendererAppState['knowledge']['research']
@@ -41,6 +45,9 @@ export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWor
   const marketBySubject = new Map(state.market.portfolioValues.map((item) => [item.subject, item]))
   const driftBySubject = new Map(state.drift.entries.map((item) => [item.subject, item]))
   const watchlistBySubject = new Map(state.process.watchlist.map((item) => [item.subject, item]))
+  const allocationBySubject = new Map(state.allocation.assets.map((item) => [item.subject, item]))
+  const priceBySubject = new Map(state.market.prices.map((item) => [item.subject, item]))
+  const priceStatusBySubject = new Map(state.enrichment.prices.map((item) => [item.subject, item]))
   const latestPolicyBySubject = new Map<string, NavorRendererAppState['plan']['entries'][number]>()
   for (const policy of state.plan.entries) {
     const current = latestPolicyBySubject.get(policy.subject)
@@ -52,11 +59,17 @@ export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWor
     get: (subject) => {
       if (!subjects.has(subject)) return null
       return {
+        allocation: allocationBySubject.get(subject) ?? null,
         execution: executionBySubject.get(subject) ?? null,
         holding: holdingBySubject.get(subject) ?? null,
         market: marketBySubject.get(subject) ?? null,
         drift: driftBySubject.get(subject) ?? null,
         policy: latestPolicyBySubject.get(subject) ?? null,
+        price: priceBySubject.get(subject) ?? null,
+        priceStatus: priceStatusBySubject.get(subject) ?? null,
+        transactions: state.portfolio.transactions
+          .filter((item) => item.subject === subject)
+          .sort((left, right) => right.date.localeCompare(left.date)),
         watchlist: watchlistBySubject.get(subject) ?? null,
         actions: state.dashboard.actionInbox.filter((item) => item.subject === subject),
         research: state.knowledge.research.filter((item) => item.subject === subject),

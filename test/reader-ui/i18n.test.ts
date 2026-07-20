@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   createReaderLocalization,
+  formatDashboardActionLabel,
   formatDashboardActionReason,
   formatSearchResultCount,
   resolveReaderLocale,
@@ -35,6 +36,10 @@ describe('reader localization', () => {
   it('requires product copy to be registered before it can use the typed translator', () => {
     expect(t('Decision', 'zh-CN')).toBe('决策')
     expect(t('Decision', 'en')).toBe('Decision')
+    expect(t('Market snapshot', 'zh-CN')).toBe('市场快照')
+    expect(t('Action below band', 'zh-CN')).toBe('低于区间时操作')
+    expect(t('stale', 'zh-CN')).toBe('陈旧')
+    expect(t('Not available', 'zh-CN')).toBe('暂无')
   })
 
   it('keeps locale, messages, and number formatting behind one Reader localization entry', () => {
@@ -52,6 +57,9 @@ describe('reader localization', () => {
   })
 
   it('formats dashboard action facts with Chinese variable order', () => {
+    expect(formatDashboardActionLabel('over_invested', 'zh-CN')).toBe('复核')
+    expect(formatDashboardActionLabel('stale_price', 'zh-CN')).toBe('价格')
+
     expect(
       formatDashboardActionReason(
         {
