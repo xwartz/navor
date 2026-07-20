@@ -18,6 +18,7 @@ import {
   formatSignedPercent,
   formatTimestamp,
 } from './format'
+import { ProgressMeter } from './PortfolioVisuals'
 import { Chip, TimelineFeed } from './ViewScaffold'
 
 export function AssetWorkspaceOverlay() {
@@ -237,15 +238,31 @@ function AssetWorkspacePanel({
 
             <WorkspaceSection id="holdings" title="Position">
               {holding ? (
-                <dl className="grid grid-cols-2 gap-4">
-                  <WorkspaceFact
-                    label="Quantity"
-                    value={formatQuantityCommodity(holding.quantity, holding.commodity)}
-                  />
-                  <WorkspaceFact label="Cost" value={formatMoney(holding.cost)} />
-                  <WorkspaceFact label="Actual weight" value={formatPercent(drift?.actualWeight)} />
-                  <WorkspaceFact label="Drift" value={formatSignedPercent(drift?.drift)} />
-                </dl>
+                <div className="space-y-4">
+                  <dl className="grid grid-cols-2 gap-4">
+                    <WorkspaceFact
+                      label="Quantity"
+                      value={formatQuantityCommodity(holding.quantity, holding.commodity)}
+                    />
+                    <WorkspaceFact label="Cost" value={formatMoney(holding.cost)} />
+                  </dl>
+                  <div className="border-t border-border pt-4">
+                    <h4 className="text-xs font-semibold text-ink">{t('Account allocation')}</h4>
+                    <dl className="mt-3 grid grid-cols-2 gap-4">
+                      <WorkspaceFact
+                        label="Account target"
+                        value={formatPercent(execution?.target)}
+                      />
+                      <WorkspaceFact
+                        label="Funding progress"
+                        value={formatPercent(execution?.investedPercent)}
+                      />
+                    </dl>
+                    <div className="mt-3">
+                      <ProgressMeter value={execution?.investedPercent} />
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <QuietMessage>{t('No funded position is recorded for this asset.')}</QuietMessage>
               )}

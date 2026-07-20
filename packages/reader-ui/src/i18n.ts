@@ -329,6 +329,7 @@ const chinese = {
   'Asset workspace': '资产工作区',
   'Close asset workspace': '关闭资产工作区',
   'Asset workspace views': '资产工作区视图',
+  'Account allocation': '账户内配置',
   'Market snapshot': '市场快照',
   'Price status': '价格状态',
   'Data source': '数据源',

@@ -59,4 +59,16 @@ describe('shared asset workspace', () => {
     expect(source).toMatch(/label: t\('Research'\)/)
     expect(source).toMatch(/label: t\('Decision'\)/)
   })
+
+  it('uses the Position section for account allocation progress, not duplicate drift facts', () => {
+    const source = readFileSync(PANEL, 'utf8')
+    const holdingsSection = source.split('id="holdings"')[1]?.split('id="drift"')[0]
+
+    expect(holdingsSection).toContain("t('Account allocation')")
+    expect(holdingsSection).toContain('label="Account target"')
+    expect(holdingsSection).toContain('label="Funding progress"')
+    expect(holdingsSection).toContain('<ProgressMeter value={execution?.investedPercent} />')
+    expect(holdingsSection).not.toContain('label="Actual weight"')
+    expect(holdingsSection).not.toContain('label="Drift"')
+  })
 })

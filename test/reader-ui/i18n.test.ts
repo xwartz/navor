@@ -40,6 +40,7 @@ describe('reader localization', () => {
     expect(t('Action below band', 'zh-CN')).toBe('低于区间时操作')
     expect(t('stale', 'zh-CN')).toBe('陈旧')
     expect(t('Not available', 'zh-CN')).toBe('暂无')
+    expect(t('Account allocation', 'zh-CN')).toBe('账户内配置')
   })
 
   it('keeps locale, messages, and number formatting behind one Reader localization entry', () => {
