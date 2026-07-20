@@ -139,18 +139,18 @@
   account: Account:HKA
   target: 10%
 
-2026-01-02 open Asset:Equity:CN:512500 "中证 500 ETF"
-  symbol: 512500
+2026-01-02 open Asset:Equity:CN:510500 "中证 500 ETF"
+  symbol: 510500
   account: Account:HKA
   target: 20%
 
-2026-01-02 open Asset:Equity:CN:515070 "人工智能 ETF"
-  symbol: 515070
+2026-01-02 open Asset:Equity:CN:159819 "人工智能 ETF"
+  symbol: 159819
   account: Account:HKA
   target: 10%
 
-2026-01-02 open Asset:Equity:CN:512760 "芯片 ETF"
-  symbol: 512760
+2026-01-02 open Asset:Equity:CN:588200 "芯片 ETF"
+  symbol: 588200
   account: Account:HKA
   target: 10%
 

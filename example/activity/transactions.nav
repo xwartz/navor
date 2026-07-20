@@ -209,8 +209,8 @@
   Assets:Cash:USD        -6,251.00 USD
   Expenses:Fee                   1 USD
 
-2026-03-27 txn Asset:Equity:CN:512760 "周线 RSI 超卖，买入 512760"
-  Assets:Equity:CN:512760   16,447 512760.SS @ 0.79799998 CNY
+2026-03-27 txn Asset:Equity:CN:588200 "周线 RSI 超卖，买入 588200"
+  Assets:Equity:CN:588200   16,447 588200.SS @ 0.79799998 CNY
   Assets:Cash:CNY          -13,130 CNY
   Expenses:Fee                   5 CNY
 
@@ -234,8 +234,8 @@
   Assets:Cash:USD           -626.00 USD
   Expenses:Fee                    1 USD
 
-2026-04-03 txn Asset:Equity:CN:512760 "周线 RSI 超卖，买入 512760"
-  Assets:Equity:CN:512760   17,112 512760.SS @ 0.76700002 CNY
+2026-04-03 txn Asset:Equity:CN:588200 "周线 RSI 超卖，买入 588200"
+  Assets:Equity:CN:588200   17,112 588200.SS @ 0.76700002 CNY
   Assets:Cash:CNY          -13,130 CNY
   Expenses:Fee                   5 CNY
 
@@ -279,8 +279,8 @@
   Assets:Cash:USD     -1,876.00 USD
   Expenses:Fee                1 USD
 
-2026-04-10 txn Asset:Equity:CN:512760 "周线 RSI/KD 超卖，买入 512760"
-  Assets:Equity:CN:512760   15,514 512760.SS @ 0.84600002 CNY
+2026-04-10 txn Asset:Equity:CN:588200 "周线 RSI/KD 超卖，买入 588200"
+  Assets:Equity:CN:588200   15,514 588200.SS @ 0.84600002 CNY
   Assets:Cash:CNY          -13,130 CNY
   Expenses:Fee                   5 CNY
 
@@ -294,8 +294,8 @@
   Assets:Cash:HKD        -29,396 HKD
   Expenses:Fee                10 HKD
 
-2026-04-17 txn Asset:Equity:CN:512760 "周线 RSI 超卖，买入 512760"
-  Assets:Equity:CN:512760   14,897 512760.SS @ 0.88099998 CNY
+2026-04-17 txn Asset:Equity:CN:588200 "周线 RSI 超卖，买入 588200"
+  Assets:Equity:CN:588200   14,897 588200.SS @ 0.88099998 CNY
   Assets:Cash:CNY          -13,129 CNY
   Expenses:Fee                   5 CNY
 

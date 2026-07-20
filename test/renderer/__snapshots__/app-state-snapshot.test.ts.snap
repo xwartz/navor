@@ -329,7 +329,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "account": "Account:HKA",
         "derivedPortfolioWeight": 8,
-        "subject": "Asset:Equity:CN:512500",
+        "subject": "Asset:Equity:CN:510500",
         "target": 20,
         "targetAmount": {
           "amount": 100000,
@@ -340,7 +340,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "account": "Account:HKA",
         "derivedPortfolioWeight": 4,
-        "subject": "Asset:Equity:CN:515070",
+        "subject": "Asset:Equity:CN:159819",
         "target": 10,
         "targetAmount": {
           "amount": 50000,
@@ -351,7 +351,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "account": "Account:HKA",
         "derivedPortfolioWeight": 4,
-        "subject": "Asset:Equity:CN:512760",
+        "subject": "Asset:Equity:CN:588200",
         "target": 10,
         "targetAmount": {
           "amount": 50000,
@@ -1421,7 +1421,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "marketValue": null,
         "remainingBudget": null,
         "status": "not_started",
-        "subject": "Asset:Equity:CN:512500",
+        "subject": "Asset:Equity:CN:510500",
         "target": 20,
         "targetAmount": {
           "amount": 100000,
@@ -1438,7 +1438,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "marketValue": null,
         "remainingBudget": null,
         "status": "not_started",
-        "subject": "Asset:Equity:CN:515070",
+        "subject": "Asset:Equity:CN:159819",
         "target": 10,
         "targetAmount": {
           "amount": 50000,
@@ -1455,7 +1455,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "marketValue": null,
         "remainingBudget": null,
         "status": "not_started",
-        "subject": "Asset:Equity:CN:512760",
+        "subject": "Asset:Equity:CN:588200",
         "target": 10,
         "targetAmount": {
           "amount": 50000,
@@ -1920,7 +1920,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "account": "Account:HKA",
         "derivedPortfolioWeight": 8,
-        "subject": "Asset:Equity:CN:512500",
+        "subject": "Asset:Equity:CN:510500",
         "target": 20,
         "targetAmount": {
           "amount": 100000,
@@ -1931,7 +1931,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "account": "Account:HKA",
         "derivedPortfolioWeight": 4,
-        "subject": "Asset:Equity:CN:515070",
+        "subject": "Asset:Equity:CN:159819",
         "target": 10,
         "targetAmount": {
           "amount": 50000,
@@ -1942,7 +1942,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "account": "Account:HKA",
         "derivedPortfolioWeight": 4,
-        "subject": "Asset:Equity:CN:512760",
+        "subject": "Asset:Equity:CN:588200",
         "target": 10,
         "targetAmount": {
           "amount": 50000,
@@ -2555,7 +2555,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "planMax": null,
         "planMin": null,
         "status": "unknown",
-        "subject": "Asset:Equity:CN:512500",
+        "subject": "Asset:Equity:CN:510500",
         "targetWeight": 8,
         "title": "中证 500 ETF",
       },
@@ -2567,7 +2567,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "planMax": null,
         "planMin": null,
         "status": "unknown",
-        "subject": "Asset:Equity:CN:515070",
+        "subject": "Asset:Equity:CN:159819",
         "targetWeight": 4,
         "title": "人工智能 ETF",
       },
@@ -2579,7 +2579,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "planMax": null,
         "planMin": null,
         "status": "unknown",
-        "subject": "Asset:Equity:CN:512760",
+        "subject": "Asset:Equity:CN:588200",
         "targetWeight": 4,
         "title": "芯片 ETF",
       },
@@ -2819,19 +2819,19 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "asOf": null,
         "provider": null,
         "status": "missing",
-        "subject": "Asset:Equity:CN:512500",
+        "subject": "Asset:Equity:CN:510500",
       },
       {
         "asOf": null,
         "provider": null,
         "status": "missing",
-        "subject": "Asset:Equity:CN:515070",
+        "subject": "Asset:Equity:CN:159819",
       },
       {
         "asOf": null,
         "provider": null,
         "status": "missing",
-        "subject": "Asset:Equity:CN:512760",
+        "subject": "Asset:Equity:CN:588200",
       },
       {
         "asOf": null,
@@ -3596,19 +3596,19 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "yahooSymbol": "588000",
       },
       {
-        "subject": "Asset:Equity:CN:512500",
-        "symbol": "512500",
-        "yahooSymbol": "512500",
+        "subject": "Asset:Equity:CN:510500",
+        "symbol": "510500",
+        "yahooSymbol": "510500",
       },
       {
-        "subject": "Asset:Equity:CN:515070",
-        "symbol": "515070",
-        "yahooSymbol": "515070",
+        "subject": "Asset:Equity:CN:159819",
+        "symbol": "159819",
+        "yahooSymbol": "159819",
       },
       {
-        "subject": "Asset:Equity:CN:512760",
-        "symbol": "512760",
-        "yahooSymbol": "512760",
+        "subject": "Asset:Equity:CN:588200",
+        "symbol": "588200",
+        "yahooSymbol": "588200",
       },
       {
         "subject": "Asset:Equity:CN:513130",
