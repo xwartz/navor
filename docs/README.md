@@ -15,6 +15,7 @@ Documentation for Navor. Start with **why**, then **how**, then the **language**
 - [Your first `.nav` file](getting-started/your-first-nav.md)
 - [Organize your repository](getting-started/organize-your-repository.md)
 - [Editor support](getting-started/editor-support.md)
+- [AI assistant skills](getting-started/ai-skills.md)
 
 ## Language
 

@@ -50,6 +50,17 @@ nav serve example
 
 Editor highlighting and format-on-save: [`extensions/vscode`](extensions/vscode/). Install `navor-*.vsix` from [Releases](https://github.com/xwartz/navor/releases/latest).
 
+## AI skills
+
+Install Navor's portable Agent Skills for Codex, Cursor, Claude Code, or another supported agent:
+
+```bash
+npx skills add xwartz/navor --list
+npx skills add xwartz/navor --skill '*' --agent codex
+```
+
+Add `--global` to make them available across projects. See [AI assistant skills](docs/getting-started/ai-skills.md) for the available skills and privacy note.
+
 ## Data boundary
 
 Navor does not upload a repository or require an account. Live prices are optional enrichment. Read [market data and privacy](docs/operations/market-data-and-privacy.md) before exposing a price proxy.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Navor Onboard"
+  short_description: "Create a fact-based Navor workspace"
+  default_prompt: "Set up a Navor workspace from the facts I provide."

@@ -50,6 +50,17 @@ nav serve example
 
 语法高亮和保存时格式化见 [`extensions/vscode`](extensions/vscode/)，从 [Releases](https://github.com/xwartz/navor/releases/latest) 安装 `navor-*.vsix`。
 
+## AI skills
+
+用可移植的 Agent Skills 为 Codex、Cursor、Claude Code 或其他支持的 agent 安装 Navor 工作流：
+
+```bash
+npx skills add xwartz/navor --list
+npx skills add xwartz/navor --skill '*' --agent codex
+```
+
+添加 `--global` 后可在所有项目中使用。可用 skill 和隐私说明见 [AI 助手 skills](docs/getting-started/ai-skills.zh.md)。
+
 ## 数据边界
 
 Navor 不上传投资仓库，也不要求注册账户；实时价格是可选增强。若要公开价格代理，请先读[行情数据与隐私](docs/operations/market-data-and-privacy.zh.md)。

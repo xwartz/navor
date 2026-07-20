@@ -46,3 +46,27 @@ Continue with [your first `.nav` file](your-first-nav.md), then [organize your r
 ## Editor support
 
 Syntax highlighting and format-on-save for `.nav` files live in the [editor support](editor-support.md) guide.
+
+## AI assistant skills
+
+Navor publishes portable Agent Skills through the open `skills` CLI. List the available skills first:
+
+```bash
+npx skills add xwartz/navor --list
+```
+
+Install all of them for Codex in the current project:
+
+```bash
+npx skills add xwartz/navor --skill '*' --agent codex
+```
+
+Use `--agent cursor` or `--agent claude-code` for another supported assistant. Add `--global` to install for all of your projects instead of only the current project.
+
+The CLI collects anonymous installation telemetry by default. If that does not fit your privacy preference, disable it for the command:
+
+```bash
+DISABLE_TELEMETRY=1 npx skills add xwartz/navor --skill '*' --agent codex --global
+```
+
+Read [AI assistant skills](ai-skills.md) before using a skill with an investment workspace.

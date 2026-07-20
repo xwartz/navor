@@ -1,0 +1,4 @@
+interface:
+  display_name: "Navor Review"
+  short_description: "Audit a Navor workspace read-only"
+  default_prompt: "Review my Navor workspace against its recorded process."

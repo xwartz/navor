@@ -15,6 +15,7 @@ Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** 
 - [第一个 `.nav` 文件](getting-started/your-first-nav.zh.md)
 - [组织仓库](getting-started/organize-your-repository.zh.md)
 - [编辑器支持](getting-started/editor-support.zh.md)
+- [AI 助手 skills](getting-started/ai-skills.zh.md)
 
 ## 语言
 

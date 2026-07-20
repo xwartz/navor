@@ -1,0 +1,4 @@
+interface:
+  display_name: "Navor Record"
+  short_description: "Record a fact in a Navor workspace"
+  default_prompt: "Record this investment event in my Navor workspace."
