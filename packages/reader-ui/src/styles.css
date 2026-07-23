@@ -131,6 +131,11 @@
     animation: view-enter 180ms cubic-bezier(0.2, 0, 0, 1) both;
   }
 
+  /* Horizontal strips that may overflow: pair with MetaScroll end-fade. */
+  .meta-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* Opt-in press for compact controls only. Full-bleed list rows must not scale. */
   .press-scale:active:not(:disabled) {
     transform: scale(0.97);
@@ -168,6 +173,10 @@
   @media (prefers-reduced-motion: reduce) {
     .view-enter {
       animation: none;
+    }
+
+    .press-scale:active:not(:disabled) {
+      transform: none;
     }
 
     button {

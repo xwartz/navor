@@ -98,9 +98,11 @@ function ReaderAppShell({
   const [navCollapsed, setNavCollapsed] = useState(readNavCollapsed)
   const [filters, setFilters] = useState<ReaderFilters>(initialFilters)
   const navButtonRef = useRef<HTMLButtonElement>(null)
+  const shouldFocusViewRef = useRef(false)
   const { selectedAssetSubject } = useAssetWorkspace()
   const diagnosticCount = state ? countDiagnostics(state) : 0
   const showSearch = Boolean(state && filters.query?.trim())
+  const viewFocusToken = showSearch ? 'search' : activeView
   const filtersEnabled = showSearch || FILTERABLE_VIEWS.has(activeView)
   const filterResultCount =
     state && filtersEnabled && Object.values(filters).some(Boolean)
@@ -109,6 +111,7 @@ function ReaderAppShell({
 
   useEffect(() => {
     const syncView = () => {
+      shouldFocusViewRef.current = true
       setActiveView(resolveReaderView(window.location.hash, initialView))
       setFilters({})
     }
@@ -125,7 +128,22 @@ function ReaderAppShell({
     window.localStorage.setItem('navor:nav-collapsed', String(navCollapsed))
   }, [navCollapsed])
 
+  useEffect(() => {
+    if (!shouldFocusViewRef.current || !viewFocusToken) {
+      return
+    }
+
+    shouldFocusViewRef.current = false
+
+    const frame = window.requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>('#main-content h1')?.focus({ preventScroll: true })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [viewFocusToken])
+
   const selectView = (view: ReaderView) => {
+    shouldFocusViewRef.current = view !== activeView || showSearch
     setActiveView(view)
     setFilters({})
 
@@ -167,7 +185,7 @@ function ReaderAppShell({
               <button
                 aria-expanded={navOpen}
                 aria-label={`${t('Open navigation')}, ${t('current view')} ${getViewLabels(readerLocale)[activeView]}`}
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-paper text-lg leading-none text-ink shadow-[0_1px_2px_rgba(17,19,24,0.06)] transition-[background-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft lg:hidden"
+                className="press-scale grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-paper text-lg leading-none text-ink shadow-[0_1px_2px_rgba(17,19,24,0.06)] transition-[background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft lg:hidden"
                 onClick={() => setNavOpen(true)}
                 ref={navButtonRef}
                 type="button"

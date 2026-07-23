@@ -2,6 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { t } from '../i18n'
 import { formatFxCoverage, formatTimestamp } from './format'
+import { MetaScroll } from './MetaScroll'
 
 interface WorkspaceMetaBarProps {
   state: NavorRendererAppState
@@ -29,9 +30,11 @@ export function WorkspaceMetaBar({ state, liveEnabled, loading }: WorkspaceMetaB
           : t('Ledger only')
 
   return (
-    <section
+    <MetaScroll
       aria-label={t('Workspace valuation status')}
-      className="meta-scroll flex min-h-9 items-center gap-x-5 overflow-x-auto border-b border-white/8 bg-sidebar px-4 py-2 text-[11px] text-sidebar-muted lg:px-5"
+      as="section"
+      className="flex min-h-9 items-center gap-x-5 border-b border-white/8 bg-sidebar px-4 py-2 text-[11px] text-sidebar-muted lg:px-5"
+      fade="sidebar"
     >
       <MetaItem label={t('Valuation')} value={valuationMode} />
       {trackedCount > 0 ? (
@@ -53,7 +56,7 @@ export function WorkspaceMetaBar({ state, liveEnabled, loading }: WorkspaceMetaB
           value={formatTimestamp(latestAsOf)}
         />
       ) : null}
-    </section>
+    </MetaScroll>
   )
 }
 

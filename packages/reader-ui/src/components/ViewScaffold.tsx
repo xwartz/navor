@@ -45,7 +45,7 @@ export function ViewHeader({
           {t(eyebrow)}
         </p>
         <h1
-          className="mt-1 text-[1.875rem] leading-[1.08] font-bold tracking-[-0.022em] text-ink"
+          className="mt-1 text-[1.875rem] leading-[1.08] font-bold tracking-[-0.022em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
           tabIndex={-1}
         >
           {t(title)}

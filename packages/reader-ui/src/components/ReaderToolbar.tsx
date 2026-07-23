@@ -94,7 +94,7 @@ export function ReaderToolbar({
 
         {filtersEnabled ? (
           <details className="group relative shrink-0" ref={filtersRef}>
-            <summary className="flex h-10 cursor-pointer list-none items-center gap-2 rounded-md border border-border bg-paper px-3 text-xs font-semibold text-ink-muted transition-[background-color,color,border-color] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:border-border-strong [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
+            <summary className="press-scale flex h-10 cursor-pointer list-none items-center gap-2 rounded-md border border-border bg-paper px-3 text-xs font-semibold text-ink-muted transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:border-border-strong [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
               <span className="inline-flex items-center gap-2 whitespace-nowrap">
                 {t('Filters')}
                 {activeCount > 0 ? (

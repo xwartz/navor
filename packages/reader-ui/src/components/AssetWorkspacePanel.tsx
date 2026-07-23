@@ -18,6 +18,7 @@ import {
   formatSignedPercent,
   formatTimestamp,
 } from './format'
+import { MetaScroll } from './MetaScroll'
 import { ProgressMeter } from './PortfolioVisuals'
 import { Chip, TimelineFeed } from './ViewScaffold'
 
@@ -159,7 +160,7 @@ function AssetWorkspacePanel({
           </div>
           <button
             aria-label={t('Close asset workspace')}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-paper text-lg text-ink-muted transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-ink"
+            className="press-scale grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-paper text-lg text-ink-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-ink"
             onClick={onClose}
             ref={closeButtonRef}
             type="button"
@@ -168,16 +169,18 @@ function AssetWorkspacePanel({
           </button>
         </header>
 
-        <nav
+        <MetaScroll
           aria-label={t('Asset workspace views')}
-          className="meta-scroll flex shrink-0 gap-1 overflow-x-auto border-b border-border px-3 py-2"
+          as="nav"
+          className="flex shrink-0 gap-1 border-b border-border px-3 py-2"
+          fade="paper-elevated"
         >
           <WorkspaceLink href="#holdings">{t('Holdings')}</WorkspaceLink>
           <WorkspaceLink href="#drift">{t('Drift')}</WorkspaceLink>
           <WorkspaceLink href="#plan">{t('Plan')}</WorkspaceLink>
           <WorkspaceLink href="#research">{t('Research')}</WorkspaceLink>
           <WorkspaceLink href="#decisions">{t('Decisions')}</WorkspaceLink>
-        </nav>
+        </MetaScroll>
 
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="space-y-5">

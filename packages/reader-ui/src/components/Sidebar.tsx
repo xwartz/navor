@@ -114,7 +114,7 @@ export function Sidebar({
             <button
               aria-label={t(isCollapsed ? 'Expand navigation' : 'Collapse navigation')}
               aria-pressed={isCollapsed}
-              className="ml-auto hidden h-8 w-8 place-items-center rounded-md text-sm text-sidebar-muted transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 [@media(hover:hover)]:hover:bg-white/8 [@media(hover:hover)]:hover:text-sidebar-ink lg:grid"
+              className="press-scale ml-auto hidden h-8 w-8 place-items-center rounded-md text-sm text-sidebar-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 [@media(hover:hover)]:hover:bg-white/8 [@media(hover:hover)]:hover:text-sidebar-ink lg:grid"
               onClick={onToggleCollapse}
               type="button"
             >

@@ -31,7 +31,12 @@ export function SearchOverview({ state, filters, onSelectView }: SearchOverviewP
   if (hits.length === 0) {
     return (
       <section className="rounded-lg border border-border bg-paper-elevated p-5">
-        <h3 className="text-lg font-bold text-ink">{t('No matches')}</h3>
+        <h1
+          className="text-lg font-bold text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          tabIndex={-1}
+        >
+          {t('No matches')}
+        </h1>
         <p className="mt-2 text-sm text-ink-muted">
           {t('Try a broader query or remove one of the subject, tag, or date filters.')}
         </p>
@@ -44,7 +49,12 @@ export function SearchOverview({ state, filters, onSelectView }: SearchOverviewP
   return (
     <section className="space-y-4">
       <div className="rounded-lg border border-border bg-paper-elevated p-5">
-        <h3 className="text-lg font-bold text-ink">{t('Search results')}</h3>
+        <h1
+          className="text-lg font-bold text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          tabIndex={-1}
+        >
+          {t('Search results')}
+        </h1>
         <p className="mt-1 text-sm text-ink-muted">{formatSearchResultCount(hits.length)}</p>
       </div>
 
