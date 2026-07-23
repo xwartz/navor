@@ -1,5 +1,11 @@
 # @navor/core
 
+## 0.5.4
+
+### Patch Changes
+
+- Refresh the Reader experience with updated terminology, focus handling, and scrolling behavior.
+
 ## 0.5.3
 
 ## 0.5.2

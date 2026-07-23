@@ -1,5 +1,15 @@
 # @navor/cli
 
+## 0.5.4
+
+### Patch Changes
+
+- Refresh the Reader experience with updated terminology, focus handling, and scrolling behavior.
+- Updated dependencies
+  - @navor/core@0.5.4
+  - @navor/renderer@0.5.4
+  - @navor/reader-ui@0.5.4
+
 ## 0.5.3
 
 ### Patch Changes

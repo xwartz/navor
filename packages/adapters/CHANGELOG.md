@@ -1,5 +1,14 @@
 # @navor/adapters
 
+## 0.5.4
+
+### Patch Changes
+
+- Refresh the Reader experience with updated terminology, focus handling, and scrolling behavior.
+- Updated dependencies
+  - @navor/contract@0.5.4
+  - @navor/core@0.5.4
+
 ## 0.5.3
 
 ### Patch Changes
