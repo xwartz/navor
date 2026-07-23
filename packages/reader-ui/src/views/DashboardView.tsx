@@ -116,7 +116,7 @@ export function DashboardView({
     <div className="space-y-5">
       <ViewHeader
         description="Portfolio posture, target-range exceptions, and the next decisions to make."
-        eyebrow="Command"
+        eyebrow="Monitor"
         title="Overview"
       />
 

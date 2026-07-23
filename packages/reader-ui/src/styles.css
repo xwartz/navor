@@ -1,34 +1,79 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display:
-    "Libre Baskerville", "Charter", "Bitstream Charter", "Sitka Text", "Songti SC", "Noto Serif SC",
-    serif;
-  --font-ui: "Public Sans", "SF Pro Text", "PingFang SC", "Noto Sans SC", sans-serif;
+  --font-display: "SF Pro Display", "Aptos Display", "PingFang SC", "Noto Sans SC", sans-serif;
+  --font-ui: "SF Pro Text", "Aptos", "PingFang SC", "Noto Sans SC", sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", "Menlo", monospace;
-  --color-paper: oklch(0.965 0.006 88);
-  --color-paper-elevated: oklch(0.992 0.003 88);
-  --color-sidebar: oklch(0.205 0.012 165);
-  --color-sidebar-strong: oklch(0.255 0.014 165);
-  --color-sidebar-ink: oklch(0.93 0.008 88);
-  --color-sidebar-muted: oklch(0.7 0.012 150);
-  --color-ink: oklch(0.205 0.012 75);
-  --color-ink-muted: oklch(0.47 0.012 75);
-  --color-ink-faint: oklch(0.62 0.01 75);
-  --color-border: oklch(0.88 0.009 82);
-  --color-border-strong: oklch(0.76 0.014 82);
-  --color-accent: oklch(0.48 0.085 158);
-  --color-accent-soft: oklch(0.93 0.028 155);
-  --color-accent-ink: oklch(0.35 0.07 158);
-  --color-warning: oklch(0.57 0.12 72);
-  --color-warning-soft: oklch(0.94 0.045 82);
-  --color-danger: oklch(0.56 0.16 27);
-  --color-danger-soft: oklch(0.95 0.035 28);
-  --color-positive: oklch(0.48 0.085 158);
-  --color-positive-soft: oklch(0.93 0.028 155);
-  --radius-sm: 3px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
+  --color-paper: oklch(0.145 0.008 250);
+  --color-paper-elevated: oklch(0.19 0.01 250);
+  --color-sidebar: oklch(0.115 0.009 250);
+  --color-sidebar-strong: oklch(0.165 0.012 250);
+  --color-sidebar-ink: oklch(0.91 0.008 85);
+  --color-sidebar-muted: oklch(0.63 0.012 220);
+  --color-ink: oklch(0.91 0.008 85);
+  --color-ink-muted: oklch(0.69 0.012 220);
+  --color-ink-faint: oklch(0.51 0.012 220);
+  --color-border: oklch(0.285 0.012 250);
+  --color-border-strong: oklch(0.38 0.015 250);
+  --color-accent: oklch(0.72 0.12 155);
+  --color-accent-soft: oklch(0.255 0.045 155);
+  --color-accent-ink: oklch(0.82 0.085 155);
+  --color-warning: oklch(0.79 0.14 82);
+  --color-warning-soft: oklch(0.27 0.045 82);
+  --color-danger: oklch(0.73 0.15 25);
+  --color-danger-soft: oklch(0.265 0.048 25);
+  --color-positive: oklch(0.72 0.12 155);
+  --color-positive-soft: oklch(0.255 0.045 155);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+/* Dark is the fallback. Supported browsers automatically use the light desk below. */
+:root {
+  color-scheme: dark;
+  --chart-pine: oklch(0.72 0.12 155);
+  --chart-slate: oklch(0.64 0.04 235);
+  --chart-amber: oklch(0.79 0.14 82);
+  --chart-terra: oklch(0.69 0.1 40);
+  --chart-plum: oklch(0.65 0.045 315);
+  --chart-olive: oklch(0.67 0.065 115);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --color-paper: oklch(0.967 0.006 250);
+    --color-paper-elevated: oklch(0.992 0.003 250);
+    --color-sidebar: oklch(0.155 0.012 250);
+    --color-sidebar-strong: oklch(0.22 0.014 250);
+    --color-sidebar-ink: oklch(0.93 0.008 85);
+    --color-sidebar-muted: oklch(0.68 0.012 220);
+    --color-ink: oklch(0.225 0.012 250);
+    --color-ink-muted: oklch(0.49 0.012 250);
+    --color-ink-faint: oklch(0.62 0.01 250);
+    --color-border: oklch(0.87 0.009 250);
+    --color-border-strong: oklch(0.76 0.014 250);
+    --color-accent: oklch(0.48 0.075 155);
+    --color-accent-soft: oklch(0.93 0.028 155);
+    --color-accent-ink: oklch(0.35 0.06 155);
+    --color-warning: oklch(0.58 0.1 75);
+    --color-warning-soft: oklch(0.94 0.045 82);
+    --color-danger: oklch(0.55 0.13 28);
+    --color-danger-soft: oklch(0.95 0.035 28);
+    --color-positive: oklch(0.48 0.075 155);
+    --color-positive-soft: oklch(0.93 0.028 155);
+    --chart-pine: oklch(0.48 0.075 155);
+    --chart-slate: oklch(0.47 0.035 240);
+    --chart-amber: oklch(0.58 0.1 75);
+    --chart-terra: oklch(0.54 0.065 35);
+    --chart-plum: oklch(0.48 0.035 310);
+    --chart-olive: oklch(0.5 0.05 130);
+  }
+
+  body {
+    background-image: linear-gradient(to bottom, rgba(17, 25, 36, 0.028), transparent 22rem);
+  }
 }
 
 @layer base {
@@ -48,6 +93,7 @@
   body {
     @apply bg-paper font-ui text-ink;
     min-width: 320px;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.018), transparent 22rem);
   }
 
   h1,
@@ -77,8 +123,8 @@
   }
 
   ::selection {
-    color: var(--color-accent-ink);
-    background: var(--color-accent-soft);
+    color: var(--color-paper-elevated);
+    background: var(--color-accent);
   }
 }
 
@@ -127,8 +173,7 @@
   }
 
   .view-enter {
-    /* Opacity only: a lingering transform creates a containing block for position:fixed descendants. */
-    animation: view-enter 180ms cubic-bezier(0.2, 0, 0, 1) both;
+    animation: view-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   /* Horizontal strips that may overflow: pair with MetaScroll end-fade. */
@@ -164,9 +209,11 @@
   @keyframes view-enter {
     from {
       opacity: 0;
+      filter: blur(2px);
     }
     to {
       opacity: 1;
+      filter: blur(0);
     }
   }
 

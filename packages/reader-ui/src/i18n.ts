@@ -1,6 +1,8 @@
 export type ReaderLocale = 'en' | 'zh-CN'
 
 const chinese = {
+  Monitor: '工作台',
+  System: '系统',
   Command: '工作台',
   Overview: '总览',
   Drift: '偏离',

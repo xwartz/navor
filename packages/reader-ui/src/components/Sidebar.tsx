@@ -95,13 +95,13 @@ export function Sidebar({
       />
       <aside
         aria-hidden={drawerHidden}
-        className={`fixed inset-y-0 left-0 z-50 flex w-[15.5rem] shrink-0 flex-col bg-sidebar text-sidebar-ink shadow-[8px_0_24px_rgba(18,25,22,0.12)] transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:bottom-auto lg:h-screen lg:self-start lg:translate-x-0 lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[15.5rem] shrink-0 flex-col bg-sidebar text-sidebar-ink shadow-[8px_0_32px_rgba(0,0,0,0.32)] transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:bottom-auto lg:h-screen lg:self-start lg:translate-x-0 lg:shadow-none ${
           isRail ? 'lg:w-20' : 'lg:w-[15.5rem]'
         } ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
         inert={drawerHidden}
         ref={asideRef}
       >
-        <div className={`border-b border-white/8 px-4 py-4 ${isRail ? 'lg:px-2' : ''}`}>
+        <div className={`border-b border-white/8 px-4 py-5 ${isRail ? 'lg:px-2' : ''}`}>
           <div className="flex items-center gap-3">
             <BrandMark className="h-8 w-8 shrink-0 rounded-md text-sidebar" size={32} />
             <div className={`min-w-0 ${isRail ? 'lg:hidden' : ''}`}>
@@ -109,7 +109,9 @@ export function Sidebar({
                 Navor
               </h1>
               <span className="sr-only">{t('Navor Reader')}</span>
-              <p className="truncate text-xs text-sidebar-muted">{t('Investment ledger')}</p>
+              <p className="mt-0.5 truncate text-[11px] tracking-[0.02em] text-sidebar-muted">
+                {t('Investment ledger')}
+              </p>
             </div>
             <button
               aria-label={t(isCollapsed ? 'Expand navigation' : 'Collapse navigation')}
@@ -125,12 +127,12 @@ export function Sidebar({
 
         <nav
           aria-label={t('Reader views')}
-          className={`flex-1 overflow-y-auto px-2.5 py-3 ${isRail ? 'lg:px-2' : ''}`}
+          className={`flex-1 overflow-y-auto px-2.5 py-4 ${isRail ? 'lg:px-2' : ''}`}
         >
           {navGroups.map((group) => (
             <div className={`mb-5 ${isRail ? 'lg:mb-2' : ''}`} key={group.label}>
               <p
-                className={`mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-sidebar-muted/75 ${
+                className={`mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-muted/75 ${
                   isRail ? 'lg:sr-only' : ''
                 }`}
               >
@@ -149,7 +151,7 @@ export function Sidebar({
                           isRail ? 'lg:justify-center lg:px-1.5' : ''
                         } ${
                           isActive
-                            ? 'bg-white/8 font-semibold text-sidebar-ink'
+                            ? 'bg-sidebar-strong font-semibold text-sidebar-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
                             : 'font-medium text-sidebar-muted [@media(hover:hover)]:hover:bg-white/5 [@media(hover:hover)]:hover:text-sidebar-ink'
                         }`}
                         onClick={() => {
@@ -200,7 +202,9 @@ export function Sidebar({
             isRail ? 'lg:hidden' : ''
           }`}
         >
-          {t('Facts first. Plans explicit.')}
+          <span className="block text-[10px] font-semibold uppercase tracking-[0.13em] text-sidebar-muted/65">
+            {t('Facts first. Plans explicit.')}
+          </span>
         </div>
       </aside>
     </>

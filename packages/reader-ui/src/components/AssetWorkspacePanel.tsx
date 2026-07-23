@@ -136,14 +136,14 @@ function AssetWorkspacePanel({
         aria-labelledby="asset-workspace-title"
         className={`fixed inset-y-0 right-0 z-[70] flex w-full flex-col bg-paper-elevated sm:w-[30rem] xl:w-[22rem] 2xl:w-[30rem] ${
           isModal
-            ? 'shadow-[-16px_0_48px_rgba(27,31,28,0.2)]'
-            : 'border-l border-border shadow-[-8px_0_24px_rgba(27,31,28,0.08)]'
+            ? 'shadow-[-16px_0_48px_rgba(0,0,0,0.45)]'
+            : 'border-l border-border shadow-[-8px_0_24px_rgba(0,0,0,0.24)]'
         }`}
         ref={panelRef}
         role={isModal ? 'dialog' : 'complementary'}
         {...(isModal ? { 'aria-modal': true } : {})}
       >
-        <header className="flex items-start justify-between gap-4 border-b border-border bg-paper-elevated px-4 py-4">
+        <header className="flex items-start justify-between gap-4 border-b border-border bg-paper-elevated px-5 py-5">
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
               {t('Asset workspace')}

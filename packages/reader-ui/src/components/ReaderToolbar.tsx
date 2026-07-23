@@ -68,7 +68,7 @@ export function ReaderToolbar({
   }, [])
 
   return (
-    <section className="sticky top-0 z-30 border-b border-border bg-paper-elevated px-4 py-2.5 lg:px-6">
+    <section className="sticky top-0 z-30 border-b border-border bg-paper/95 px-4 py-3 lg:px-7">
       <div className="flex items-center gap-2.5">
         {leading}
         <label className="relative min-w-0 flex-1">
@@ -80,7 +80,7 @@ export function ReaderToolbar({
             ⌕
           </span>
           <input
-            className="h-10 w-full rounded-md border border-border bg-paper pl-8 pr-14 text-sm text-ink outline-none transition-[border-color,box-shadow,background-color] focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/20"
+            className="h-10 w-full rounded-md border border-border bg-paper-elevated/80 pl-8 pr-14 text-sm text-ink outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/70 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/20"
             onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
             placeholder={t('Search workspace')}
             ref={searchRef}
@@ -94,7 +94,7 @@ export function ReaderToolbar({
 
         {filtersEnabled ? (
           <details className="group relative shrink-0" ref={filtersRef}>
-            <summary className="press-scale flex h-10 cursor-pointer list-none items-center gap-2 rounded-md border border-border bg-paper px-3 text-xs font-semibold text-ink-muted transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:border-border-strong [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
+            <summary className="press-scale flex h-10 cursor-pointer list-none items-center gap-2 rounded-md border border-border bg-paper-elevated px-3 text-xs font-semibold text-ink-muted transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:border-border-strong [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
               <span className="inline-flex items-center gap-2 whitespace-nowrap">
                 {t('Filters')}
                 {activeCount > 0 ? (

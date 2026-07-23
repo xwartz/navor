@@ -59,7 +59,7 @@ export function ViewHeader({
 
 export function SummaryStrip({ items }: { items: SummaryItem[] }) {
   return (
-    <section className="summary-strip overflow-hidden rounded-lg bg-paper-elevated shadow-[0_1px_0_rgba(47,43,36,0.05),0_3px_12px_rgba(47,43,36,0.055)] ring-1 ring-border/85">
+    <section className="summary-strip overflow-hidden rounded-lg bg-paper-elevated shadow-[0_1px_2px_rgba(62,47,30,0.055)] ring-1 ring-border/85">
       {items.map((item) => (
         <div
           className="summary-item min-h-[6.5rem] px-3.5 py-3.5 sm:min-h-[7.25rem] sm:px-4"

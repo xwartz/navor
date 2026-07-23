@@ -37,14 +37,21 @@ export interface TargetActualItem {
 export type ChartTone = 'accent' | 'positive' | 'warning' | 'danger' | 'muted'
 
 const TONE_COLORS: Record<ChartTone, string> = {
-  accent: '#367455',
-  positive: '#367455',
-  warning: '#956812',
-  danger: '#b54c47',
-  muted: '#beb9ae',
+  accent: 'var(--chart-pine)',
+  positive: 'var(--chart-pine)',
+  warning: 'var(--chart-amber)',
+  danger: 'var(--color-danger)',
+  muted: 'var(--color-border-strong)',
 }
 
-const CATEGORY_COLORS = ['#367455', '#526f7a', '#a77816', '#9a5844', '#71637f', '#737b49']
+const CATEGORY_COLORS = [
+  'var(--chart-pine)',
+  'var(--chart-slate)',
+  'var(--chart-amber)',
+  'var(--chart-terra)',
+  'var(--chart-plum)',
+  'var(--chart-olive)',
+]
 
 export function DonutChart({
   items,
@@ -109,7 +116,7 @@ export function DonutChart({
                   fill={item.color}
                   fillOpacity={!activeId || activeId === item.id ? 1 : 0.28}
                   key={item.id}
-                  stroke={activeId === item.id ? '#fcfbf7' : 'transparent'}
+                  stroke={activeId === item.id ? 'var(--color-paper-elevated)' : 'transparent'}
                   strokeWidth={activeId === item.id ? 3 : 0}
                 />
               ))}
@@ -191,11 +198,11 @@ export function AllocationBarChart({ items }: { items: ChartItem[] }) {
     <div className="h-72">
       <ResponsiveContainer height="100%" width="100%">
         <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16, top: 8, bottom: 8 }}>
-          <CartesianGrid horizontal={false} stroke="#ddd9d0" />
+          <CartesianGrid horizontal={false} stroke="var(--color-border)" />
           <XAxis tickFormatter={(value) => `${value}%`} type="number" />
           <YAxis
             dataKey="label"
-            tick={{ fill: '#69645c', fontSize: 12 }}
+            tick={{ fill: 'var(--color-ink-muted)', fontSize: 12 }}
             tickLine={false}
             type="category"
             width={96}

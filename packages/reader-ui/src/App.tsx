@@ -196,9 +196,9 @@ function ReaderAppShell({
             onChange={setFilters}
             resultCount={filterResultCount}
           />
-          <main className="flex-1 px-4 py-5 lg:px-6 lg:py-7" id="main-content">
+          <main className="flex-1 px-4 py-6 lg:px-7 lg:py-8" id="main-content">
             <div
-              className="view-enter mx-auto w-full max-w-[100rem]"
+              className="view-enter mx-auto w-full max-w-[96rem]"
               key={showSearch ? `search:${filters.query}` : activeView}
             >
               {showSearch ? (

@@ -25,7 +25,7 @@ export interface NavGroup {
 
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: 'Command',
+    label: 'Monitor',
     items: [
       { id: 'overview', label: 'Overview' },
       { id: 'drift', label: 'Drift' },
@@ -33,7 +33,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: 'Portfolio',
+    label: 'Capital',
     items: [
       { id: 'holdings', label: 'Holdings' },
       { id: 'allocation', label: 'Allocation' },
@@ -42,7 +42,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: 'Investment process',
+    label: 'Research',
     items: [
       { id: 'research', label: 'Research' },
       { id: 'thesis', label: 'Thesis' },
@@ -52,7 +52,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: 'Controls',
+    label: 'System',
     items: [
       { id: 'plan', label: 'Plan' },
       { id: 'market-data', label: 'Market data' },
