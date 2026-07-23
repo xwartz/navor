@@ -29,7 +29,7 @@ describe('Reader App', () => {
     expect(html).toContain('Overview')
     expect(html).toContain('Holdings')
     expect(html).toContain('Allocation')
-    expect(html).toContain('Policy')
+    expect(html).toContain('Plan')
     expect(html).toContain('Drift')
     expect(html).toContain('Market data')
     expect(html).toContain('Diagnostics')

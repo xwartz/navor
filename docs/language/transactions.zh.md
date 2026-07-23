@@ -71,7 +71,7 @@ Account 级 `txn` 不得包含持仓 posting。
   decision: 2026-01-31
 ```
 
-Asset 级 `decision` 没有对应 Asset `txn` 时会产生诊断。
+`decision` 是可选的。仅当交易执行了已记录的投资决策时才填写；分红、转账、导入记录等独立交易不需要它。日期按同一 subject 的 decision 解析，日期重复时可补充带引号的标题消歧。
 
 ## Parser 限制
 

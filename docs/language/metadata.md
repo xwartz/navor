@@ -36,8 +36,8 @@ The parser preserves values as strings. Interpretation belongs to the engine and
 | `review_by` | `thesis` | Date to revisit |
 | `action` | `decision`, `review` | Intended or resulting action |
 | `target_weight` | `decision` | Intended portfolio weight |
-| `based_on` | `decision` | Subject the decision refers to |
-| `decision` | `txn` | Date of a prior `decision` directive |
+| `based_on` | `thesis`, `decision` | Date of the preceding same-subject `research` or `thesis`; on the same date, the referenced record must appear earlier in source order. Add its quoted title only when the date is ambiguous. |
+| `decision` | `txn` | Optional date of a prior same-subject `decision` directive |
 | `source` | `research` | Where the observation came from |
 | `tags` | `research` | Comma-separated labels |
 

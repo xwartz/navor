@@ -33,7 +33,6 @@ export function ReviewsView({
             value: String(state.dashboard.pendingReviews.length),
             tone: state.dashboard.pendingReviews.length > 0 ? 'warning' : 'positive',
           },
-          { label: 'Visible', value: String(items.length) },
         ]}
       />
 

@@ -220,9 +220,9 @@ function statusDescription(status: DashboardAssetExecution['status']) {
     case 'over_invested':
       return t('Invested cost exceeds the configured target amount.')
     case 'above_max':
-      return t('Current portfolio weight is above the policy range.')
+      return t('Current portfolio weight is above the target range.')
     case 'below_min':
-      return t('Current portfolio weight is below the policy range.')
+      return t('Current portfolio weight is below the target range.')
     case 'currency_mismatch':
       return t(
         'Target and invested cost use different currencies, so funding progress is not comparable.',

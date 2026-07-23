@@ -29,6 +29,7 @@ export type {
   PriceManifest,
   PriceManifestEntry,
   ProcessViews,
+  ReferenceView,
   ResearchView,
   ReviewView,
   ThesisView,

@@ -30,9 +30,17 @@ export function generatePlanViews(ast: NavorAst): PlanResult {
         actionWhenAbove: directive.metadata.action_when_above ?? null,
       } satisfies PlanEntry
     })
+  const currentBySubject = new Map<string, PlanEntry>()
+  for (const entry of entries) {
+    const existing = currentBySubject.get(entry.subject)
+    if (!existing || entry.date >= existing.date) {
+      currentBySubject.set(entry.subject, entry)
+    }
+  }
 
   return {
     entries,
+    current: [...currentBySubject.values()],
     diagnostics,
   }
 }

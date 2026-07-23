@@ -32,7 +32,6 @@ export function DecisionsView({
             label: 'With basis',
             value: String(state.knowledge.decisions.filter((item) => item.basedOn).length),
           },
-          { label: 'Visible', value: String(items.length) },
         ]}
       />
 

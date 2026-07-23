@@ -4,14 +4,14 @@ import { describe, expect, it } from 'vitest'
 const VIEW = 'packages/reader-ui/src/views/AllocationView.tsx'
 
 describe('AllocationView information design', () => {
-  it('owns policy structure and does not duplicate Drift deviations', () => {
+  it('owns target structure and does not duplicate Drift deviations', () => {
     const source = readFileSync(VIEW, 'utf8')
 
     expect(source).not.toMatch(/Allocation deviations/)
     expect(source).not.toMatch(/TargetActualList/)
     expect(source).not.toMatch(/state\.drift/)
-    expect(source).toMatch(/Account policy/)
-    expect(source).toMatch(/Asset policy/)
+    expect(source).toMatch(/Account targets/)
+    expect(source).toMatch(/Asset targets/)
     expect(source).toMatch(/groupAssetsByAccount/)
     expect(source).toMatch(/derivedPortfolioWeight/)
   })

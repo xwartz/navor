@@ -1,3 +1,4 @@
+import { resolveDateScopedReference } from '../relationships'
 import type {
   NavorAst,
   NavorDiagnostic,
@@ -38,7 +39,7 @@ export function generatePortfolio(ast: NavorAst): PortfolioResult {
   }
 
   return {
-    transactions: orderTransactions(ast).map(transactionToView),
+    transactions: orderTransactions(ast).map((transaction) => transactionToView(ast, transaction)),
     holdings: Array.from(holdings.values()).filter((holding) => holding.quantity !== 0),
     cash: Array.from(cash.entries()).map(([currency, amount]) => ({ currency, amount })),
     income: Array.from(income.values()),
@@ -48,13 +49,24 @@ export function generatePortfolio(ast: NavorAst): PortfolioResult {
   }
 }
 
-function transactionToView(directive: NavorDirective): PortfolioTransactionView {
+function transactionToView(ast: NavorAst, directive: NavorDirective): PortfolioTransactionView {
   return {
     date: directive.date,
     subject: directive.subject,
     title: directive.title,
     file: directive.file,
     line: directive.line,
+    ...(directive.metadata.decision
+      ? {
+          decision: directive.metadata.decision,
+          decisionReference: resolveDateScopedReference({
+            ast,
+            owner: directive,
+            raw: directive.metadata.decision,
+            expected: ['decision'],
+          }),
+        }
+      : {}),
     postings: directive.postings.map((posting) => ({
       account: posting.account,
       quantity: posting.quantity,

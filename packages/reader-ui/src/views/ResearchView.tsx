@@ -24,10 +24,6 @@ export function ResearchView({
   const research = state.knowledge.research.filter((item) => matchesFilters(item, filters))
   const theses = state.knowledge.theses.filter((item) => matchesFilters(item, filters))
   const decisions = state.knowledge.decisions.filter((item) => matchesFilters(item, filters))
-  const sources = new Set(state.knowledge.research.map((item) => item.source).filter(Boolean))
-  const activeTheses = state.knowledge.theses.filter(
-    (item) => item.status?.toLowerCase() === 'active',
-  )
   const reviewable = state.knowledge.theses.filter((item) => item.reviewBy)
   const timeline = [
     ...research.map((item) => ({
@@ -151,28 +147,6 @@ export function ResearchView({
           />
         </Panel>
       </section>
-
-      <Panel title="Research quality">
-        <div className="grid gap-3 text-sm sm:grid-cols-3">
-          <QualityMetric label="Sources" value={String(sources.size)} />
-          <QualityMetric label="Active theses" value={String(activeTheses.length)} />
-          <QualityMetric
-            label="With basis"
-            value={String(state.knowledge.decisions.filter((item) => item.basedOn).length)}
-          />
-        </div>
-      </Panel>
-    </div>
-  )
-}
-
-function QualityMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-md bg-paper px-3 py-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
-        {label}
-      </p>
-      <p className="mt-1 text-lg font-semibold tabular-nums text-ink">{value}</p>
     </div>
   )
 }

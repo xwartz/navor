@@ -9,10 +9,10 @@ describe('example workspace process demo data', () => {
     })
 
     expect(
-      state.workspace.diagnostics.every((entry) =>
+      state.workspace.diagnostics.some((entry) =>
         entry.message.includes('has no matching Transaction yet'),
       ),
-    ).toBe(true)
+    ).toBe(false)
     expect(state.workspace.diagnostics.length).toBeGreaterThan(0)
     expect(state.process.watchlist.length).toBeGreaterThanOrEqual(4)
     expect(state.knowledge.research.length).toBeGreaterThanOrEqual(8)

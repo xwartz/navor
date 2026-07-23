@@ -22,7 +22,7 @@
 | `txn` subject 未 open | 对已关闭或未知 Asset/Account 记账 |
 | Account `txn` 含持仓 posting | 现金事件不得移动标的持仓 |
 | Asset `txn` 缺持仓 posting | 标的交易需匹配的 `Assets:Equity:...` 行（纯现金/收入/费用事件除外） |
-| `decision` 无 `txn` | Asset 级决策没有对应交易 |
+| 日期关联未解析或存在歧义 | `based_on` 或 `txn.decision` 日期无法在同一 subject 内唯一解析 |
 
 ## 诊断不是什么
 

@@ -243,7 +243,7 @@ describe('generateDashboard', () => {
     expect(dashboard.actionInbox.filter((item) => item.type === 'currency_mismatch')).toEqual([])
   })
 
-  it('ranks actions by policy risk, exposure, and urgency', () => {
+  it('ranks actions by target-range risk, exposure, and urgency', () => {
     const source = `2026-01-01 open Account:Crypto "Digital assets"
   target: 100%
   total: 100,000 USD

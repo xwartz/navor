@@ -115,7 +115,7 @@ export function DashboardView({
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Portfolio posture, policy exceptions, and the next decisions to make."
+        description="Portfolio posture, target-range exceptions, and the next decisions to make."
         eyebrow="Command"
         title="Overview"
       />
@@ -165,12 +165,12 @@ export function DashboardView({
                   : 'danger',
           },
           {
-            label: t('Policy breaches'),
+            label: t('Target-range breaches'),
             value: String(offTrackAssets.length),
             detail:
               offTrackAssets.length > 0
-                ? t('Positions outside policy')
-                : t('All positions in policy'),
+                ? t('Positions outside target range')
+                : t('All positions within target range'),
             tone: offTrackAssets.length > 0 ? 'warning' : 'positive',
           },
           {
@@ -199,7 +199,7 @@ export function DashboardView({
           >
             <div className="grid gap-5 lg:grid-cols-[minmax(16rem,0.9fr)_minmax(0,1.1fr)] lg:items-start">
               <DonutChart
-                centerLabel={t('Policy')}
+                centerLabel={t('Target')}
                 centerValue="100%"
                 compact
                 items={state.dashboard.accountExecutions.map((account) => ({
@@ -269,14 +269,14 @@ export function DashboardView({
             description={
               openActionCount > 0
                 ? 'Ranked by risk severity, portfolio exposure, and urgency.'
-                : 'No policy, execution, or data issue needs attention.'
+                : 'No target, execution, or data issue needs attention.'
             }
             title="Decision queue"
           >
             {state.dashboard.actionInbox.length === 0 ? (
               <div className="flex items-center gap-3 rounded-md bg-positive-soft px-3 py-3 text-sm text-accent-ink">
                 <span aria-hidden className="h-2 w-2 rounded-full bg-positive" />
-                {t('Portfolio controls are clear.')}
+                {t('Nothing requires action')}
               </div>
             ) : (
               <div className="space-y-3">

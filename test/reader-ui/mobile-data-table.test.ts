@@ -13,7 +13,6 @@ const primaryColumnViews = [
   'AllocationView.tsx',
   'DecisionsView.tsx',
   'MarketView.tsx',
-  'PlanView.tsx',
   'ResearchView.tsx',
   'WatchlistView.tsx',
 ]

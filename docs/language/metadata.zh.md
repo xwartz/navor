@@ -36,8 +36,8 @@ parser 把值当字符串留着，具体怎么解释由 engine 和 Reader 决定
 | `review_by` | `thesis` | 下次复核日期 |
 | `action` | `decision`、`review` | 意图或结果行动 |
 | `target_weight` | `decision` | 目标组合权重 |
-| `based_on` | `decision` | 决策所指的 subject |
-| `decision` | `txn` | 先前 `decision` 指令的日期 |
+| `based_on` | `thesis`、`decision` | 同一 subject 的前序 `research` 或 `thesis` 日期；同日时，被引用记录必须在源文件中更早出现。只有日期重复时才补充带引号的标题。 |
+| `decision` | `txn` | 可选的同一 subject 的先前 `decision` 日期 |
 | `source` | `research` | 观察来源 |
 | `tags` | `research` | 逗号分隔标签 |
 

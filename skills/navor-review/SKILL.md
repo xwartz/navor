@@ -15,7 +15,7 @@ Review the repository's documented process, not the market or the user's financi
 
    - **Data integrity:** parse and semantic diagnostics, unknown subjects, malformed transaction shapes, or decisions with no matching transaction.
    - **Process follow-through:** `review_by` dates already past relative to the current date, theses lacking `invalid_if`, decisions lacking recorded execution, and reviews or journals that explain a change.
-   - **Portfolio policy:** recorded Account/Asset targets, plans, and derived-vs-source distinctions. Do not treat derived market values or live prices as source facts.
+   - **Portfolio plans:** recorded Account/Asset targets, plans, and derived-vs-source distinctions. Do not treat derived market values or live prices as source facts.
 
 4. Separate confirmed facts from inferences. Say when the repository lacks enough information to determine an outcome.
 5. Stay read-only. If the user asks to turn a finding into a `review`, `decision`, or other record, hand off to `navor-record` and present a draft first.

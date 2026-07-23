@@ -2876,6 +2876,16 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "action": "Buy",
         "basedOn": "2026-02-11",
+        "basedOnReference": {
+          "raw": "2026-02-11",
+          "status": "resolved",
+          "target": {
+            "date": "2026-02-11",
+            "directive": "thesis",
+            "subject": "Asset:Crypto:BTC",
+            "title": "Digital reserve asset",
+          },
+        },
         "confidence": "High",
         "date": "2026-03-01",
         "subject": "Asset:Crypto:BTC",
@@ -2978,6 +2988,41 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
     ],
   },
   "plan": {
+    "current": [
+      {
+        "actionWhenAbove": null,
+        "actionWhenBelow": null,
+        "date": "2026-01-03",
+        "max": 55,
+        "min": 45,
+        "rebalance": null,
+        "subject": "Account:US",
+        "target": 50,
+        "title": "US account allocation",
+      },
+      {
+        "actionWhenAbove": null,
+        "actionWhenBelow": null,
+        "date": "2026-01-03",
+        "max": 35,
+        "min": 25,
+        "rebalance": null,
+        "subject": "Account:Crypto",
+        "target": 30,
+        "title": "Crypto account allocation",
+      },
+      {
+        "actionWhenAbove": "trim",
+        "actionWhenBelow": "accumulate",
+        "date": "2026-01-03",
+        "max": 30,
+        "min": 20,
+        "rebalance": "quarterly",
+        "subject": "Asset:Crypto:BTC",
+        "target": 25,
+        "title": "Bitcoin target weight",
+      },
+    ],
     "diagnostics": [],
     "entries": [
       {

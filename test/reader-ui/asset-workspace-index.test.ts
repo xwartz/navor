@@ -17,7 +17,7 @@ describe('Asset workspace index', () => {
       allocation: { subject: 'Asset:Crypto:BTC' },
       execution: { subject: 'Asset:Crypto:BTC' },
       holding: { asset: 'Asset:Crypto:BTC' },
-      policy: { subject: 'Asset:Crypto:BTC' },
+      plan: { subject: 'Asset:Crypto:BTC' },
       priceStatus: { subject: 'Asset:Crypto:BTC' },
     })
     expect(facts?.transactions).toEqual(expect.any(Array))

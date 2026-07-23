@@ -29,7 +29,7 @@ describe('reader localization', () => {
   it('localizes navigation labels without changing hash routes', () => {
     const command = getNavGroups('zh-CN')[0]
 
-    expect(command?.label).toBe('指挥台')
+    expect(command?.label).toBe('工作台')
     expect(command?.items[0]).toEqual({ id: 'overview', label: '总览' })
   })
 
@@ -38,7 +38,8 @@ describe('reader localization', () => {
     expect(t('Decision', 'en')).toBe('Decision')
     expect(t('Market snapshot', 'zh-CN')).toBe('市场快照')
     expect(t('Action below band', 'zh-CN')).toBe('低于区间时操作')
-    expect(t('stale', 'zh-CN')).toBe('陈旧')
+    expect(t('stale', 'zh-CN')).toBe('已过期')
+    expect(t('sleeves', 'zh-CN')).toBe('个资金分组')
     expect(t('Not available', 'zh-CN')).toBe('暂无')
     expect(t('Account allocation', 'zh-CN')).toBe('账户内配置')
   })
@@ -70,7 +71,7 @@ describe('reader localization', () => {
         },
         'zh-CN',
       ),
-    ).toBe('持仓高于策略区间 3.2 个百分点，占已估值投资组合的 40.0%。')
+    ).toBe('持仓高于目标区间 3.2 个百分点，占已估值投资组合的 40.0%。')
 
     expect(
       formatDashboardActionReason(

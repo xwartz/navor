@@ -24,6 +24,7 @@ Navor 把推理写进源文件，不是挂在持仓旁边的注释。
 
 ```nav
 2026-01-12 thesis Asset:Equity:US:NVDA "算力需求仍具韧性"
+  based_on: 2026-01-10
   horizon: 3y
   confidence: Medium
   invalid_if: 数据中心收入连续两季下滑
@@ -44,10 +45,12 @@ Navor 把推理写进源文件，不是挂在持仓旁边的注释。
   action: Buy
   target_weight: 15%
   trigger: 财报后确认
-  based_on: Asset:Equity:US:NVDA
+  based_on: 2026-01-12
 ```
 
-配上对应的 `txn`，决策才算落成了事实。
+引用按同一 subject 与日期解析。同日有多条候选记录时，再补充带引号的标题：`based_on: 2026-01-12 "算力需求仍具韧性"`。
+
+没有执行记录的 decision 仍是有效意图。若某笔交易执行了它，可在 `txn` 上写 `decision: 2026-01-13`；分红、转账、导入记录等交易不需要关联 decision。
 
 ## 复盘
 

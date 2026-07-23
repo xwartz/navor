@@ -271,9 +271,9 @@ function statusReason(asset: DashboardAssetExecution) {
     case 'over_invested':
       return t('Over target')
     case 'above_max':
-      return t('Above policy band')
+      return t('Above target range')
     case 'below_min':
-      return t('Below policy band')
+      return t('Below target range')
     case 'complete':
       return t('Target reached')
     case 'building':

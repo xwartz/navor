@@ -22,7 +22,7 @@ The title is optional and cannot contain a double quote. The body is optional.
 | `capital` | Investable budget | `amount` |
 | `open` | Begin managing a subject | `account`, `target`, `symbol`, `status` |
 | `close` | End active management without deleting history | `reason` |
-| `plan` | Target bands and rebalance policy | `target`, `min`, `max`, `rebalance` |
+| `plan` | Target ranges and rebalance rules | `target`, `min`, `max`, `rebalance` |
 | `research` | Observed external information | `source`, `reliability`, `tags` |
 | `thesis` | Falsifiable investment view | `horizon`, `confidence`, `invalid_if`, `review_by` |
 | `decision` | Intended action | `action`, `target_weight`, `trigger`, `based_on` |
@@ -66,6 +66,7 @@ The title is optional and cannot contain a double quote. The body is optional.
   tags: AI,DataCenter
 
 2026-01-12 thesis Asset:Equity:US:NVDA "Compute demand remains durable"
+  based_on: 2026-01-10
   horizon: 3y
   confidence: Medium
   invalid_if: Data-center revenue declines for two quarters
@@ -73,10 +74,10 @@ The title is optional and cannot contain a double quote. The body is optional.
 2026-01-13 decision Asset:Equity:US:NVDA "Build the position"
   action: Buy
   target_weight: 15%
-  based_on: Asset:Equity:US:NVDA
+  based_on: 2026-01-12
 ```
 
-`research` records observations. `thesis` states a view that can be invalidated. `decision` records intent; execution is a separate `txn`.
+`research` records observations. `thesis` states a view that can be invalidated. `based_on` resolves a same-subject preceding record by date; on the same date, the referenced record must appear earlier in source order. Add its quoted title only when the date is ambiguous. `decision` records intent, while a `txn` may optionally link back with `decision: <date>` when it executes that intent.
 
 ## Reviews and notes
 

@@ -22,7 +22,7 @@ YYYY-MM-DD DIRECTIVE SUBJECT "标题"
 | `capital` | 可投资预算 | `amount` |
 | `open` | 开始管理 subject | `account`、`target`、`symbol`、`status` |
 | `close` | 结束主动管理，不删历史 | `reason` |
-| `plan` | 目标区间与再平衡策略 | `target`、`min`、`max`、`rebalance` |
+| `plan` | 目标区间与再平衡规则 | `target`、`min`、`max`、`rebalance` |
 | `research` | 外部观察信息 | `source`、`reliability`、`tags` |
 | `thesis` | 可证伪投资观点 | `horizon`、`confidence`、`invalid_if`、`review_by` |
 | `decision` | 意图中的行动 | `action`、`target_weight`、`trigger`、`based_on` |
@@ -65,15 +65,17 @@ YYYY-MM-DD DIRECTIVE SUBJECT "标题"
   source: 公司财报
 
 2026-01-12 thesis Asset:Equity:US:NVDA "算力需求仍具韧性"
+  based_on: 2026-01-10
   confidence: Medium
   invalid_if: 数据中心收入连续两季下滑
 
 2026-01-13 decision Asset:Equity:US:NVDA "建仓"
   action: Buy
   target_weight: 15%
+  based_on: 2026-01-12
 ```
 
-`research` 记观察，`thesis` 记可证伪观点，`decision` 记意图；执行用单独的 `txn`。
+`research` 记观察，`thesis` 记可证伪观点。`based_on` 按同一 subject 的前序记录日期解析；同日时，被引用记录必须在源文件中更早出现。只有日期重复时才补充带引号的标题。`decision` 记意图；执行它的 `txn` 可选写入 `decision: <日期>` 回链。
 
 ## 复盘与笔记
 

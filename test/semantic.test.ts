@@ -91,7 +91,7 @@ describe('validateNavorSemantics', () => {
     expect(validateNavorSemantics(parsed.ast)).toEqual([])
   })
 
-  it('does not treat Account funding as execution of an Account decision', async () => {
+  it('keeps a decision without an execution record as a valid intent', async () => {
     const { validateNavorSemantics } = await import('@navor/core')
     const parsed = parseNavor(`2026-01-01 open Account:Crypto "Crypto"
 2026-01-01 open Asset:Crypto:BTC "Bitcoin"
@@ -105,10 +105,88 @@ describe('validateNavorSemantics', () => {
 2026-03-01 decision Asset:Crypto:BTC "Buy first tranche"
 `)
 
+    expect(validateNavorSemantics(parsed.ast)).toEqual([])
+  })
+
+  it('diagnoses ambiguous, future, and missing date-scoped references', async () => {
+    const { validateNavorSemantics } = await import('@navor/core')
+    const parsed = parseNavor(`2026-02-01 open Account:Crypto "Crypto"
+2026-02-01 open Asset:Crypto:ETH "Ethereum"
+  account: Account:Crypto
+2026-02-05 research Asset:Crypto:ETH "First note"
+2026-02-05 research Asset:Crypto:ETH "Second note"
+2026-02-08 thesis Asset:Crypto:ETH "Build on weakness"
+  based_on: 2026-02-05
+2026-02-10 thesis Asset:Crypto:ETH "Later thesis"
+2026-02-09 decision Asset:Crypto:ETH "Start DCA"
+  based_on: 2026-02-10
+2026-02-12 txn Asset:Crypto:ETH "First tranche"
+  decision: 2026-02-11
+  Assets:Crypto:ETH  1 ETH @ 2,000 USD
+  Assets:Cash:USD    -2,000 USD
+`)
+
     expect(validateNavorSemantics(parsed.ast)).toEqual([
       {
-        line: 10,
-        message: 'Decision "Buy first tranche" has no matching Transaction yet.',
+        line: 6,
+        message: 'Thesis basis "2026-02-05" is ambiguous; add the referenced title.',
+      },
+      {
+        line: 9,
+        message: 'Decision basis "2026-02-10" references a later record.',
+      },
+      {
+        line: 11,
+        message:
+          'Transaction decision "2026-02-11" does not resolve to a record of the expected type.',
+      },
+    ])
+  })
+
+  it('resolves a transaction to a same-subject decision by date', async () => {
+    const { generatePortfolio } = await import('@navor/core')
+    const parsed = parseNavor(`2026-02-09 decision Asset:Crypto:ETH "Start DCA"
+2026-02-12 txn Asset:Crypto:ETH "First tranche"
+  decision: 2026-02-09
+  Assets:Crypto:ETH  1 ETH @ 2,000 USD
+  Assets:Cash:USD    -2,000 USD
+`)
+
+    expect(generatePortfolio(parsed.ast).transactions[0]?.decisionReference).toMatchObject({
+      status: 'resolved',
+      target: { directive: 'decision', title: 'Start DCA' },
+    })
+  })
+
+  it('requires a same-day reference to appear earlier in the workspace', async () => {
+    const { validateNavorSemantics } = await import('@navor/core')
+    const parsed = parseNavor(`2026-02-08 thesis Asset:Crypto:ETH "Build on weakness"
+  based_on: 2026-02-08
+2026-02-08 research Asset:Crypto:ETH "Later note"
+`)
+
+    expect(validateNavorSemantics(parsed.ast)).toEqual([
+      {
+        line: 1,
+        message: 'Thesis basis "2026-02-08" references a later record.',
+      },
+    ])
+  })
+
+  it('diagnoses malformed references while retaining known legacy subject references', async () => {
+    const { validateNavorSemantics } = await import('@navor/core')
+    const parsed = parseNavor(`2026-02-01 open Asset:Crypto:ETH "Ethereum"
+2026-02-05 thesis Asset:Crypto:ETH "Legacy basis"
+  based_on: Asset:Crypto:ETH
+2026-02-06 thesis Asset:Crypto:ETH "Malformed basis"
+  based_on: 2026-2-5
+`)
+
+    expect(validateNavorSemantics(parsed.ast)).toEqual([
+      {
+        file: undefined,
+        line: 4,
+        message: 'Thesis basis "2026-2-5" does not resolve to a record of the expected type.',
       },
     ])
   })

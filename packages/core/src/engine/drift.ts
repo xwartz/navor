@@ -23,7 +23,7 @@ export function generateDrift({
   baseCurrency = null,
   fxRates = {},
 }: GenerateDriftOptions): DriftResult {
-  const planBySubject = new Map(plan.entries.map((entry) => [entry.subject, entry]))
+  const planBySubject = new Map(plan.current.map((entry) => [entry.subject, entry]))
   const valueBySubject = new Map(market.portfolioValues.map((value) => [value.subject, value]))
   const titleBySubject = new Map(allocation.assets.map((asset) => [asset.subject, asset.title]))
   const unconvertedCurrencies = new Set<string>()

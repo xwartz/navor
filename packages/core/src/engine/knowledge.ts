@@ -1,4 +1,5 @@
 import { parseList } from '../core/values'
+import { resolveDateScopedReference } from '../relationships'
 import type { KnowledgeViews, NavorAst, NavorDiagnostic } from '../types'
 
 export function generateKnowledgeViews(
@@ -31,6 +32,18 @@ export function generateKnowledgeViews(
         invalidIf: directive.metadata.invalid_if ?? null,
         reviewBy: directive.metadata.review_by ?? null,
         body: directive.body,
+        ...(directive.metadata.based_on
+          ? {
+              basedOn: directive.metadata.based_on,
+              basedOnReference: resolveDateScopedReference({
+                ast,
+                owner: directive,
+                raw: directive.metadata.based_on,
+                expected: ['research'],
+                allowLegacySubject: true,
+              }),
+            }
+          : {}),
       }
 
       if (
@@ -57,6 +70,17 @@ export function generateKnowledgeViews(
       action: directive.metadata.action ?? null,
       targetWeight: directive.metadata.target_weight ?? null,
       basedOn: directive.metadata.based_on ?? null,
+      ...(directive.metadata.based_on
+        ? {
+            basedOnReference: resolveDateScopedReference({
+              ast,
+              owner: directive,
+              raw: directive.metadata.based_on,
+              expected: ['thesis'],
+              allowLegacySubject: true,
+            }),
+          }
+        : {}),
       confidence: directive.metadata.confidence ?? null,
     }))
 

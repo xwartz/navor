@@ -1,3 +1,4 @@
+import { resolveDateScopedReference } from './relationships'
 import type { NavorAst, NavorDiagnostic, NavorDirective, NavorPosting } from './types'
 
 export function validateNavorSemantics(ast: NavorAst): NavorDiagnostic[] {
@@ -16,15 +17,6 @@ export function validateNavorSemantics(ast: NavorAst): NavorDiagnostic[] {
       )
       .map((directive) => directive.subject),
   )
-  const txnSubjects = new Set(
-    ast.directives.filter((directive) => directive.directive === 'txn').map((d) => d.subject),
-  )
-  const decisionSubjects = new Map(
-    ast.directives
-      .filter((directive) => directive.directive === 'decision')
-      .map((directive) => [directive.subject, directive]),
-  )
-
   for (const directive of ast.directives) {
     if (directive.directive === 'open' && directive.subject.startsWith('Asset:')) {
       const account = directive.metadata.account
@@ -60,36 +52,81 @@ export function validateNavorSemantics(ast: NavorAst): NavorDiagnostic[] {
 
     if (directive.directive === 'txn') {
       validateTransactionSubject(directive, assets, accounts, diagnostics)
+      validateReference({
+        ast,
+        directive,
+        raw: directive.metadata.decision,
+        expected: ['decision'],
+        label: 'Transaction decision',
+        diagnostics,
+      })
+    }
+
+    if (directive.directive === 'thesis') {
+      validateReference({
+        ast,
+        directive,
+        raw: directive.metadata.based_on,
+        expected: ['research'],
+        label: 'Thesis basis',
+        allowLegacySubject: true,
+        diagnostics,
+      })
     }
 
     if (directive.directive === 'decision') {
-      const basedOn = directive.metadata.based_on
-
-      if (basedOn?.includes(':') && !assets.has(basedOn) && !accounts.has(basedOn)) {
-        diagnostics.push({
-          line: directive.line,
-          file: directive.file,
-          message: `Decision "${directive.subject}" references unknown subject "${basedOn}".`,
-        })
-      }
-    }
-  }
-
-  for (const [subject, decision] of decisionSubjects) {
-    if (!subject.startsWith('Asset:')) {
-      continue
-    }
-
-    if (!txnSubjects.has(subject)) {
-      diagnostics.push({
-        line: decision.line,
-        file: decision.file,
-        message: `Decision "${decision.title ?? subject}" has no matching Transaction yet.`,
+      validateReference({
+        ast,
+        directive,
+        raw: directive.metadata.based_on,
+        expected: ['thesis'],
+        label: 'Decision basis',
+        allowLegacySubject: true,
+        diagnostics,
       })
     }
   }
 
   return diagnostics
+}
+
+function validateReference({
+  ast,
+  directive,
+  raw,
+  expected,
+  label,
+  allowLegacySubject = false,
+  diagnostics,
+}: {
+  ast: NavorAst
+  directive: NavorDirective
+  raw: string | undefined
+  expected: ('research' | 'thesis' | 'decision')[]
+  label: string
+  allowLegacySubject?: boolean
+  diagnostics: NavorDiagnostic[]
+}) {
+  const reference = resolveDateScopedReference({
+    ast,
+    owner: directive,
+    raw,
+    expected,
+    allowLegacySubject,
+  })
+  if (!reference || reference.status === 'resolved' || reference.status === 'legacy') return
+
+  const detail =
+    reference.status === 'future'
+      ? 'references a later record'
+      : reference.status === 'ambiguous'
+        ? 'is ambiguous; add the referenced title'
+        : 'does not resolve to a record of the expected type'
+  diagnostics.push({
+    line: directive.line,
+    file: directive.file,
+    message: `${label} "${reference.raw}" ${detail}.`,
+  })
 }
 
 function validateTransactionSubject(

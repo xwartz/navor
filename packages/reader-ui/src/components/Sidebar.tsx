@@ -200,7 +200,7 @@ export function Sidebar({
             isRail ? 'lg:hidden' : ''
           }`}
         >
-          {t('Facts first. Policy always.')}
+          {t('Facts first. Plans explicit.')}
         </div>
       </aside>
     </>
@@ -215,7 +215,7 @@ function compactNavLabel(view: ReaderView) {
     holdings: 'HD',
     ledger: 'LD',
     allocation: 'AL',
-    policy: 'PL',
+    plan: 'PL',
     drift: 'DR',
     watchlist: 'WL',
     research: 'RS',

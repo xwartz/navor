@@ -35,7 +35,6 @@ export function JournalView({
             label: 'Related notes',
             value: String(state.process.journal.filter((item) => item.related).length),
           },
-          { label: 'Visible', value: String(items.length) },
         ]}
       />
 

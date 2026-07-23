@@ -96,6 +96,8 @@ export interface PortfolioTransactionView {
   file?: string
   line: number
   postings: PortfolioTransactionPosting[]
+  decision?: string | null
+  decisionReference?: ReferenceView | null
 }
 
 export interface PortfolioResult {
@@ -136,6 +138,8 @@ export interface ThesisView {
   invalidIf: string | null
   reviewBy: string | null
   body: string | null
+  basedOn?: string | null
+  basedOnReference?: ReferenceView | null
 }
 
 export interface DecisionView {
@@ -145,7 +149,19 @@ export interface DecisionView {
   action: string | null
   targetWeight: string | null
   basedOn: string | null
+  basedOnReference?: ReferenceView | null
   confidence: string | null
+}
+
+export interface ReferenceView {
+  raw: string
+  status: 'resolved' | 'future' | 'unresolved' | 'ambiguous' | 'legacy'
+  target: {
+    directive: string
+    date: string
+    subject: string
+    title: string | null
+  } | null
 }
 
 export interface WatchlistView {
@@ -195,6 +211,7 @@ export interface PlanEntry {
 
 export interface PlanResult {
   entries: PlanEntry[]
+  current: PlanEntry[]
   diagnostics: NavorDiagnostic[]
 }
 

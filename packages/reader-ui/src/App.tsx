@@ -207,7 +207,7 @@ const FILTERABLE_VIEWS = new Set<ReaderView>([
   'holdings',
   'ledger',
   'allocation',
-  'policy',
+  'plan',
   'drift',
   'watchlist',
   'research',
@@ -231,7 +231,7 @@ function countFilterMatches(
     holdings: state.portfolio.holdings,
     ledger: state.portfolio.transactions,
     allocation: state.allocation.assets,
-    policy: state.plan.entries,
+    plan: state.plan.entries,
     drift: state.drift.entries,
     watchlist: state.process.watchlist,
     research: [
@@ -300,7 +300,7 @@ function renderActiveView(
       return <TransactionsView filters={filters} state={state} />
     case 'allocation':
       return <AllocationView filters={filters} state={state} />
-    case 'policy':
+    case 'plan':
       return <PlanView filters={filters} state={state} />
     case 'drift':
       return <DriftView filters={filters} state={state} />

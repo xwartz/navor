@@ -24,7 +24,6 @@ export function WatchlistView({
         items={[
           { label: 'Candidates', value: String(state.process.watchlist.length) },
           { label: 'Accounts', value: String(accounts.size) },
-          { label: 'Visible', value: String(items.length) },
           { label: 'With reason', value: String(items.filter((item) => item.watchReason).length) },
         ]}
       />

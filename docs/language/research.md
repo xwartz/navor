@@ -24,6 +24,7 @@ Use `source`, `reliability`, and `tags` for structured fields. Use the body for 
 
 ```nav
 2026-01-12 thesis Asset:Equity:US:NVDA "Compute demand remains durable"
+  based_on: 2026-01-10
   horizon: 3y
   confidence: Medium
   invalid_if: Data-center revenue declines for two quarters
@@ -44,10 +45,12 @@ Use `source`, `reliability`, and `tags` for structured fields. Use the body for 
   action: Buy
   target_weight: 15%
   trigger: Post-earnings confirmation
-  based_on: Asset:Equity:US:NVDA
+  based_on: 2026-01-12
 ```
 
-A decision becomes an executed fact only when a matching `txn` is recorded.
+References resolve within the same subject by date. If more than one applicable record exists on that date, add the quoted title: `based_on: 2026-01-12 "Compute demand remains durable"`.
+
+A decision remains valid intent without execution. When a transaction executes it, optionally add `decision: 2026-01-13` to the `txn`; dividends, transfers, imports, and other transactions do not need a decision link.
 
 ## Review
 

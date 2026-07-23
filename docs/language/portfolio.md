@@ -1,6 +1,6 @@
 # Portfolio
 
-Portfolio-level facts describe investable capacity, workspace settings, allocation sleeves, and rebalance policy.
+Portfolio-level facts describe investable capacity, workspace settings, allocation sleeves, and plan-based rebalancing.
 
 ## Capital
 
@@ -44,7 +44,7 @@ Open the Account before Assets that reference it. Open an Asset before asset-lev
 - Asset `target` is **relative to its parent Account** (e.g. 15% of that account sleeve).
 - Whole-portfolio asset weight is derived; do not duplicate it as source metadata.
 
-## Plans and rebalance policy
+## Plans and rebalance rules
 
 Use `plan` for bands and rebalance rhythm:
 

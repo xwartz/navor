@@ -4,6 +4,7 @@ import { resolveReaderView } from '../../packages/reader-ui/src/App'
 describe('reader navigation state', () => {
   it('resolves a view from the URL hash', () => {
     expect(resolveReaderView('#drift', 'overview')).toBe('drift')
+    expect(resolveReaderView('#plan', 'overview')).toBe('plan')
   })
 
   it('returns to the initial view when browser history removes the hash', () => {
@@ -18,7 +19,7 @@ describe('reader navigation state', () => {
     expect(resolveReaderView('#dashboard', 'overview')).toBe('overview')
     expect(resolveReaderView('#portfolio', 'overview')).toBe('overview')
     expect(resolveReaderView('#transactions', 'overview')).toBe('overview')
-    expect(resolveReaderView('#plan', 'overview')).toBe('overview')
+    expect(resolveReaderView('#policy', 'overview')).toBe('overview')
     expect(resolveReaderView('#market', 'overview')).toBe('overview')
   })
 })

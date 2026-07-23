@@ -56,6 +56,7 @@ export type {
   PortfolioTransactionPosting,
   PortfolioTransactionView,
   ProcessViews,
+  ReferenceView,
   ResearchView,
   ReviewView,
   ThesisView,

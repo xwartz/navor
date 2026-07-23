@@ -3,12 +3,18 @@ import { useState } from 'react'
 
 import { AccountTree } from '../components/AccountTree'
 import { AssetDetailPanel } from '../components/AssetDetailPanel'
-import { formatMoneyList } from '../components/format'
+import { formatMoney, formatMoneyList, groupMoneyValues } from '../components/format'
 import { Panel } from '../components/Panel'
 import { SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { t } from '../i18n'
 
 export function AccountsView({ state }: { state: NavorRendererAppState }) {
   const [selectedAssetSubject, setSelectedAssetSubject] = useState<string | null>(null)
+  const targetAmounts = state.dashboard.accountExecutions.map((account) => account.targetAmount)
+  const targetCurrencies = groupMoneyValues(targetAmounts)
+  const fundedAssetCount = state.dashboard.assetExecutions.filter(
+    (asset) => asset.investedCost,
+  ).length
 
   return (
     <div className="space-y-5">
@@ -23,15 +29,16 @@ export function AccountsView({ state }: { state: NavorRendererAppState }) {
           { label: 'Accounts', value: String(state.dashboard.accountExecutions.length) },
           { label: 'Assets', value: String(state.dashboard.assetExecutions.length) },
           {
-            label: 'Budget',
-            value: `${state.dashboard.accountExecutions.length} sleeves`,
-            detail: formatMoneyList(
-              state.dashboard.accountExecutions.map((account) => account.targetAmount),
-            ),
+            label: 'Target capital',
+            value:
+              targetCurrencies.length === 1
+                ? formatMoney(targetCurrencies[0])
+                : t('Multiple currencies'),
+            detail: formatMoneyList(targetAmounts),
           },
           {
-            label: 'Invested',
-            value: `${state.dashboard.assetExecutions.filter((asset) => asset.investedCost).length} funded`,
+            label: 'Funded assets',
+            value: String(fundedAssetCount),
             detail: formatMoneyList(
               state.dashboard.accountExecutions.flatMap((account) => account.investedCost),
             ),

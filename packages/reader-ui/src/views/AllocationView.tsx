@@ -28,7 +28,7 @@ export function AllocationView({
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Policy structure: account sleeves and how asset targets resolve into portfolio weight."
+        description="Target structure: account sleeves and how asset targets resolve into portfolio weight."
         eyebrow="Portfolio"
         title="Allocation"
       />
@@ -41,7 +41,7 @@ export function AllocationView({
             label: 'Target capital',
             value: state.allocation.capital
               ? formatMoney(state.allocation.capital)
-              : `${accounts.length} ${accounts.length === 1 ? 'sleeve' : 'sleeves'}`,
+              : `${accounts.length} ${t('sleeves')}`,
             detail: formatMoneyList(accounts.map((account) => account.baseAmount)),
           },
           {
@@ -54,11 +54,11 @@ export function AllocationView({
 
       <Panel
         description="Strategic mix across accounts. Asset-level distance from target lives on Drift."
-        title="Account policy"
+        title="Account targets"
       >
         <div className="grid gap-6 xl:grid-cols-[minmax(16rem,0.75fr)_minmax(0,1.25fr)] xl:items-center">
           <DonutChart
-            centerLabel="Policy"
+            centerLabel="Target"
             centerValue="100%"
             items={accounts.map((account) => ({
               id: account.subject,
@@ -95,7 +95,7 @@ export function AllocationView({
 
       <Panel
         description="Account-scoped target × sleeve weight = portfolio weight. Amounts are the resolved capital targets."
-        title="Asset policy"
+        title="Asset targets"
       >
         {groups.length === 0 ? (
           <p className="text-sm text-ink-muted">{t('No assets match the current filters.')}</p>

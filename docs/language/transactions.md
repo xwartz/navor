@@ -71,7 +71,7 @@ Record intent with `decision`, then execution with `txn`:
   decision: 2026-01-31
 ```
 
-An Asset-level `decision` without a matching Asset `txn` surfaces as a diagnostic.
+`decision` is optional. Use it when this transaction executes a recorded investment decision; dividends, transfers, imports, and other independent transactions do not need it. The date resolves to a same-subject decision, with a quoted title available when a date is ambiguous.
 
 ## Parser limits
 

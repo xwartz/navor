@@ -65,9 +65,34 @@ describe('generateKnowledgeViews', () => {
         action: 'Buy',
         targetWeight: '20%',
         basedOn: '2026-02-11',
+        basedOnReference: {
+          raw: '2026-02-11',
+          status: 'resolved',
+          target: {
+            directive: 'thesis',
+            date: '2026-02-11',
+            subject: 'Asset:Crypto:BTC',
+            title: 'Digital reserve asset',
+          },
+        },
         confidence: 'High',
       },
     ])
+  })
+
+  it('resolves thesis evidence by date and subject without a user-authored id', () => {
+    const source = `2026-02-05 research Asset:Crypto:ETH "L2 fees"
+
+2026-02-08 thesis Asset:Crypto:ETH "Build on weakness"
+  based_on: 2026-02-05
+`
+
+    const views = generateKnowledgeViews(parseNavor(source).ast)
+
+    expect(views.theses[0]?.basedOnReference).toMatchObject({
+      status: 'resolved',
+      target: { directive: 'research', title: 'L2 fees' },
+    })
   })
 
   it('warns when an active Thesis is past its review date', () => {

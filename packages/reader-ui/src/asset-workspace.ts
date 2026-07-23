@@ -6,7 +6,8 @@ type AssetWorkspaceFacts = {
   holding: NavorRendererAppState['portfolio']['holdings'][number] | null
   market: NavorRendererAppState['market']['portfolioValues'][number] | null
   drift: NavorRendererAppState['drift']['entries'][number] | null
-  policy: NavorRendererAppState['plan']['entries'][number] | null
+  plan: NavorRendererAppState['plan']['entries'][number] | null
+  plans: NavorRendererAppState['plan']['entries']
   price: NavorRendererAppState['market']['prices'][number] | null
   priceStatus: NavorRendererAppState['enrichment']['prices'][number] | null
   transactions: NavorRendererAppState['portfolio']['transactions']
@@ -48,11 +49,7 @@ export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWor
   const allocationBySubject = new Map(state.allocation.assets.map((item) => [item.subject, item]))
   const priceBySubject = new Map(state.market.prices.map((item) => [item.subject, item]))
   const priceStatusBySubject = new Map(state.enrichment.prices.map((item) => [item.subject, item]))
-  const latestPolicyBySubject = new Map<string, NavorRendererAppState['plan']['entries'][number]>()
-  for (const policy of state.plan.entries) {
-    const current = latestPolicyBySubject.get(policy.subject)
-    if (!current || policy.date > current.date) latestPolicyBySubject.set(policy.subject, policy)
-  }
+  const currentPlanBySubject = new Map(state.plan.current.map((plan) => [plan.subject, plan]))
 
   return {
     has: (subject) => Boolean(subject && subjects.has(subject)),
@@ -64,7 +61,10 @@ export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWor
         holding: holdingBySubject.get(subject) ?? null,
         market: marketBySubject.get(subject) ?? null,
         drift: driftBySubject.get(subject) ?? null,
-        policy: latestPolicyBySubject.get(subject) ?? null,
+        plan: currentPlanBySubject.get(subject) ?? null,
+        plans: state.plan.entries
+          .filter((item) => item.subject === subject)
+          .sort((left, right) => right.date.localeCompare(left.date)),
         price: priceBySubject.get(subject) ?? null,
         priceStatus: priceStatusBySubject.get(subject) ?? null,
         transactions: state.portfolio.transactions

@@ -7,7 +7,7 @@ export type ReaderView =
   | 'holdings'
   | 'ledger'
   | 'allocation'
-  | 'policy'
+  | 'plan'
   | 'drift'
   | 'watchlist'
   | 'research'
@@ -54,7 +54,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Controls',
     items: [
-      { id: 'policy', label: 'Policy' },
+      { id: 'plan', label: 'Plan' },
       { id: 'market-data', label: 'Market data' },
       { id: 'workspace', label: 'Workspace' },
       { id: 'diagnostics', label: 'Diagnostics' },

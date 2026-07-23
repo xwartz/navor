@@ -20,7 +20,12 @@ describe('generateDrift', () => {
   account: Account:Crypto
   target: 100%
 
-2026-01-03 plan Asset:Crypto:BTC "Bitcoin target"
+2026-04-03 plan Asset:Crypto:BTC "Current target"
+  target: 30%
+  min: 25%
+  max: 35%
+
+2026-01-03 plan Asset:Crypto:BTC "Historical target"
   target: 25%
   min: 20%
   max: 30%
@@ -53,12 +58,12 @@ describe('generateDrift', () => {
     expect(drift.totalMarketValue).toEqual({ amount: 10000, currency: 'USD' })
     expect(drift.entries[0]).toMatchObject({
       subject: 'Asset:Crypto:BTC',
-      targetWeight: 25,
+      targetWeight: 30,
       actualWeight: 100,
-      drift: 75,
+      drift: 70,
       status: 'above_max',
-      planMin: 20,
-      planMax: 30,
+      planMin: 25,
+      planMax: 35,
     })
   })
 

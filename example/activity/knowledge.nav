@@ -102,6 +102,7 @@
   ---
 
 2026-02-08 thesis Asset:Crypto:ETH "熊市分批建仓"
+  based_on: 2026-02-05
   horizon: 4y
   sentiment: Bullish
   confidence: High

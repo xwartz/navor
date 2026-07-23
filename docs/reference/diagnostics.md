@@ -22,7 +22,7 @@ Fix the line shape per [syntax](syntax.md).
 | `txn` subject not open | Transaction on closed or unknown Asset/Account |
 | Account `txn` includes holding posting | Cash events must not move asset holdings |
 | Asset `txn` missing holding posting | Asset trade needs matching `Assets:Equity:...` line (except cash/income/expense-only events) |
-| `decision` without `txn` | Asset-level decision has no matching transaction |
+| date-scoped relationship is unresolved or ambiguous | A `based_on` or `txn.decision` date cannot uniquely resolve within the same subject |
 
 ## What diagnostics are not
 

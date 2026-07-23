@@ -21,3 +21,19 @@
   min: 5%
   max: 15%
   rebalance: Quarterly
+
+2026-02-01 plan Asset:Crypto:ETH "ETH 分批计划"
+  target: 20%
+  min: 15%
+  max: 25%
+  rebalance: Quarterly
+  action_when_below: Accumulate
+  action_when_above: Trim
+
+2026-03-01 plan Asset:Crypto:ETH "ETH 回撤后计划"
+  target: 18%
+  min: 12%
+  max: 23%
+  rebalance: Monthly
+  action_when_below: Accumulate
+  action_when_above: Trim

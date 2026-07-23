@@ -14,7 +14,7 @@ Navor is an institutional editorial terminal for long-horizon investors. The int
 - `ink`: `oklch(0.205 0.012 75)`, primary text and numeric values.
 - `muted`: `oklch(0.47 0.012 75)`, secondary explanations.
 - `pine`: `oklch(0.48 0.085 158)`, active navigation and constructive financial state.
-- `amber`: `oklch(0.62 0.12 72)`, review and policy attention.
+- `amber`: `oklch(0.62 0.12 72)`, review and target-range attention.
 - `red`: `oklch(0.56 0.16 27)`, loss, error, and destructive state only.
 - `categorical`: pine, slate, amber, terracotta, plum, and olive, used only to distinguish stable portfolio categories in charts.
 
@@ -37,11 +37,11 @@ Navigation follows four investor tasks rather than source-file taxonomy:
 1. Command: current posture, exceptions, and watch items.
 2. Portfolio: holdings, allocation, accounts, and ledger activity.
 3. Investment process: research, thesis, decisions, reviews, and behavioral journal.
-4. Controls: policy, market data, workspace sources, and diagnostics.
+4. Controls: plans, market data, workspace sources, and diagnostics.
 
 The Overview page orders information by decision urgency: portfolio state, open actions, allocation posture, liquidity, recent activity, then contextual evidence. Healthy empty states collapse into a quiet confirmation instead of occupying a full diagnostic panel.
 
-Allocation follows a policy-to-execution hierarchy: account sleeves and capital first, funded-position deviations second, and the complete asset target ledger last. Transaction history shows economic events as compact rows and reveals double-entry postings on demand. Market data combines price, source, freshness, and timestamp in one coverage table before showing downstream valuation and research.
+Allocation follows a plan-to-execution hierarchy: account sleeves and capital first, funded-position deviations second, and the complete asset target ledger last. Transaction history shows economic events as compact rows and reveals double-entry postings on demand. Market data combines price, source, freshness, and timestamp in one coverage table before showing downstream valuation and research.
 
 Accounts uses an inline master-detail pattern. Selecting an asset expands its decision brief directly below the row, preserves document scroll and neighboring asset context, and never opens a modal or locks the page. Asset rows use the same elevated surface as other data tables, with a quiet pine selection tint only for the active row.
 
@@ -61,7 +61,7 @@ Depth is created primarily through background steps. The sidebar is the darkest 
 - Do make chart legends keyboard-focusable and keep their active state synchronized with chart geometry.
 - Do not introduce purple, cyan, gradients, glass effects, or ornamental shadows.
 - Do not turn every data group into an independent floating card.
-- Do not hide source identifiers or policy context in safety-sensitive views.
+- Do not hide source identifiers or plan context in safety-sensitive views.
 - Do not animate layout, width, height, or numeric position.
 - Do not animate analytical charts on initial render. Stable geometry is more valuable than decorative motion.
 - Do not repeat the same market input across separate status and value tables.

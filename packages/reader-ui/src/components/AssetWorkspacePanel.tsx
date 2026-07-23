@@ -54,7 +54,7 @@ function AssetWorkspacePanel({
   const holding = facts?.holding ?? null
   const market = facts?.market ?? null
   const drift = facts?.drift ?? null
-  const policy = facts?.policy ?? null
+  const plan = facts?.plan ?? null
   const price = facts?.price ?? null
   const priceStatus = facts?.priceStatus ?? null
   const watchlist = facts?.watchlist ?? null
@@ -174,7 +174,7 @@ function AssetWorkspacePanel({
         >
           <WorkspaceLink href="#holdings">{t('Holdings')}</WorkspaceLink>
           <WorkspaceLink href="#drift">{t('Drift')}</WorkspaceLink>
-          <WorkspaceLink href="#policy">{t('Policy')}</WorkspaceLink>
+          <WorkspaceLink href="#plan">{t('Plan')}</WorkspaceLink>
           <WorkspaceLink href="#research">{t('Research')}</WorkspaceLink>
           <WorkspaceLink href="#decisions">{t('Decisions')}</WorkspaceLink>
         </nav>
@@ -273,7 +273,7 @@ function AssetWorkspacePanel({
                 <WorkspaceFact label="Actual weight" value={formatPercent(drift?.actualWeight)} />
                 <WorkspaceFact
                   label="Target"
-                  value={formatPercent(policy?.target ?? facts?.allocation?.derivedPortfolioWeight)}
+                  value={formatPercent(plan?.target ?? facts?.allocation?.derivedPortfolioWeight)}
                 />
                 <WorkspaceFact label="Drift" value={formatSignedPercent(drift?.drift)} />
                 <WorkspaceFact
@@ -283,23 +283,23 @@ function AssetWorkspacePanel({
               </dl>
             </WorkspaceSection>
 
-            <WorkspaceSection id="policy" title="Policy">
-              {policy ? (
+            <WorkspaceSection id="plan" title="Plan">
+              {plan ? (
                 <dl className="grid grid-cols-2 gap-4">
-                  <WorkspaceFact label="Target" value={formatPercent(policy.target)} />
+                  <WorkspaceFact label="Target" value={formatPercent(plan.target)} />
                   <WorkspaceFact
                     label="Band"
-                    value={`${formatPercent(policy.min)} / ${formatPercent(policy.max)}`}
+                    value={`${formatPercent(plan.min)} / ${formatPercent(plan.max)}`}
                   />
-                  <WorkspaceFact label="Rebalance" value={policy.rebalance ?? t('Not available')} />
-                  <WorkspaceFact label="As of" value={policy.date} />
+                  <WorkspaceFact label="Rebalance" value={plan.rebalance ?? t('Not available')} />
+                  <WorkspaceFact label="Plan date" value={plan.date} />
                   <WorkspaceFact
                     label="Action below band"
-                    value={policy.actionWhenBelow ?? t('Not available')}
+                    value={plan.actionWhenBelow ?? t('Not available')}
                   />
                   <WorkspaceFact
                     label="Action above band"
-                    value={policy.actionWhenAbove ?? t('Not available')}
+                    value={plan.actionWhenAbove ?? t('Not available')}
                   />
                 </dl>
               ) : (
@@ -358,6 +358,9 @@ function AssetWorkspacePanel({
                         {transaction.title ?? transaction.subject}
                       </p>
                       <p className="mt-1 text-xs tabular-nums text-ink-muted">{transaction.date}</p>
+                      <p className="mt-1 text-xs text-ink-muted">
+                        {formatTransactionDecision(transaction)}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -460,7 +463,9 @@ function buildResearchTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
       date: item.date,
       label: t('Thesis'),
       title: item.title ?? item.subject,
-      subject: item.reviewBy ? formatReviewDeadline(item.reviewBy) : item.status,
+      subject:
+        formatReference(item.basedOnReference) ??
+        (item.reviewBy ? formatReviewDeadline(item.reviewBy) : item.status),
     })),
   ].sort((left, right) => right.date.localeCompare(left.date))
 }
@@ -474,9 +479,46 @@ function buildDecisionsTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
       date: item.date,
       label: t('Decision'),
       title: item.title ?? item.subject,
-      subject: item.action,
+      subject: [
+        formatReference(item.basedOnReference),
+        formatApplicablePlan(facts.plans, item.date),
+        item.action,
+      ]
+        .filter(Boolean)
+        .join(' · '),
     }))
     .sort((left, right) => right.date.localeCompare(left.date))
+}
+
+function formatApplicablePlan(plans: NavorRendererAppState['plan']['entries'], date: string) {
+  const plan = plans.find((item) => date.localeCompare(item.date) !== -1)
+  return plan ? `${t('Plan')}: ${plan.title ?? plan.date}` : null
+}
+
+function formatReference(
+  reference: NavorRendererAppState['knowledge']['decisions'][number]['basedOnReference'],
+) {
+  if (!reference) return null
+  if (reference.status === 'resolved') {
+    return `${t('Based on')}: ${reference.target?.title ?? reference.target?.date ?? reference.raw}`
+  }
+  if (reference.status === 'ambiguous')
+    return `${t('Reference needs clarification')}: ${reference.raw}`
+  if (reference.status === 'unresolved' || reference.status === 'future') {
+    return `${t('Reference does not resolve')}: ${reference.raw}`
+  }
+  return `${t('Legacy reference')}: ${reference.raw}`
+}
+
+function formatTransactionDecision(
+  transaction: NavorRendererAppState['portfolio']['transactions'][number],
+) {
+  const reference = transaction.decisionReference
+  if (!reference) return t('No decision is linked to this transaction.')
+  if (reference.status === 'resolved') {
+    return `${t('Decision')}: ${reference.target?.title ?? reference.target?.date ?? reference.raw}`
+  }
+  return formatReference(reference) ?? t('No decision is linked to this transaction.')
 }
 
 function priceStatusLabel(
@@ -516,9 +558,9 @@ function statusLabel(status: string) {
     case 'over_invested':
       return t('Over target')
     case 'above_max':
-      return t('Above policy band')
+      return t('Above target range')
     case 'below_min':
-      return t('Below policy band')
+      return t('Below target range')
     case 'currency_mismatch':
       return t('Currency mismatch')
     default:
@@ -537,9 +579,9 @@ function statusDescription(status: string) {
     case 'over_invested':
       return t('Invested cost exceeds the configured target amount.')
     case 'above_max':
-      return t('Current portfolio weight is above the policy range.')
+      return t('Current portfolio weight is above the target range.')
     case 'below_min':
-      return t('Current portfolio weight is below the policy range.')
+      return t('Current portfolio weight is below the target range.')
     case 'currency_mismatch':
       return t(
         'Target and invested cost use different currencies, so funding progress is not comparable.',

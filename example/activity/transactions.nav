@@ -165,6 +165,7 @@
   Expenses:Fee                1 USD
 
 2026-03-06 txn Asset:Crypto:ETH "周线 KD 超卖，买入 ETH"
+  decision: 2026-02-09
   Assets:Crypto:ETH  3.15855775 ETH @ 1,978.75 USD
   Assets:Cash:USD     -6,251.00 USD
   Expenses:Fee                1 USD

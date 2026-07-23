@@ -31,7 +31,6 @@ export function ThesisView({
           { label: 'Theses', value: String(state.knowledge.theses.length) },
           { label: 'Active', value: String(active.length), tone: 'positive' },
           { label: 'Review dated', value: String(reviewable.length) },
-          { label: 'Visible', value: String(items.length) },
         ]}
       />
 
