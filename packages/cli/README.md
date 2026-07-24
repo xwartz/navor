@@ -6,6 +6,7 @@ Install the Navor command-line interface:
 npm install --global @navor/cli
 nav serve ./portfolio
 nav build ./portfolio --out ./site
+nav check ./portfolio
 nav format ./portfolio
 nav format ./portfolio --check
 ```

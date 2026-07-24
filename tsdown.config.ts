@@ -56,6 +56,7 @@ export default defineConfig([
       'packages/cli/src/serve.ts',
       'packages/cli/src/static-site.ts',
       'packages/cli/src/format.ts',
+      'packages/cli/src/check.ts',
     ],
     outDir: 'packages/cli/dist',
     dts: true,

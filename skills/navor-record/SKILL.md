@@ -24,7 +24,7 @@ Record facts faithfully and make the smallest valid change to an existing Navor 
 3. Ask for a missing date, subject, transaction quantity/commodity, or price instead of inferring it. For an Asset transaction, use the matching `Assets:...` holding posting; for an Account cash deployment, do not include an asset-holding posting.
 4. Show the exact proposed directive and destination file before changing source when the request is not already an unambiguous instruction to write it.
 5. Append the approved record. Do not modify or delete historical records merely because a thesis, target, or decision has changed.
-6. Run `nav format <affected path>`, then run the available Navor compile or Reader diagnostic path. Do not finish until the affected workspace has zero parse diagnostics. Report any remaining semantic diagnostics separately. Never patch derived output such as Reader JSON to hide a source diagnostic.
+6. Run `nav format <affected path>`, then `nav check <workspace>`. Do not finish until the workspace has zero parse diagnostics. Report any remaining semantic diagnostics separately. Never patch derived output such as Reader JSON to hide a source diagnostic.
 
 ## Exact line shapes
 
@@ -51,9 +51,8 @@ Before writing, inspect the proposed directive line by line. After writing, re-r
 Formatting is not validation. `nav format <affected path>` can normalize whitespace but does not prove that the parser accepted every line.
 
 1. Format the affected path.
-2. Run the workspace's existing Navor compile or Reader diagnostic command.
-3. If only `nav build` is available, build to a temporary output directory and inspect `navor-data.json` under `workspace.diagnostics`.
-4. Fix source and repeat until there are zero parse diagnostics. Remove temporary output afterward.
+2. Run `nav check <workspace>`.
+3. Fix source and repeat until there are zero parse diagnostics.
 
 Do not report success when diagnostics include malformed directives, metadata, postings, indentation, or an unclosed body.
 

@@ -46,6 +46,7 @@ nav serve example
 | --- | --- |
 | `nav serve <workspace>` | 本地 Reader（`<workspace>` 为投资仓库路径） |
 | `nav build <workspace> --out <dir>` | 静态站点 |
+| `nav check <workspace>` | 校验 parser 和语义诊断 |
 | `nav format <path> [--check]` | 格式化 `.nav` |
 
 语法高亮和保存时格式化见 [`extensions/vscode`](extensions/vscode/)，从 [Releases](https://github.com/xwartz/navor/releases/latest) 安装 `navor-*.vsix`。

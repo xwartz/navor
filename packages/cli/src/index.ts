@@ -2,6 +2,11 @@
 import { realpathSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
+import {
+  type CheckNavorWorkspaceResult,
+  checkNavorWorkspace,
+  checkNavorWorkspaceSummary,
+} from './check'
 import { type FormatNavorPathResult, formatNavorPath, formatNavorPathSummary } from './format'
 import { type ServedNavorWorkspace, serveNavorWorkspace } from './serve'
 import { type BuildNavorStaticSiteResult, buildNavorStaticSite } from './static-site'
@@ -9,15 +14,17 @@ import { type BuildNavorStaticSiteResult, buildNavorStaticSite } from './static-
 export type NavorCliResult =
   | (ServedNavorWorkspace & { command: 'serve' })
   | (BuildNavorStaticSiteResult & { command: 'build' })
+  | CheckNavorWorkspaceResult
   | FormatNavorPathResult
 
+export type { CheckNavorWorkspaceResult } from './check'
 export type { FormatNavorPathResult } from './format'
 export type { ServedNavorWorkspace, ServeNavorWorkspaceOptions } from './serve'
 export type {
   BuildNavorStaticSiteOptions,
   BuildNavorStaticSiteResult,
 } from './static-site'
-export { buildNavorStaticSite, formatNavorPath, serveNavorWorkspace }
+export { buildNavorStaticSite, checkNavorWorkspace, formatNavorPath, serveNavorWorkspace }
 
 export async function runNavorCli(
   args: string[],
@@ -27,7 +34,7 @@ export async function runNavorCli(
 
   if (!command || !target) {
     throw new Error(
-      'Usage: nav <serve|build|format> <workspace> [--out <dir>] [--port <port>] [--check]',
+      'Usage: nav <serve|build|check|format> <workspace> [--out <dir>] [--port <port>] [--check]',
     )
   }
 
@@ -73,6 +80,18 @@ export async function runNavorCli(
       command,
       ...built,
     }
+  }
+
+  if (command === 'check') {
+    const result = await checkNavorWorkspace(target)
+
+    console.log(checkNavorWorkspaceSummary(result))
+
+    if (result.diagnostics.length > 0) {
+      process.exitCode = 1
+    }
+
+    return result
   }
 
   if (command === 'format') {

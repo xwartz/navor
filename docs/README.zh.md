@@ -33,6 +33,7 @@ Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** 
 - [概览](cli/overview.zh.md)
 - [`nav serve`](cli/serve.zh.md)
 - [`nav build`](cli/build.zh.md)
+- [`nav check`](cli/check.zh.md)
 - [`nav format`](cli/format.zh.md)
 
 ## 概念

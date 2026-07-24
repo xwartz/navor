@@ -33,6 +33,7 @@ Documentation for Navor. Start with **why**, then **how**, then the **language**
 - [Overview](cli/overview.md)
 - [`nav serve`](cli/serve.md)
 - [`nav build`](cli/build.md)
+- [`nav check`](cli/check.md)
 - [`nav format`](cli/format.md)
 
 ## Concepts

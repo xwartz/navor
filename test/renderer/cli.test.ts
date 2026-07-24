@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest'
 describe('runNavorCli', () => {
   it('uses the public nav name in command errors', async () => {
     await expect(runNavorCli([])).rejects.toThrow(
-      'Usage: nav <serve|build|format> <workspace> [--out <dir>] [--port <port>] [--check]',
+      'Usage: nav <serve|build|check|format> <workspace> [--out <dir>] [--port <port>] [--check]',
     )
     await expect(runNavorCli(['unknown', 'fixtures/core'])).rejects.toThrow(
       'Unknown nav command "unknown".',
@@ -68,6 +68,44 @@ describe('runNavorCli', () => {
     if (checkAfter.command === 'format') {
       expect(checkAfter.changed).toEqual([])
       expect(checkAfter.unchanged).toEqual([file])
+    }
+  })
+
+  it('checks a workspace and returns its diagnostics', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'navor-cli-check-'))
+    const file = join(dir, 'knowledge.nav')
+    await writeFile(
+      file,
+      `2026-01-01 research Asset:Equity:US:TEST "Test"
+  source: Test
+ ---
+  Body
+  ---
+`,
+      'utf8',
+    )
+
+    const previousExitCode = process.exitCode
+
+    try {
+      const checked = await runNavorCli(['check', dir])
+
+      expect(checked.command).toBe('check')
+      if (checked.command === 'check') {
+        expect(checked.files).toEqual([file])
+        expect(checked.diagnostics).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              file,
+              line: 3,
+              message: 'Line is not a valid directive.',
+            }),
+          ]),
+        )
+      }
+      expect(process.exitCode).toBe(1)
+    } finally {
+      process.exitCode = previousExitCode
     }
   })
 })

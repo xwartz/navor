@@ -1,6 +1,6 @@
-import { execFile, execFileSync } from 'node:child_process'
+import { execFile, execFileSync, spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { mkdtemp, readFile } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -50,5 +50,28 @@ describe('compiled nav cli', () => {
     expect(await readFile(join(outDir, 'index.html'), 'utf8')).toContain(
       '<title>Core - Navor</title>',
     )
+  })
+
+  it('exits non-zero and prints diagnostics for an invalid workspace', async () => {
+    const workspace = await mkdtemp(join(tmpdir(), 'navor-cli-check-dist-'))
+    const file = join(workspace, 'knowledge.nav')
+    await writeFile(
+      file,
+      `2026-01-01 research Asset:Equity:US:TEST "Test"
+  source: Test
+ ---
+  Body
+  ---
+`,
+      'utf8',
+    )
+
+    const checked = spawnSync(process.execPath, [cliEntry, 'check', workspace], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    })
+
+    expect(checked.status).toBe(1)
+    expect(checked.stdout).toContain(`${file}:3: Line is not a valid directive.`)
   })
 })

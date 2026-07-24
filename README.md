@@ -46,6 +46,7 @@ nav serve example
 | --- | --- |
 | `nav serve <workspace>` | Local Reader (`<workspace>` is the repository path) |
 | `nav build <workspace> --out <dir>` | Static site |
+| `nav check <workspace>` | Validate parser and semantic diagnostics |
 | `nav format <path> [--check]` | Format `.nav` files |
 
 Editor highlighting and format-on-save: [`extensions/vscode`](extensions/vscode/). Install `navor-*.vsix` from [Releases](https://github.com/xwartz/navor/releases/latest).
