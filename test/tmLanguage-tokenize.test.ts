@@ -30,7 +30,9 @@ const require = createRequire(import.meta.url)
 async function loadNavorGrammar(): Promise<vsctm.IGrammar> {
   const wasmPath = require.resolve('vscode-oniguruma/release/onig.wasm')
   const wasmBin = await readFile(wasmPath)
-  await oniguruma.loadWASM(wasmBin.buffer.slice(wasmBin.byteOffset, wasmBin.byteOffset + wasmBin.byteLength))
+  await oniguruma.loadWASM(
+    wasmBin.buffer.slice(wasmBin.byteOffset, wasmBin.byteOffset + wasmBin.byteLength),
+  )
 
   const grammarPath = join(process.cwd(), 'extensions/vscode/syntaxes/navor.tmLanguage.json')
   const navorRaw = await readFile(grammarPath, 'utf8')
@@ -58,7 +60,10 @@ async function loadNavorGrammar(): Promise<vsctm.IGrammar> {
   return grammar
 }
 
-function directiveKeywordHits(grammar: vsctm.IGrammar, source: string): { ok: number; total: number } {
+function directiveKeywordHits(
+  grammar: vsctm.IGrammar,
+  source: string,
+): { ok: number; total: number } {
   const lines = source.split(/\n/)
   let ruleStack = vsctm.INITIAL
   let ok = 0

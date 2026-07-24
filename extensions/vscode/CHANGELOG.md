@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.5
+
+- Fix Markdown body highlighting so directives after the first block keep syntax highlighting.
+- Align the extension with the Navor 0.5.5 release.
+
 ## 0.5.4
 
 - Align the extension with the Navor 0.5.4 release.

@@ -1,5 +1,7 @@
 # @navor/core
 
+## 0.5.5
+
 ## 0.5.4
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @navor/cli
 
+## 0.5.5
+
+### Patch Changes
+
+- Add the `nav check` command to validate a workspace and report parser and semantic diagnostics with a non-zero exit code, and fix Reader plan version comparison.
+- Updated dependencies
+  - @navor/reader-ui@0.5.5
+  - @navor/core@0.5.5
+  - @navor/renderer@0.5.5
+
 ## 0.5.4
 
 ### Patch Changes
