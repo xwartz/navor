@@ -288,8 +288,10 @@ function groupPlanVersions(entries: PlanEntry[], currentEntries: PlanEntry[]): P
     .map(([subject, versions]) => {
       const current = currentBySubject.get(subject)
       if (!current) return null
+      // Compare by fields, not object identity: static builds JSON-roundtrip the
+      // state, so `plan.current` and `plan.entries` are no longer the same refs.
       const history = versions
-        .filter((entry) => entry !== current)
+        .filter((entry) => !isSamePlanVersion(entry, current))
         .sort((left, right) => right.date.localeCompare(left.date))
       return { subject, current, history }
     })
@@ -299,6 +301,20 @@ function groupPlanVersions(entries: PlanEntry[], currentEntries: PlanEntry[]): P
 
 function matchesPlanFilters(entry: PlanEntry, filters: ReaderFilters) {
   return matchesFilters(entry, filters) && (!filters.date || entry.date.includes(filters.date))
+}
+
+function isSamePlanVersion(left: PlanEntry, right: PlanEntry) {
+  return (
+    left.date === right.date &&
+    left.subject === right.subject &&
+    left.title === right.title &&
+    left.target === right.target &&
+    left.min === right.min &&
+    left.max === right.max &&
+    left.rebalance === right.rebalance &&
+    left.actionWhenBelow === right.actionWhenBelow &&
+    left.actionWhenAbove === right.actionWhenAbove
+  )
 }
 
 function clamp(value: number) {

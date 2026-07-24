@@ -29,6 +29,44 @@ describe('Plan view', () => {
     expect(html).not.toContain('role="img"')
   })
 
+  it('hides history after a JSON roundtrip when a plan has only one version', async () => {
+    const compiled = await compileNavorWorkspace('example', {
+      fetchLivePrices: false,
+      today: '2026-07-10',
+    })
+    const currentEth = compiled.plan.current.find((entry) => entry.subject === 'Asset:Crypto:ETH')
+    expect(currentEth).toBeTruthy()
+
+    const state = JSON.parse(
+      JSON.stringify({
+        ...compiled,
+        plan: {
+          ...compiled.plan,
+          entries: [currentEth],
+          current: [currentEth],
+        },
+      }),
+    ) as typeof compiled
+
+    const html = renderToStaticMarkup(<App initialView="plan" state={state} />)
+
+    expect(html).toContain('ETH 回撤后计划')
+    expect(html).not.toContain('Show history')
+  })
+
+  it('still counts only prior revisions after a JSON roundtrip', async () => {
+    const compiled = await compileNavorWorkspace('example', {
+      fetchLivePrices: false,
+      today: '2026-07-10',
+    })
+    const state = JSON.parse(JSON.stringify(compiled)) as typeof compiled
+
+    const html = renderToStaticMarkup(<App initialView="plan" state={state} />)
+
+    expect(html.match(/1 revision/g)).toHaveLength(1)
+    expect(html).not.toContain('2 revision')
+  })
+
   it('keeps the current plan visible when a filter matches one of its revisions', async () => {
     const state = await compileNavorWorkspace('example', {
       fetchLivePrices: false,
