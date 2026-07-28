@@ -2,6 +2,11 @@ import type { NavorRendererAppState } from '@navor/contract'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { buildAssetNarrativeIndex } from './asset-workspace'
 import { AssetWorkspaceContext } from './asset-workspace-context'
+import {
+  readReaderLocation,
+  subscribeReaderLocation,
+  updateReaderLocation,
+} from './reader-location'
 
 export function AssetWorkspaceProvider({
   children,
@@ -20,8 +25,7 @@ export function AssetWorkspaceProvider({
       return null
     }
 
-    const subject = new URL(window.location.href).searchParams.get('asset')
-    return assetWorkspace.has(subject) ? subject : null
+    return readReaderLocation(window.location.href, 'overview', assetWorkspace.has).asset
   })
   const returnFocusRef = useRef<HTMLElement | null>(null)
 
@@ -36,7 +40,7 @@ export function AssetWorkspaceProvider({
       }
 
       setSelectedAssetSubject(subject)
-      syncAssetParam(subject)
+      syncAssetLocation(subject)
     },
     [canOpenAsset],
   )
@@ -44,7 +48,7 @@ export function AssetWorkspaceProvider({
   const closeAsset = useCallback(() => {
     const subject = selectedAssetSubject
     setSelectedAssetSubject(null)
-    syncAssetParam(null)
+    syncAssetLocation(null)
     window.setTimeout(() => {
       if (returnFocusRef.current?.isConnected) {
         returnFocusRef.current.focus({ preventScroll: true })
@@ -61,18 +65,17 @@ export function AssetWorkspaceProvider({
 
   useEffect(() => {
     const syncFromHistory = () => {
-      const subject = new URL(window.location.href).searchParams.get('asset')
-      setSelectedAssetSubject(subject && canOpenAsset(subject) ? subject : null)
+      setSelectedAssetSubject(
+        readReaderLocation(window.location.href, 'overview', canOpenAsset).asset,
+      )
     }
-
-    window.addEventListener('popstate', syncFromHistory)
-    return () => window.removeEventListener('popstate', syncFromHistory)
+    return subscribeReaderLocation(syncFromHistory)
   }, [canOpenAsset])
 
   useEffect(() => {
     if (selectedAssetSubject && !canOpenAsset(selectedAssetSubject)) {
       setSelectedAssetSubject(null)
-      syncAssetParam(null)
+      syncAssetLocation(null)
     }
   }, [canOpenAsset, selectedAssetSubject])
 
@@ -84,14 +87,6 @@ export function AssetWorkspaceProvider({
   return <AssetWorkspaceContext.Provider value={value}>{children}</AssetWorkspaceContext.Provider>
 }
 
-function syncAssetParam(subject: string | null) {
-  const url = new URL(window.location.href)
-
-  if (subject) {
-    url.searchParams.set('asset', subject)
-  } else {
-    url.searchParams.delete('asset')
-  }
-
-  window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`)
+function syncAssetLocation(asset: string | null) {
+  window.history.replaceState(null, '', updateReaderLocation(window.location.href, { asset }))
 }

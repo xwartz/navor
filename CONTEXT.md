@@ -6,6 +6,7 @@ Shared vocabulary for documentation, implementation, and interface copy. Navor m
 | --- | --- |
 | Investment state | Objective facts (holdings, transactions) plus cognitive facts (research, thesis, decisions, reviews). |
 | Repository | A directory tree of `.nav` files that describes investment state. Preferred term in prose. |
+| Repository snapshot | One derived observation of a Repository's source files, configuration result, source revision, and parsed workspace. It is not a source fact. |
 | Workspace | The CLI path argument `<workspace>`: the repository root. Not related to VS Code workspace settings. |
 | Navor file | A plain-text `.nav` file containing dated investment facts. |
 | Directive | One dated record. Navor 0.1 supports `option`, `capital`, `open`, `close`, `plan`, `research`, `thesis`, `decision`, `txn`, `review`, `journal`, and `note`. |
@@ -27,6 +28,9 @@ Shared vocabulary for documentation, implementation, and interface copy. Navor m
 | Journal | Subjective process record of emotion, discipline, mistakes, or reflection. |
 | Engine | The layer that validates facts, derives portfolio state, applies enrichment, and generates views. |
 | Reader | The local application that renders a repository. |
+| Reader location session | The Reader-derived URL state for the active view and selected Asset, including its browser-history and focus restoration rules. It is not a source fact. |
+| Reader state delivery | The mechanism that makes derived Reader state available to the Reader. Static output and development runtime are adapters of the same delivery contract; it is not a source fact. |
+| Reader behavior test surface | The observable Reader behavior for navigation, Asset selection, browser history, and focus restoration. It protects derived Reader behavior without exposing implementation arrangement. |
 | Static-site compiler | The build path that writes static HTML, assets, and serialized view data. |
 | Price adapter | A provider integration for optional prices, FX rates, and market metadata. Its output is not source truth. |
 

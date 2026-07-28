@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import type { NavorRendererAppState } from '@navor/contract'
 
 import { documentTitleFromState } from './document-title'
+import { readerStateDeliveryTag } from './state-delivery'
 
 export const READER_ARTIFACT_FILES = [
   'index.html',
@@ -26,10 +27,7 @@ export async function finalizeReaderArtifacts(outDir: string, state: NavorRender
   const html = await readFile(indexPath, 'utf8')
   const withDataSource = html.includes('data-navor-source')
     ? html
-    : html.replace(
-        '</head>',
-        '    <script type="application/json" data-navor-source="./navor-data.json"></script>\n  </head>',
-      )
+    : html.replace('</head>', `    ${readerStateDeliveryTag()}\n  </head>`)
   const patched = withDataSource.replace(
     /<title>[^<]*<\/title>/,
     `<title>${escapeHtml(documentTitleFromState(state))}</title>`,

@@ -14,7 +14,7 @@ import {
   generateProcessViews,
   getNavorWorkspaceFingerprint,
   getPortfolioOptions,
-  loadNavorWorkspace,
+  loadNavorRepositorySnapshot,
   type MarketPrice,
   mergeFxRates,
 } from '@navor/core'
@@ -82,16 +82,27 @@ export async function compileNavorWorkspace(
     return cached.promise
   }
 
-  const promise = compileNavorWorkspaceInternal(root, options).then((state) => {
-    const entry = compileCache.get(cacheKey)
+  const snapshot = await loadNavorRepositorySnapshot(root)
 
-    if (entry) {
-      entry.state = state
-      entry.promise = undefined
-    }
+  for (const key of compileCache.keys()) {
+    if (key.startsWith(`${root}\0`) && key !== cacheKey) compileCache.delete(key)
+  }
 
-    return state
-  })
+  const promise = compileNavorWorkspaceInternal(root, options, snapshot.workspace)
+    .then((state) => {
+      const entry = compileCache.get(cacheKey)
+
+      if (entry) {
+        entry.state = state
+        entry.promise = undefined
+      }
+
+      return state
+    })
+    .catch((error: unknown) => {
+      compileCache.delete(cacheKey)
+      throw error
+    })
 
   compileCache.set(cacheKey, {
     fingerprint,
@@ -105,8 +116,8 @@ export async function compileNavorWorkspace(
 async function compileNavorWorkspaceInternal(
   root: string,
   options: CompileNavorWorkspaceOptions,
+  workspace: Awaited<ReturnType<typeof loadNavorRepositorySnapshot>>['workspace'],
 ): Promise<NavorRendererAppState> {
-  const workspace = await loadNavorWorkspace(root)
   const stalePriceAfterDays = options.stalePriceAfterDays ?? workspace.config.stalePriceAfterDays
   const portfolioOptions = getPortfolioOptions(workspace.ast)
   const portfolioSubject =
@@ -193,7 +204,7 @@ async function compileNavorWorkspaceInternal(
 }
 
 function resolvePriceAdapter(
-  workspace: Awaited<ReturnType<typeof loadNavorWorkspace>>,
+  workspace: Awaited<ReturnType<typeof loadNavorRepositorySnapshot>>['workspace'],
   options: CompileNavorWorkspaceOptions,
 ) {
   if (options.priceAdapter === null) {

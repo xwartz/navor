@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 describe('compileNavorWorkspace cache', () => {
   it('reuses compiled state for repeated requests with the same workspace and options', async () => {
     invalidateNavorCompileCache()
-    const loadSpy = vi.spyOn(core, 'loadNavorWorkspace')
+    const loadSpy = vi.spyOn(core, 'loadNavorRepositorySnapshot')
 
     const options = {
       today: '2026-07-08',
@@ -32,7 +32,7 @@ describe('compileNavorWorkspace cache', () => {
 
   it('recompiles after the workspace compile cache is invalidated', async () => {
     invalidateNavorCompileCache()
-    const loadSpy = vi.spyOn(core, 'loadNavorWorkspace')
+    const loadSpy = vi.spyOn(core, 'loadNavorRepositorySnapshot')
 
     const options = {
       today: '2026-07-08',

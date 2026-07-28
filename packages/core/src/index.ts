@@ -67,5 +67,6 @@ export type {
 export {
   getNavorWorkspaceFingerprint,
   listWorkspaceSourceFiles,
+  loadNavorRepositorySnapshot,
   loadNavorWorkspace,
 } from './workspace'

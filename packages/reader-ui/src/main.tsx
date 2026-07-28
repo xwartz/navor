@@ -2,6 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ReaderApp } from './ReaderApp'
+import { readerStateSourceFromDocument } from './state-delivery'
 import './styles.css'
 
 declare global {
@@ -15,7 +16,7 @@ async function loadReaderState(): Promise<NavorRendererAppState | null> {
     return window.__NAVOR_STATIC_STATE__
   }
 
-  const source = document.querySelector('[data-navor-source]')?.getAttribute('data-navor-source')
+  const source = readerStateSourceFromDocument(document)
 
   if (!source) {
     return null

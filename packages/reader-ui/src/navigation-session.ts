@@ -2,13 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 
 import type { ReaderFilters } from './filters'
 import type { ReaderView } from './navigation'
-import { resolveReaderView } from './navigation'
+import {
+  readReaderLocation,
+  subscribeReaderLocation,
+  updateReaderLocation,
+} from './reader-location'
 
 export function useReaderNavigationSession(initialView: ReaderView, initialFilters: ReaderFilters) {
   const [activeView, setActiveView] = useState<ReaderView>(() =>
     typeof window === 'undefined'
       ? initialView
-      : resolveReaderView(window.location.hash, initialView),
+      : readReaderLocation(window.location.href, initialView, () => false).view,
   )
   const [navOpen, setNavOpen] = useState(false)
   const [navCollapsed, setNavCollapsed] = useState(readNavCollapsed)
@@ -18,15 +22,10 @@ export function useReaderNavigationSession(initialView: ReaderView, initialFilte
   useEffect(() => {
     const syncView = () => {
       shouldFocusViewRef.current = true
-      setActiveView(resolveReaderView(window.location.hash, initialView))
+      setActiveView(readReaderLocation(window.location.href, initialView, () => false).view)
       setFilters({})
     }
-    window.addEventListener('popstate', syncView)
-    window.addEventListener('hashchange', syncView)
-    return () => {
-      window.removeEventListener('popstate', syncView)
-      window.removeEventListener('hashchange', syncView)
-    }
+    return subscribeReaderLocation(syncView)
   }, [initialView])
 
   useEffect(() => {
@@ -37,7 +36,9 @@ export function useReaderNavigationSession(initialView: ReaderView, initialFilte
     shouldFocusViewRef.current = view !== activeView || searchOpen
     setActiveView(view)
     setFilters({})
-    if (window.location.hash !== `#${view}`) window.history.pushState(null, '', `#${view}`)
+    if (window.location.hash !== `#${view}`) {
+      window.history.pushState(null, '', updateReaderLocation(window.location.href, { view }))
+    }
   }
 
   return {

@@ -6,6 +6,7 @@
 | --- | --- |
 | 投资状态 | 客观事实（持仓、交易）与认知事实（研究、观点、决策、复盘）的总和。 |
 | 投资仓库 | `.nav` 文件目录树，描述完整投资状态，文档中的推荐说法 |
+| Repository snapshot | 对投资仓库源文件、配置解析结果、源版本和已解析工作区的一次派生观察。它不是源事实。 |
 | 工作区 | CLI 参数 `<workspace>` 的名称，指投资仓库的路径，与 VS Code「工作区」设置无关 |
 | Navor 文件 | 包含带日期投资事实的纯文本 `.nav` 文件。 |
 | 指令 | 一条带日期的记录，Navor 0.1 支持 `option`、`capital`、`open`、`close`、`plan`、`research`、`thesis`、`decision`、`txn`、`review`、`journal` 和 `note` |
@@ -26,6 +27,9 @@
 | Journal | 记录情绪、纪律、错误或反思的主观过程记录。 |
 | Engine | 校验事实、派生组合状态、应用数据增强并生成视图的层。 |
 | Reader | 渲染投资仓库的本地应用。 |
+| Reader location session | Reader 派生的 URL 状态，记录当前视图与选中的 Asset，以及浏览器历史和焦点恢复规则。它不是源事实。 |
+| Reader state delivery | 将派生 Reader 状态提供给 Reader 的机制。静态产物与开发运行时是同一交付契约的 adapter；它不是源事实。 |
+| Reader behavior test surface | Reader 导航、Asset 选择、浏览器历史和焦点恢复的可观察行为。它保护派生 Reader 行为，而不暴露实现编排。 |
 | 静态站点编译器 | 输出静态 HTML、资源和序列化视图数据的构建路径。 |
 | 价格适配器 | 提供可选价格、汇率和市场元数据的集成，其输出不是源事实。 |
 

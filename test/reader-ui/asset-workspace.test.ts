@@ -6,12 +6,11 @@ const PANEL = 'packages/reader-ui/src/components/AssetWorkspacePanel.tsx'
 const SCAFFOLD = 'packages/reader-ui/src/components/ViewScaffold.tsx'
 
 describe('shared asset workspace', () => {
-  it('persists the selected asset in the URL and restores focus on close', () => {
+  it('uses the location protocol and restores focus on close', () => {
     const source = readFileSync(WORKSPACE, 'utf8')
 
-    expect(source).toMatch(/searchParams\.get\('asset'\)/)
-    expect(source).toMatch(/searchParams\.set\('asset', subject\)/)
-    expect(source).toMatch(/searchParams\.delete\('asset'\)/)
+    expect(source).toMatch(/readReaderLocation/)
+    expect(source).toMatch(/updateReaderLocation/)
     expect(source).toMatch(/returnFocusRef\.current\.focus\(\{ preventScroll: true \}\)/)
     expect(source).toMatch(/data-asset-subject/)
   })

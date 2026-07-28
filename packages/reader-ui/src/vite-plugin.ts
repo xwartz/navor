@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 
 import type { CompileNavorWorkspaceOptions } from '@navor/renderer'
 import type { Plugin, ViteDevServer } from 'vite'
-
+import { isReaderStateRequest } from './state-delivery'
 import { workspaceWatchGlobs } from './vite-config'
 
 export interface NavorWorkspacePluginOptions {
@@ -77,7 +77,7 @@ export function navorWorkspacePlugin(options: NavorWorkspacePluginOptions): Plug
           return
         }
 
-        if (req.url !== '/navor-data.json') {
+        if (!isReaderStateRequest(req.url)) {
           next()
           return
         }
