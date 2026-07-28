@@ -13,22 +13,7 @@ import { matchesFilters } from './filters'
 import { readerLocale, t } from './i18n'
 import { getNavGroups, getViewLabels, type ReaderView, VIEW_LABELS } from './navigation'
 import { buildSearchHits } from './search'
-import { AccountsView } from './views/AccountsView'
-import { AllocationView } from './views/AllocationView'
-import { DashboardView } from './views/DashboardView'
-import { DecisionsView } from './views/DecisionsView'
-import { DiagnosticsView } from './views/DiagnosticsView'
-import { DriftView } from './views/DriftView'
-import { JournalView } from './views/JournalView'
-import { MarketView } from './views/MarketView'
-import { PlanView } from './views/PlanView'
-import { PortfolioView } from './views/PortfolioView'
-import { ResearchView } from './views/ResearchView'
-import { ReviewsView } from './views/ReviewsView'
-import { ThesisView } from './views/ThesisView'
-import { TransactionsView } from './views/TransactionsView'
-import { WatchlistView } from './views/WatchlistView'
-import { WorkspaceView } from './views/WorkspaceView'
+import { getReaderView } from './view-catalog'
 
 interface AppProps {
   state?: NavorRendererAppState | null
@@ -103,7 +88,7 @@ function ReaderAppShell({
   const diagnosticCount = state ? countDiagnostics(state) : 0
   const showSearch = Boolean(state && filters.query?.trim())
   const viewFocusToken = showSearch ? 'search' : activeView
-  const filtersEnabled = showSearch || FILTERABLE_VIEWS.has(activeView)
+  const filtersEnabled = showSearch || Boolean(getReaderView(activeView).filterSource)
   const filterResultCount =
     state && filtersEnabled && Object.values(filters).some(Boolean)
       ? countFilterMatches(showSearch ? null : activeView, state, filters)
@@ -204,7 +189,7 @@ function ReaderAppShell({
               {showSearch ? (
                 <SearchOverview filters={filters} onSelectView={selectView} state={state} />
               ) : (
-                renderActiveView(activeView, state, filters, liveEnabled)
+                getReaderView(activeView).render(state, filters, liveEnabled)
               )}
             </div>
           </main>
@@ -221,21 +206,6 @@ function readNavCollapsed() {
   )
 }
 
-const FILTERABLE_VIEWS = new Set<ReaderView>([
-  'holdings',
-  'ledger',
-  'allocation',
-  'plan',
-  'drift',
-  'watchlist',
-  'research',
-  'thesis',
-  'decisions',
-  'reviews',
-  'journal',
-  'market-data',
-])
-
 function countFilterMatches(
   view: ReaderView | null,
   state: NavorRendererAppState,
@@ -245,41 +215,9 @@ function countFilterMatches(
     return buildSearchHits(state).filter((hit) => matchesFilters(hit, filters)).length
   }
 
-  const sources: Partial<Record<ReaderView, unknown[]>> = {
-    holdings: state.portfolio.holdings,
-    ledger: state.portfolio.transactions,
-    allocation: state.allocation.assets,
-    plan: state.plan.entries,
-    drift: state.drift.entries,
-    watchlist: state.process.watchlist,
-    research: [
-      ...state.knowledge.research,
-      ...state.knowledge.theses,
-      ...state.knowledge.decisions,
-    ],
-    thesis: state.knowledge.theses,
-    decisions: state.knowledge.decisions,
-    reviews: state.process.reviews,
-    journal: state.process.journal,
-  }
-
-  if (view === 'market-data') {
-    const priceSubjects = new Set([
-      ...state.market.prices.map((price) => price.subject),
-      ...state.enrichment.prices.map((price) => price.subject),
-    ])
-    const priceRecords = [...priceSubjects].map((subject) => ({
-      subject,
-      ...state.market.prices.find((price) => price.subject === subject),
-      ...state.enrichment.prices.find((price) => price.subject === subject),
-    }))
-
-    return [...priceRecords, ...state.market.research].filter((item) =>
-      matchesFilters(item, filters),
-    ).length
-  }
-
-  return (sources[view] ?? []).filter((item) => matchesFilters(item, filters)).length
+  return (getReaderView(view).filterSource?.(state) ?? []).filter((item) =>
+    matchesFilters(item, filters),
+  ).length
 }
 
 export function resolveReaderView(hash: string, fallback: ReaderView): ReaderView {
@@ -297,48 +235,4 @@ function countDiagnostics(state: NavorRendererAppState) {
     ...state.plan.diagnostics,
     ...state.drift.diagnostics,
   ].length
-}
-
-function renderActiveView(
-  view: ReaderView,
-  state: NavorRendererAppState,
-  filters: ReaderFilters,
-  liveEnabled: boolean,
-) {
-  switch (view) {
-    case 'workspace':
-      return <WorkspaceView state={state} />
-    case 'overview':
-      return <DashboardView liveEnabled={liveEnabled} state={state} />
-    case 'accounts':
-      return <AccountsView state={state} />
-    case 'holdings':
-      return <PortfolioView filters={filters} state={state} />
-    case 'ledger':
-      return <TransactionsView filters={filters} state={state} />
-    case 'allocation':
-      return <AllocationView filters={filters} state={state} />
-    case 'plan':
-      return <PlanView filters={filters} state={state} />
-    case 'drift':
-      return <DriftView filters={filters} state={state} />
-    case 'watchlist':
-      return <WatchlistView filters={filters} state={state} />
-    case 'research':
-      return <ResearchView filters={filters} state={state} />
-    case 'thesis':
-      return <ThesisView filters={filters} state={state} />
-    case 'decisions':
-      return <DecisionsView filters={filters} state={state} />
-    case 'reviews':
-      return <ReviewsView filters={filters} state={state} />
-    case 'journal':
-      return <JournalView filters={filters} state={state} />
-    case 'market-data':
-      return <MarketView filters={filters} state={state} />
-    case 'diagnostics':
-      return <DiagnosticsView state={state} />
-    default:
-      return <DashboardView liveEnabled={liveEnabled} state={state} />
-  }
 }

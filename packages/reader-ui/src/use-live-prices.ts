@@ -1,4 +1,5 @@
 import type { PriceProxyResponseBody } from '@navor/adapters'
+import { resolvePriceSources } from '@navor/adapters/browser'
 import type { NavorRendererAppState } from '@navor/contract'
 import { applyLivePrices } from '@navor/renderer/apply-live-prices'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -63,7 +64,7 @@ export function useLivePrices(baseState: NavorRendererAppState | null): UseLiveP
       const staticPrices = baseState.market.prices.filter(
         (price) => price.provider === 'WorkspaceStaticPrices',
       )
-      const mergedPrices = mergeLivePrices(staticPrices, payload.prices)
+      const mergedPrices = resolvePriceSources({ staticPrices, livePrices: payload.prices })
 
       setState(
         applyLivePrices(
@@ -101,19 +102,4 @@ export function useLivePrices(baseState: NavorRendererAppState | null): UseLiveP
     liveEnabled,
     refresh,
   }
-}
-
-function mergeLivePrices(
-  staticPrices: NavorRendererAppState['market']['prices'],
-  livePrices: PriceProxyResponseBody['prices'],
-) {
-  const merged = new Map(livePrices.map((price) => [price.subject, price]))
-
-  for (const price of staticPrices) {
-    if (!merged.has(price.subject)) {
-      merged.set(price.subject, price)
-    }
-  }
-
-  return [...merged.values()]
 }

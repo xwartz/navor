@@ -1,3 +1,5 @@
+export type { InvestmentActionInboxSignals } from './action-inbox'
+export { buildInvestmentActionInbox } from './action-inbox'
 export { generateAllocation } from './allocation'
 export { buildDashboardView, generateDashboard } from './dashboard'
 export { generateDrift } from './drift'

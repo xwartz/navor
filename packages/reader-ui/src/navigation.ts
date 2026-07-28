@@ -1,70 +1,22 @@
 import { type ReaderLocale, translateText } from './i18n'
+import { READER_VIEW_CATALOG, type ReaderView } from './view-catalog'
 
-export type ReaderView =
-  | 'workspace'
-  | 'overview'
-  | 'accounts'
-  | 'holdings'
-  | 'ledger'
-  | 'allocation'
-  | 'plan'
-  | 'drift'
-  | 'watchlist'
-  | 'research'
-  | 'thesis'
-  | 'decisions'
-  | 'reviews'
-  | 'journal'
-  | 'market-data'
-  | 'diagnostics'
+export type { ReaderView } from './view-catalog'
 
 export interface NavGroup {
   label: string
   items: Array<{ id: ReaderView; label: string }>
 }
 
-export const NAV_GROUPS: NavGroup[] = [
-  {
-    label: 'Monitor',
-    items: [
-      { id: 'overview', label: 'Overview' },
-      { id: 'drift', label: 'Drift' },
-      { id: 'watchlist', label: 'Watchlist' },
-    ],
-  },
-  {
-    label: 'Capital',
-    items: [
-      { id: 'holdings', label: 'Holdings' },
-      { id: 'allocation', label: 'Allocation' },
-      { id: 'accounts', label: 'Accounts' },
-      { id: 'ledger', label: 'Ledger' },
-    ],
-  },
-  {
-    label: 'Research',
-    items: [
-      { id: 'research', label: 'Research' },
-      { id: 'thesis', label: 'Thesis' },
-      { id: 'decisions', label: 'Decisions' },
-      { id: 'reviews', label: 'Reviews' },
-      { id: 'journal', label: 'Journal' },
-    ],
-  },
-  {
-    label: 'System',
-    items: [
-      { id: 'plan', label: 'Plan' },
-      { id: 'market-data', label: 'Market data' },
-      { id: 'workspace', label: 'Workspace' },
-      { id: 'diagnostics', label: 'Diagnostics' },
-    ],
-  },
-]
+export const NAV_GROUPS: NavGroup[] = ['Monitor', 'Capital', 'Research', 'System'].map((label) => ({
+  label,
+  items: READER_VIEW_CATALOG.filter((view) => view.group === label).map(({ id, label }) => ({
+    id,
+    label,
+  })),
+}))
 
-export const VIEW_LABELS = Object.fromEntries(
-  NAV_GROUPS.flatMap((group) => group.items.map((item) => [item.id, item.label])),
-) as Record<ReaderView, string>
+export { VIEW_LABELS } from './view-catalog'
 
 export function getNavGroups(locale: ReaderLocale): NavGroup[] {
   if (locale === 'en') {

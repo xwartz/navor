@@ -1,7 +1,7 @@
 import type { NavorRendererAppState } from '@navor/contract'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
-import type { AssetWorkspaceIndex } from '../asset-workspace'
+import type { AssetNarrativeIndex } from '../asset-workspace'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel } from '../EntityLabelContext'
 import {
@@ -43,7 +43,7 @@ function AssetWorkspacePanel({
   onClose,
   subject,
 }: {
-  facts: ReturnType<AssetWorkspaceIndex['get']>
+  facts: ReturnType<AssetNarrativeIndex['get']>
   onClose: () => void
   subject: string
 }) {
@@ -450,18 +450,21 @@ function QuietMessage({ children }: { children: ReactNode }) {
   )
 }
 
-function buildResearchTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
+function buildResearchTimeline(facts: ReturnType<AssetNarrativeIndex['get']>) {
   if (!facts) return []
 
-  return [
-    ...facts.research.map((item) => ({
-      id: `research:${item.date}:${item.title}`,
-      date: item.date,
-      label: t('Research'),
-      title: item.title ?? item.subject,
-      subject: item.tags.join(' · '),
-    })),
-    ...facts.theses.map((item) => ({
+  return facts.researchTimeline.map((item) => {
+    if ('tags' in item) {
+      return {
+        id: `research:${item.date}:${item.title}`,
+        date: item.date,
+        label: t('Research'),
+        title: item.title ?? item.subject,
+        subject: item.tags.join(' · '),
+      }
+    }
+
+    return {
       id: `thesis:${item.date}:${item.title}`,
       date: item.date,
       label: t('Thesis'),
@@ -469,14 +472,14 @@ function buildResearchTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
       subject:
         formatReference(item.basedOnReference) ??
         (item.reviewBy ? formatReviewDeadline(item.reviewBy) : item.status),
-    })),
-  ].sort((left, right) => right.date.localeCompare(left.date))
+    }
+  })
 }
 
-function buildDecisionsTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
+function buildDecisionsTimeline(facts: ReturnType<AssetNarrativeIndex['get']>) {
   if (!facts) return []
 
-  return facts.decisions
+  return facts.decisionTimeline
     .map((item) => ({
       id: `decision:${item.date}:${item.title}`,
       date: item.date,

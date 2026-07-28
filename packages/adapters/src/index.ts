@@ -4,6 +4,8 @@ import type { MarketPrice, NavorWorkspaceConfig } from '@navor/core'
 export type { BuildPriceEnrichmentOptions } from './enrichment'
 export { buildPriceEnrichment } from './enrichment'
 export { buildPricePlan, type PricePlanEntry } from './price-plan'
+export type { PriceSources } from './price-policy'
+export { resolvePriceSources } from './price-policy'
 export type {
   PriceProxyHandlerOptions,
   PriceProxyQuoteRequest,

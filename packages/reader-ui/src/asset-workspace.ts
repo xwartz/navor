@@ -1,6 +1,6 @@
 import type { NavorRendererAppState } from '@navor/contract'
 
-type AssetWorkspaceFacts = {
+export type AssetNarrative = {
   allocation: NavorRendererAppState['allocation']['assets'][number] | null
   execution: NavorRendererAppState['dashboard']['assetExecutions'][number] | null
   holding: NavorRendererAppState['portfolio']['holdings'][number] | null
@@ -16,14 +16,24 @@ type AssetWorkspaceFacts = {
   research: NavorRendererAppState['knowledge']['research']
   theses: NavorRendererAppState['knowledge']['theses']
   decisions: NavorRendererAppState['knowledge']['decisions']
+  researchTimeline: Array<
+    | NavorRendererAppState['knowledge']['research'][number]
+    | NavorRendererAppState['knowledge']['theses'][number]
+  >
+  decisionTimeline: NavorRendererAppState['knowledge']['decisions']
+  contextTimeline: Array<
+    | NavorRendererAppState['knowledge']['research'][number]
+    | NavorRendererAppState['knowledge']['theses'][number]
+    | NavorRendererAppState['knowledge']['decisions'][number]
+  >
 }
 
-export interface AssetWorkspaceIndex {
-  get: (subject: string) => AssetWorkspaceFacts | null
+export interface AssetNarrativeIndex {
+  get: (subject: string) => AssetNarrative | null
   has: (subject: string | null | undefined) => boolean
 }
 
-export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWorkspaceIndex {
+export function buildAssetNarrativeIndex(state: NavorRendererAppState): AssetNarrativeIndex {
   const subjects = new Set<string>()
   const add = (subject: string | null | undefined) => {
     if (subject?.startsWith('Asset:')) subjects.add(subject)
@@ -55,6 +65,16 @@ export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWor
     has: (subject) => Boolean(subject && subjects.has(subject)),
     get: (subject) => {
       if (!subjects.has(subject)) return null
+      const research = state.knowledge.research.filter((item) => item.subject === subject)
+      const theses = state.knowledge.theses.filter((item) => item.subject === subject)
+      const decisions = state.knowledge.decisions.filter((item) => item.subject === subject)
+      const researchTimeline = [...research, ...theses].sort((left, right) =>
+        right.date.localeCompare(left.date),
+      )
+      const decisionTimeline = decisions.toSorted((left, right) =>
+        right.date.localeCompare(left.date),
+      )
+
       return {
         allocation: allocationBySubject.get(subject) ?? null,
         execution: executionBySubject.get(subject) ?? null,
@@ -72,10 +92,19 @@ export function buildAssetWorkspaceIndex(state: NavorRendererAppState): AssetWor
           .sort((left, right) => right.date.localeCompare(left.date)),
         watchlist: watchlistBySubject.get(subject) ?? null,
         actions: state.dashboard.actionInbox.filter((item) => item.subject === subject),
-        research: state.knowledge.research.filter((item) => item.subject === subject),
-        theses: state.knowledge.theses.filter((item) => item.subject === subject),
-        decisions: state.knowledge.decisions.filter((item) => item.subject === subject),
+        research,
+        theses,
+        decisions,
+        researchTimeline,
+        decisionTimeline,
+        contextTimeline: [...researchTimeline, ...decisionTimeline].sort((left, right) =>
+          right.date.localeCompare(left.date),
+        ),
       }
     },
   }
 }
+
+/** @deprecated Use the Asset narrative interface instead. */
+export const buildAssetWorkspaceIndex = buildAssetNarrativeIndex
+export type AssetWorkspaceIndex = AssetNarrativeIndex

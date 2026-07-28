@@ -6,6 +6,7 @@ export {
 } from './directives'
 export {
   buildDashboardView,
+  buildInvestmentActionInbox,
   generateAllocation,
   generateDashboard,
   generateDrift,

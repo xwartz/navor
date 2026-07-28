@@ -1,6 +1,6 @@
 import type { NavorRendererAppState } from '@navor/contract'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { buildAssetWorkspaceIndex } from './asset-workspace'
+import { buildAssetNarrativeIndex } from './asset-workspace'
 import { AssetWorkspaceContext } from './asset-workspace-context'
 
 export function AssetWorkspaceProvider({
@@ -10,7 +10,7 @@ export function AssetWorkspaceProvider({
   children: ReactNode
   state: NavorRendererAppState
 }) {
-  const assetWorkspace = useMemo(() => buildAssetWorkspaceIndex(state), [state])
+  const assetWorkspace = useMemo(() => buildAssetNarrativeIndex(state), [state])
   const canOpenAsset = useCallback(
     (subject: string | null | undefined) => assetWorkspace.has(subject),
     [assetWorkspace],

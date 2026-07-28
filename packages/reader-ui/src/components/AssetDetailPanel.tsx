@@ -1,6 +1,6 @@
 import type { DashboardAssetExecution, NavorRendererAppState } from '@navor/contract'
 
-import { type AssetWorkspaceIndex, buildAssetWorkspaceIndex } from '../asset-workspace'
+import { type AssetNarrativeIndex, buildAssetNarrativeIndex } from '../asset-workspace'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { formatDecisionBriefLabel, formatReviewDeadline, t, translateText } from '../i18n'
 import { formatMoney, formatPercent, formatQuantityCommodity } from './format'
@@ -18,7 +18,7 @@ export function AssetDetailPanel({
   variant?: 'full' | 'compact'
 }) {
   const { assetWorkspace, canOpenAsset, openAsset } = useAssetWorkspace()
-  const facts = assetWorkspace.get(subject) ?? buildAssetWorkspaceIndex(state).get(subject)
+  const facts = assetWorkspace.get(subject) ?? buildAssetNarrativeIndex(state).get(subject)
   const asset = facts?.execution
 
   if (!asset) {
@@ -165,32 +165,38 @@ function PositionFact({ label, value }: { label: string; value: string }) {
   )
 }
 
-function buildTimeline(facts: ReturnType<AssetWorkspaceIndex['get']>) {
+function buildTimeline(facts: ReturnType<AssetNarrativeIndex['get']>) {
   if (!facts) return []
 
-  return [
-    ...facts.research.map((item) => ({
-      id: `research:${item.date}:${item.title}`,
-      date: item.date,
-      label: t('Research'),
-      title: item.title ?? item.subject,
-      subject: item.source,
-    })),
-    ...facts.theses.map((item) => ({
-      id: `thesis:${item.date}:${item.title}`,
-      date: item.date,
-      label: t('Thesis'),
-      title: item.title ?? item.subject,
-      subject: item.reviewBy ? formatReviewDeadline(item.reviewBy) : item.status,
-    })),
-    ...facts.decisions.map((item) => ({
+  return facts.contextTimeline.map((item) => {
+    if ('tags' in item) {
+      return {
+        id: `research:${item.date}:${item.title}`,
+        date: item.date,
+        label: t('Research'),
+        title: item.title ?? item.subject,
+        subject: item.source,
+      }
+    }
+
+    if ('horizon' in item) {
+      return {
+        id: `thesis:${item.date}:${item.title}`,
+        date: item.date,
+        label: t('Thesis'),
+        title: item.title ?? item.subject,
+        subject: item.reviewBy ? formatReviewDeadline(item.reviewBy) : item.status,
+      }
+    }
+
+    return {
       id: `decision:${item.date}:${item.title}`,
       date: item.date,
       label: t('Decision'),
       title: item.title ?? item.subject,
       subject: item.action,
-    })),
-  ].sort((left, right) => right.date.localeCompare(left.date))
+    }
+  })
 }
 
 function chipTone(status: DashboardAssetExecution['status']) {

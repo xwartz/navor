@@ -1,5 +1,9 @@
 import type { PriceAdapter } from '@navor/adapters'
-import { createWorkspacePriceAdapter, resolveConfigStaticPrices } from '@navor/adapters'
+import {
+  createWorkspacePriceAdapter,
+  resolveConfigStaticPrices,
+  resolvePriceSources,
+} from '@navor/adapters'
 import type { NavorRendererAppState } from '@navor/contract'
 import {
   generateAllocation,
@@ -121,7 +125,7 @@ async function compileNavorWorkspaceInternal(
   const staticPrices = resolveConfigStaticPrices(trackedSubjects, workspace.config.staticPrices)
   const priceAdapter = resolvePriceAdapter(workspace, options)
   const adapterResult = priceAdapter ? await priceAdapter.fetchPrices(trackedSubjects) : null
-  const prices = mergePrices({
+  const prices = resolvePriceSources({
     explicitPrices: options.prices ?? [],
     staticPrices,
     livePrices: adapterResult?.prices ?? [],
@@ -174,24 +178,6 @@ async function compileNavorWorkspaceInternal(
     },
     priceManifest,
   }
-}
-
-function mergePrices({
-  explicitPrices,
-  staticPrices,
-  livePrices,
-}: {
-  explicitPrices: MarketPrice[]
-  staticPrices: MarketPrice[]
-  livePrices: MarketPrice[]
-}) {
-  const merged = new Map<string, MarketPrice>()
-
-  for (const price of [...staticPrices, ...explicitPrices, ...livePrices]) {
-    merged.set(price.subject, price)
-  }
-
-  return [...merged.values()]
 }
 
 function resolvePriceAdapter(

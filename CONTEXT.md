@@ -16,6 +16,7 @@ Shared vocabulary for documentation, implementation, and interface copy. Navor m
 | Capital | Investable planning budget. It need not equal live brokerage cash. |
 | Account | A top-level allocation sleeve, market boundary, strategy boundary, or cash boundary. |
 | Asset | An investable object that can be researched, planned, and transacted. Its `target` is relative to its parent Account. |
+| Asset narrative | A Reader-derived view of one Asset's holdings, plans, research, thesis, decisions, transactions, prices, and actions. It is not a source fact. |
 | Derived portfolio weight | Whole-portfolio Asset weight derived from Account and Asset targets. Do not store it as a second source fact. |
 | Research | Recorded observation, source note, or data summary. |
 | Thesis | A falsifiable investment view. |

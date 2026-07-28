@@ -1,3 +1,5 @@
 export type { BuildPriceEnrichmentOptions } from './enrichment'
 export { buildPriceEnrichment } from './enrichment'
+export type { PriceSources } from './price-policy'
+export { resolvePriceSources } from './price-policy'
 export type { PriceAdapterFailure } from './types'
