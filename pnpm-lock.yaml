@@ -121,6 +121,9 @@ importers:
       '@navor/contract':
         specifier: workspace:*
         version: link:../contract
+      '@navor/core':
+        specifier: workspace:*
+        version: link:../core
       '@navor/renderer':
         specifier: workspace:*
         version: link:../renderer

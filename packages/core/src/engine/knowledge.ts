@@ -1,3 +1,4 @@
+import { orderChronologically } from '../chronology'
 import { parseList } from '../core/values'
 import { resolveDateScopedReference } from '../relationships'
 import type { KnowledgeViews, NavorAst, NavorDiagnostic } from '../types'
@@ -7,10 +8,13 @@ export function generateKnowledgeViews(
   options: { today?: string } = {},
 ): KnowledgeViews {
   const diagnostics: NavorDiagnostic[] = []
-  const research = ast.directives
+  const directives = orderChronologically(ast.directives)
+  const research = directives
     .filter((directive) => directive.directive === 'research')
     .map((directive) => ({
       date: directive.date,
+      file: directive.file,
+      line: directive.line,
       subject: directive.subject,
       title: directive.title,
       source: directive.metadata.source ?? null,
@@ -18,11 +22,13 @@ export function generateKnowledgeViews(
       tags: parseList(directive.metadata.tags ?? null),
       body: directive.body,
     }))
-  const theses = ast.directives
+  const theses = directives
     .filter((directive) => directive.directive === 'thesis')
     .map((directive) => {
       const view = {
         date: directive.date,
+        file: directive.file,
+        line: directive.line,
         subject: directive.subject,
         title: directive.title,
         horizon: directive.metadata.horizon ?? null,
@@ -61,10 +67,12 @@ export function generateKnowledgeViews(
 
       return view
     })
-  const decisions = ast.directives
+  const decisions = directives
     .filter((directive) => directive.directive === 'decision')
     .map((directive) => ({
       date: directive.date,
+      file: directive.file,
+      line: directive.line,
       subject: directive.subject,
       title: directive.title,
       action: directive.metadata.action ?? null,

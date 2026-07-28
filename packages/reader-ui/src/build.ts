@@ -1,11 +1,12 @@
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { mkdir, rm } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 import type { NavorRendererAppState } from '@navor/contract'
 import type { CompileNavorWorkspaceOptions } from '@navor/renderer'
 import { compileNavorWorkspace } from '@navor/renderer'
 import { build } from 'vite'
 
+import { finalizeReaderArtifacts, writeReaderState } from './artifact-assembly'
 import { documentTitleFromState } from './document-title'
 import { createNavorReaderViteConfig } from './vite-config'
 
@@ -32,7 +33,7 @@ export async function buildNavorReaderApp(
 
   await rm(outDir, { recursive: true, force: true })
   await mkdir(outDir, { recursive: true })
-  await writeFile(join(outDir, 'navor-data.json'), `${JSON.stringify(state, null, 2)}\n`)
+  await writeReaderState(outDir, state)
 
   await build({
     ...createNavorReaderViteConfig({
@@ -47,45 +48,9 @@ export async function buildNavorReaderApp(
     envDir: false,
   })
 
-  const indexPath = join(outDir, 'index.html')
-  const html = await readFile(indexPath, 'utf8')
-  const withDataSource = html.includes('data-navor-source')
-    ? html
-    : html.replace(
-        '</head>',
-        '    <script type="application/json" data-navor-source="./navor-data.json"></script>\n  </head>',
-      )
-  const escapedTitle = escapeHtml(title)
-  const patchedHtml = withDataSource.replace(
-    /<title>[^<]*<\/title>/,
-    `<title>${escapedTitle}</title>`,
-  )
-
-  if (patchedHtml !== html) {
-    await writeFile(indexPath, patchedHtml)
-  }
-
   return {
     outDir,
-    files: [
-      'index.html',
-      'manifest.webmanifest',
-      'sw.js',
-      'favicon.svg',
-      'pwa-192.png',
-      'pwa-512.png',
-      'assets/app.js',
-      'assets/app.css',
-      'navor-data.json',
-    ],
+    files: await finalizeReaderArtifacts(outDir, state),
     state,
   }
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
 }

@@ -9,6 +9,7 @@
 | 工作区 | CLI 参数 `<workspace>` 的名称，指投资仓库的路径，与 VS Code「工作区」设置无关 |
 | Navor 文件 | 包含带日期投资事实的纯文本 `.nav` 文件。 |
 | 指令 | 一条带日期的记录，Navor 0.1 支持 `option`、`capital`、`open`、`close`、`plan`、`research`、`thesis`、`decision`、`txn`、`review`、`journal` 和 `note` |
+| Chronology | 指令的派生顺序：先按日期，再按既定 Navor 文件顺序，最后按源代码行号。它约束同日引用与派生视图，不是源事实。 |
 | Subject | 稳定标识符，例如 `Portfolio:Core`、`Account:US` 或 `Asset:Equity:US:NVDA`。 |
 | 元数据 | 附属于单条指令、以 `key: value` 缩进书写的信息，用于承载可扩展语义。 |
 | 正文 | 由 `---` 分隔符包围的缩进 Markdown。 |

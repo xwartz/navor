@@ -9,6 +9,7 @@ Shared vocabulary for documentation, implementation, and interface copy. Navor m
 | Workspace | The CLI path argument `<workspace>`: the repository root. Not related to VS Code workspace settings. |
 | Navor file | A plain-text `.nav` file containing dated investment facts. |
 | Directive | One dated record. Navor 0.1 supports `option`, `capital`, `open`, `close`, `plan`, `research`, `thesis`, `decision`, `txn`, `review`, `journal`, and `note`. |
+| Chronology | The derived ordering of Directives: date first, then established Navor file order, then source line. It governs same-date references and derived views; it is not a source fact. |
 | Subject | A stable identifier such as `Portfolio:Core`, `Account:US`, or `Asset:Equity:US:NVDA`. |
 | Metadata | Indented `key: value` attached to one directive. Metadata carries extensible semantics. |
 | Body | Indented Markdown enclosed by `---` delimiters. |

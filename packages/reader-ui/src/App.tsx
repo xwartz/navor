@@ -1,5 +1,5 @@
 import type { NavorRendererAppState } from '@navor/contract'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { AssetWorkspaceProvider } from './AssetWorkspaceProvider'
 import { useAssetWorkspace } from './asset-workspace-context'
@@ -11,7 +11,8 @@ import { EntityLabelProvider } from './EntityLabelContext'
 import type { ReaderFilters } from './filters'
 import { matchesFilters } from './filters'
 import { readerLocale, t } from './i18n'
-import { getNavGroups, getViewLabels, type ReaderView, VIEW_LABELS } from './navigation'
+import { getNavGroups, getViewLabels, type ReaderView } from './navigation'
+import { useReaderNavigationSession } from './navigation-session'
 import { buildSearchHits } from './search'
 import { getReaderView } from './view-catalog'
 
@@ -74,16 +75,18 @@ function ReaderAppShell({
   initialView: ReaderView
   liveEnabled: boolean
 }) {
-  const [activeView, setActiveView] = useState<ReaderView>(() =>
-    typeof window === 'undefined'
-      ? initialView
-      : resolveReaderView(window.location.hash, initialView),
-  )
-  const [navOpen, setNavOpen] = useState(false)
-  const [navCollapsed, setNavCollapsed] = useState(readNavCollapsed)
-  const [filters, setFilters] = useState<ReaderFilters>(initialFilters)
+  const {
+    activeView,
+    navOpen,
+    setNavOpen,
+    navCollapsed,
+    setNavCollapsed,
+    filters,
+    setFilters,
+    selectView,
+    shouldFocusViewRef,
+  } = useReaderNavigationSession(initialView, initialFilters)
   const navButtonRef = useRef<HTMLButtonElement>(null)
-  const shouldFocusViewRef = useRef(false)
   const { selectedAssetSubject } = useAssetWorkspace()
   const diagnosticCount = state ? countDiagnostics(state) : 0
   const showSearch = Boolean(state && filters.query?.trim())
@@ -93,25 +96,6 @@ function ReaderAppShell({
     state && filtersEnabled && Object.values(filters).some(Boolean)
       ? countFilterMatches(showSearch ? null : activeView, state, filters)
       : null
-
-  useEffect(() => {
-    const syncView = () => {
-      shouldFocusViewRef.current = true
-      setActiveView(resolveReaderView(window.location.hash, initialView))
-      setFilters({})
-    }
-
-    window.addEventListener('popstate', syncView)
-    window.addEventListener('hashchange', syncView)
-    return () => {
-      window.removeEventListener('popstate', syncView)
-      window.removeEventListener('hashchange', syncView)
-    }
-  }, [initialView])
-
-  useEffect(() => {
-    window.localStorage.setItem('navor:nav-collapsed', String(navCollapsed))
-  }, [navCollapsed])
 
   useEffect(() => {
     if (!shouldFocusViewRef.current || !viewFocusToken) {
@@ -125,17 +109,9 @@ function ReaderAppShell({
     })
 
     return () => window.cancelAnimationFrame(frame)
-  }, [viewFocusToken])
+  }, [viewFocusToken, shouldFocusViewRef])
 
-  const selectView = (view: ReaderView) => {
-    shouldFocusViewRef.current = view !== activeView || showSearch
-    setActiveView(view)
-    setFilters({})
-
-    if (window.location.hash !== `#${view}`) {
-      window.history.pushState(null, '', `#${view}`)
-    }
-  }
+  const selectReaderView = (view: ReaderView) => selectView(view, showSearch)
 
   return (
     <>
@@ -157,7 +133,7 @@ function ReaderAppShell({
           isOpen={navOpen}
           navGroups={getNavGroups(readerLocale)}
           onClose={() => setNavOpen(false)}
-          onSelect={selectView}
+          onSelect={selectReaderView}
           onToggleCollapse={() => setNavCollapsed((current) => !current)}
           triggerRef={navButtonRef}
         />
@@ -187,7 +163,7 @@ function ReaderAppShell({
               key={showSearch ? `search:${filters.query}` : activeView}
             >
               {showSearch ? (
-                <SearchOverview filters={filters} onSelectView={selectView} state={state} />
+                <SearchOverview filters={filters} onSelectView={selectReaderView} state={state} />
               ) : (
                 getReaderView(activeView).render(state, filters, liveEnabled)
               )}
@@ -197,12 +173,6 @@ function ReaderAppShell({
       </div>
       <AssetWorkspaceOverlay />
     </>
-  )
-}
-
-function readNavCollapsed() {
-  return (
-    typeof window !== 'undefined' && window.localStorage.getItem('navor:nav-collapsed') === 'true'
   )
 }
 
@@ -220,10 +190,7 @@ function countFilterMatches(
   ).length
 }
 
-export function resolveReaderView(hash: string, fallback: ReaderView): ReaderView {
-  const candidate = hash.replace(/^#/, '')
-  return Object.hasOwn(VIEW_LABELS, candidate) ? (candidate as ReaderView) : fallback
-}
+export { resolveReaderView } from './navigation'
 
 function countDiagnostics(state: NavorRendererAppState) {
   return [

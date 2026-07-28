@@ -91,6 +91,8 @@ export interface PortfolioResult {
 
 export interface ResearchView {
   date: string
+  file?: string
+  line?: number
   subject: string
   title: string | null
   source: string | null
@@ -101,6 +103,8 @@ export interface ResearchView {
 
 export interface ThesisView {
   date: string
+  file?: string
+  line?: number
   subject: string
   title: string | null
   horizon: string | null
@@ -116,6 +120,8 @@ export interface ThesisView {
 
 export interface DecisionView {
   date: string
+  file?: string
+  line?: number
   subject: string
   title: string | null
   action: string | null
@@ -355,6 +361,20 @@ export interface PriceManifest {
   livePricesPath?: string
 }
 
+export interface PriceInput {
+  subject: string
+  price: MoneyAmount
+  provider: string
+  asOf: string
+}
+
+export interface PriceSnapshot {
+  staticPrices: PriceInput[]
+  explicitPrices: PriceInput[]
+  livePrices: PriceInput[]
+  failures: PriceEnrichmentState[]
+}
+
 export interface NavorRendererAppState {
   workspace: {
     root: string
@@ -374,4 +394,5 @@ export interface NavorRendererAppState {
     prices: PriceEnrichmentState[]
   }
   priceManifest: PriceManifest
+  priceSnapshot: PriceSnapshot
 }

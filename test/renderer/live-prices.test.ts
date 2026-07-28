@@ -5,6 +5,27 @@ import { describe, expect, it } from 'vitest'
 import { createYahooSparkFetch } from '../adapters/yahoo-spark-fixture'
 
 describe('applyLivePrices', () => {
+  it('retains an explicit price when a live refresh has no quote', async () => {
+    const baseState = await compileNavorWorkspace('fixtures/core', {
+      prices: [
+        {
+          subject: 'Asset:Crypto:BTC',
+          price: { amount: 90000, currency: 'USD' },
+          provider: 'FixtureExplicit',
+          asOf: '2026-07-07T00:00:00Z',
+        },
+      ],
+      today: '2026-07-08',
+    })
+
+    const refreshed = applyLivePrices(baseState, { prices: [] }, { today: '2026-07-08' })
+
+    expect(refreshed.market.prices).toEqual([
+      expect.objectContaining({ subject: 'Asset:Crypto:BTC', provider: 'FixtureExplicit' }),
+    ])
+    expect(refreshed.priceSnapshot.explicitPrices).toHaveLength(1)
+  })
+
   it('recomputes market, drift, and dashboard from proxy prices', async () => {
     const baseState = await compileNavorWorkspace('fixtures/core', {
       today: '2026-07-08',

@@ -1,5 +1,5 @@
 import { type ReaderLocale, translateText } from './i18n'
-import { READER_VIEW_CATALOG, type ReaderView } from './view-catalog'
+import { READER_VIEW_CATALOG, type ReaderView, VIEW_LABELS } from './view-catalog'
 
 export type { ReaderView } from './view-catalog'
 
@@ -17,6 +17,11 @@ export const NAV_GROUPS: NavGroup[] = ['Monitor', 'Capital', 'Research', 'System
 }))
 
 export { VIEW_LABELS } from './view-catalog'
+
+export function resolveReaderView(hash: string, fallback: ReaderView): ReaderView {
+  const candidate = hash.replace(/^#/, '')
+  return Object.hasOwn(VIEW_LABELS, candidate) ? (candidate as ReaderView) : fallback
+}
 
 export function getNavGroups(locale: ReaderLocale): NavGroup[] {
   if (locale === 'en') {

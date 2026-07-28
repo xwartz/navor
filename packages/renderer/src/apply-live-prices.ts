@@ -1,3 +1,4 @@
+import { resolvePriceSources } from '@navor/adapters'
 import type { PriceAdapterFailure } from '@navor/adapters/browser'
 import type { NavorRendererAppState } from '@navor/contract'
 import type { MarketPrice } from '@navor/core/browser'
@@ -14,6 +15,17 @@ export function applyLivePrices(
   result: { prices: MarketPrice[]; failures?: PriceAdapterFailure[] },
   options: ApplyLivePricesOptions = {},
 ): NavorRendererAppState {
+  const priceSnapshot = {
+    ...state.priceSnapshot,
+    livePrices: result.prices,
+    failures: (result.failures ?? []).map((failure) => ({
+      subject: failure.subject,
+      provider: failure.provider,
+      asOf: null,
+      status: 'failed' as const,
+      message: failure.message,
+    })),
+  }
   const { dashboard, drift, market, priceEnrichment } = rebuildReaderDerivedState({
     facts: {
       allocation: state.allocation,
@@ -27,7 +39,7 @@ export function applyLivePrices(
       priceManifest: state.priceManifest,
       recentTransactions: state.dashboard.recentTransactions,
     },
-    prices: result.prices,
+    prices: resolvePriceSources(priceSnapshot),
     failures: result.failures,
     today: options.today,
     stalePriceAfterDays: options.stalePriceAfterDays,
@@ -41,5 +53,6 @@ export function applyLivePrices(
     enrichment: {
       prices: priceEnrichment,
     },
+    priceSnapshot,
   }
 }

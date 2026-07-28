@@ -1,9 +1,10 @@
+import { orderChronologically } from '../chronology'
 import { parsePercent } from '../core/values'
 import type { NavorAst, NavorDiagnostic, PlanEntry, PlanResult } from '../types'
 
 export function generatePlanViews(ast: NavorAst): PlanResult {
   const diagnostics: NavorDiagnostic[] = []
-  const entries = ast.directives
+  const entries = orderChronologically(ast.directives)
     .filter((directive) => directive.directive === 'plan')
     .map((directive) => {
       const target = parsePercent(directive.metadata.target ?? null)

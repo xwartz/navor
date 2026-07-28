@@ -22,6 +22,7 @@
   "dependencies": {
     "@navor/adapters": "workspace:*",
     "@navor/contract": "workspace:*",
+    "@navor/core": "workspace:*",
     "@navor/renderer": "workspace:*",
     "@tailwindcss/vite": "^4.3.2",
     "@vitejs/plugin-react": "^6.0.3",

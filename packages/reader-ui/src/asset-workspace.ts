@@ -1,4 +1,5 @@
 import type { NavorRendererAppState } from '@navor/contract'
+import { compareChronology } from '@navor/core/browser'
 
 export type AssetNarrative = {
   allocation: NavorRendererAppState['allocation']['assets'][number] | null
@@ -68,12 +69,10 @@ export function buildAssetNarrativeIndex(state: NavorRendererAppState): AssetNar
       const research = state.knowledge.research.filter((item) => item.subject === subject)
       const theses = state.knowledge.theses.filter((item) => item.subject === subject)
       const decisions = state.knowledge.decisions.filter((item) => item.subject === subject)
-      const researchTimeline = [...research, ...theses].sort((left, right) =>
-        right.date.localeCompare(left.date),
+      const researchTimeline = [...research, ...theses].toSorted((left, right) =>
+        compareChronology(right, left),
       )
-      const decisionTimeline = decisions.toSorted((left, right) =>
-        right.date.localeCompare(left.date),
-      )
+      const decisionTimeline = decisions.toSorted((left, right) => compareChronology(right, left))
 
       return {
         allocation: allocationBySubject.get(subject) ?? null,
@@ -97,8 +96,8 @@ export function buildAssetNarrativeIndex(state: NavorRendererAppState): AssetNar
         decisions,
         researchTimeline,
         decisionTimeline,
-        contextTimeline: [...researchTimeline, ...decisionTimeline].sort((left, right) =>
-          right.date.localeCompare(left.date),
+        contextTimeline: [...researchTimeline, ...decisionTimeline].toSorted((left, right) =>
+          compareChronology(right, left),
         ),
       }
     },

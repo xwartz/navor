@@ -2888,6 +2888,8 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         },
         "confidence": "High",
         "date": "2026-03-01",
+        "file": "fixtures/core/activity/knowledge.nav",
+        "line": 20,
         "subject": "Asset:Crypto:BTC",
         "targetWeight": "20%",
         "title": "Start accumulation",
@@ -2903,6 +2905,8 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "body": "Spot ETF inflow remains a structural source of demand.",
         "date": "2026-02-10",
+        "file": "fixtures/core/activity/knowledge.nav",
+        "line": 1,
         "reliability": "Secondary",
         "source": "Market data",
         "subject": "Asset:Crypto:BTC",
@@ -2915,6 +2919,8 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
       {
         "body": null,
         "date": "2026-07-08",
+        "file": "fixtures/core/activity/knowledge.nav",
+        "line": 26,
         "reliability": null,
         "source": "Market data",
         "subject": "Market:Crypto",
@@ -2930,8 +2936,10 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
         "body": "BTC is treated as the core reserve asset in the crypto account.",
         "confidence": "High",
         "date": "2026-02-11",
+        "file": "fixtures/core/activity/knowledge.nav",
         "horizon": "5y",
         "invalidIf": "ETF flow reverses for 2 quarters",
+        "line": 9,
         "reviewBy": "2026-05-11",
         "sentiment": "Bullish",
         "status": "Active",
@@ -3688,6 +3696,22 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
     ],
     "livePricesPath": "/api/prices",
     "stalePriceAfterDays": undefined,
+  },
+  "priceSnapshot": {
+    "explicitPrices": [
+      {
+        "asOf": "2026-07-08T00:00:00Z",
+        "price": {
+          "amount": 100000,
+          "currency": "USD",
+        },
+        "provider": "Fixture",
+        "subject": "Asset:Crypto:BTC",
+      },
+    ],
+    "failures": [],
+    "livePrices": [],
+    "staticPrices": [],
   },
   "process": {
     "journal": [

@@ -1,3 +1,4 @@
+import { compareChronology } from './chronology'
 import type { NavorAst, NavorDirective, ReferenceView } from './types'
 
 type ReferenceDirective = 'research' | 'thesis' | 'decision'
@@ -38,10 +39,7 @@ export function resolveDateScopedReference({
   const [target] = candidates
   if (!target) return { raw, status: 'unresolved', target: null }
 
-  const ownerIndex = ast.directives.indexOf(owner)
-  const targetIndex = ast.directives.indexOf(target)
-  const targetIsLater =
-    target.date > owner.date || (target.date === owner.date && targetIndex > ownerIndex)
+  const targetIsLater = compareChronology(target, owner) > 0
 
   return {
     raw,

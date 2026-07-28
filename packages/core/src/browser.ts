@@ -1,3 +1,4 @@
+export { type ChronologicalEntry, compareChronology, orderChronologically } from './chronology'
 export { buildDashboardView, generateDashboard } from './engine/dashboard'
 export { generateDrift } from './engine/drift'
 export { buildMarketView, generateMarketView } from './market'

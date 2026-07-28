@@ -177,6 +177,18 @@ async function compileNavorWorkspaceInternal(
       prices: priceEnrichment,
     },
     priceManifest,
+    priceSnapshot: {
+      staticPrices,
+      explicitPrices: options.prices ?? [],
+      livePrices: adapterResult?.prices ?? [],
+      failures: failures.map((failure) => ({
+        subject: failure.subject,
+        provider: failure.provider,
+        asOf: null,
+        status: 'failed' as const,
+        message: failure.message,
+      })),
+    },
   }
 }
 

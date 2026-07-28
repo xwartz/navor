@@ -35,6 +35,8 @@ describe('generateKnowledgeViews', () => {
     expect(views.research).toEqual([
       {
         date: '2026-02-10',
+        file: undefined,
+        line: 1,
         subject: 'Asset:Crypto:BTC',
         title: 'ETF inflow remains strong',
         source: 'Market data',
@@ -46,6 +48,8 @@ describe('generateKnowledgeViews', () => {
     expect(views.theses).toEqual([
       {
         date: '2026-02-11',
+        file: undefined,
+        line: 9,
         subject: 'Asset:Crypto:BTC',
         title: 'Digital reserve asset',
         horizon: '5y',
@@ -60,6 +64,8 @@ describe('generateKnowledgeViews', () => {
     expect(views.decisions).toEqual([
       {
         date: '2026-03-01',
+        file: undefined,
+        line: 20,
         subject: 'Asset:Crypto:BTC',
         title: 'Start accumulation',
         action: 'Buy',

@@ -119,6 +119,8 @@ export interface KnowledgeViews {
 
 export interface ResearchView {
   date: string
+  file?: string
+  line?: number
   subject: string
   title: string | null
   source: string | null
@@ -129,6 +131,8 @@ export interface ResearchView {
 
 export interface ThesisView {
   date: string
+  file?: string
+  line?: number
   subject: string
   title: string | null
   horizon: string | null
@@ -144,6 +148,8 @@ export interface ThesisView {
 
 export interface DecisionView {
   date: string
+  file?: string
+  line?: number
   subject: string
   title: string | null
   action: string | null

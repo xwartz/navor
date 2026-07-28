@@ -1,3 +1,4 @@
+export { type ChronologicalEntry, compareChronology, orderChronologically } from './chronology'
 export { mergeFxRates } from './core/fx'
 export {
   NAVOR_DIRECTIVE_SET,

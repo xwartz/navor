@@ -1,3 +1,4 @@
+import { orderChronologically } from '../chronology'
 import { resolveDateScopedReference } from '../relationships'
 import type {
   NavorAst,
@@ -77,21 +78,7 @@ function transactionToView(ast: NavorAst, directive: NavorDirective): PortfolioT
 }
 
 function orderTransactions(ast: NavorAst): NavorDirective[] {
-  return ast.directives
-    .filter((item) => item.directive === 'txn')
-    .sort((left, right) => {
-      const dateComparison = left.date.localeCompare(right.date)
-      if (dateComparison !== 0) {
-        return dateComparison
-      }
-
-      const fileComparison = (left.file ?? '').localeCompare(right.file ?? '')
-      if (fileComparison !== 0) {
-        return fileComparison
-      }
-
-      return left.line - right.line
-    })
+  return orderChronologically(ast.directives.filter((item) => item.directive === 'txn'))
 }
 
 function applyTransaction(
