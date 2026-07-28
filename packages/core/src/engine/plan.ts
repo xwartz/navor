@@ -1,5 +1,6 @@
 import { orderChronologically } from '../chronology'
 import { parsePercent } from '../core/values'
+import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from '../diagnostics'
 import type { NavorAst, NavorDiagnostic, PlanEntry, PlanResult } from '../types'
 
 export function generatePlanViews(ast: NavorAst): PlanResult {
@@ -42,6 +43,6 @@ export function generatePlanViews(ast: NavorAst): PlanResult {
   return {
     entries,
     current: [...currentBySubject.values()],
-    diagnostics,
+    diagnostics: withDiagnosticCode(diagnostics, NAVOR_DIAGNOSTIC_CODES.plan),
   }
 }

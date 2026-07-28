@@ -1,5 +1,6 @@
 import { convertToBaseCurrency } from '../core/fx'
 import { parseMoney, parsePercent } from '../core/values'
+import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from '../diagnostics'
 import type {
   AllocationAccount,
   AllocationResult,
@@ -126,7 +127,7 @@ export function generateAllocation(
     capital,
     accounts: accounts.map(({ market: _market, ...account }) => account),
     assets,
-    diagnostics,
+    diagnostics: withDiagnosticCode(diagnostics, NAVOR_DIAGNOSTIC_CODES.allocation),
   }
 }
 

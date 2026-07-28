@@ -1,7 +1,10 @@
 import { type ParsedPostingLine, parsePostingLine } from './postings'
-
-const METADATA_PATTERN = /^([A-Za-z_][A-Za-z0-9_]*):\s+(.+)$/
-const DIRECTIVE_PATTERN = /^(\d{4}-\d{2}-\d{2})\s+([A-Za-z]+)\s+([^\s"]+)(?:\s+"([^"]*)")?\s*$/
+import {
+  classifyNavorSourceLine,
+  NAVOR_DIRECTIVE_PATTERN,
+  parseNavorMetadata,
+  splitNavorSource,
+} from './source-text'
 
 type TopLevelItem =
   | { kind: 'comment'; text: string }
@@ -16,7 +19,7 @@ type ChildLine =
   | { kind: 'raw'; text: string }
 
 export function formatNavor(source: string): string {
-  const lines = source.replace(/\r\n/g, '\n').replace(/\t/g, '  ').split('\n')
+  const lines = splitNavorSource(source, true)
   const items = collectTopLevelItems(lines)
   const output: string[] = []
 
@@ -57,18 +60,20 @@ function collectTopLevelItems(lines: string[]): TopLevelItem[] {
   while (index < lines.length) {
     const line = lines[index] ?? ''
 
-    if (line.trim() === '') {
+    const kind = classifyNavorSourceLine(line)
+
+    if (kind === 'blank') {
       index += 1
       continue
     }
 
-    if (line.startsWith(';')) {
+    if (kind === 'comment') {
       items.push({ kind: 'comment', text: line.trimEnd() })
       index += 1
       continue
     }
 
-    if (line.startsWith('  ')) {
+    if (kind === 'indented') {
       items.push({
         kind: 'directive',
         header: line.trimEnd(),
@@ -85,7 +90,7 @@ function collectTopLevelItems(lines: string[]): TopLevelItem[] {
     while (index < lines.length) {
       const child = (lines[index] ?? '').replace(/\t/g, '  ')
 
-      if (child.trim() === '' || !child.startsWith('  ')) {
+      if (classifyNavorSourceLine(child) !== 'indented') {
         break
       }
 
@@ -109,13 +114,13 @@ function collectTopLevelItems(lines: string[]): TopLevelItem[] {
         continue
       }
 
-      const metadataMatch = content.match(METADATA_PATTERN)
+      const metadata = parseNavorMetadata(content)
 
-      if (metadataMatch?.[1] !== undefined && metadataMatch[2] !== undefined) {
+      if (metadata) {
         children.push({
           kind: 'metadata',
-          key: metadataMatch[1],
-          value: metadataMatch[2],
+          key: metadata.key,
+          value: metadata.value,
         })
         index += 1
         continue
@@ -144,7 +149,7 @@ function collectTopLevelItems(lines: string[]): TopLevelItem[] {
 }
 
 function formatDirectiveHeader(line: string): string {
-  const match = line.match(DIRECTIVE_PATTERN)
+  const match = line.match(NAVOR_DIRECTIVE_PATTERN)
 
   if (!match) {
     return line

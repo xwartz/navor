@@ -1,6 +1,7 @@
 import { access, readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from './diagnostics'
 import { parseNavor } from './parser'
 import { validateNavorSemantics } from './semantic'
 import type { NavorAst, NavorDiagnostic, NavorWorkspace, NavorWorkspaceConfig } from './types'
@@ -49,7 +50,7 @@ async function loadNavorWorkspaceFromFiles(root: string, files: string[]): Promi
   const diagnostics: NavorDiagnostic[] = [
     ...parsedFiles.flatMap((parsed) => parsed.diagnostics),
     ...configDiagnostics,
-    ...validateNavorSemantics(ast),
+    ...withDiagnosticCode(validateNavorSemantics(ast), NAVOR_DIAGNOSTIC_CODES.semantic),
   ]
   const source = parsedFiles.map((parsed) => parsed.source).join('\n')
 
@@ -94,6 +95,7 @@ async function loadWorkspaceConfig(root: string): Promise<{
         {
           file: jsonPath,
           line: 1,
+          code: NAVOR_DIAGNOSTIC_CODES.invalidConfig,
           message: `Could not read navor.config.json: ${error instanceof Error ? error.message : String(error)}`,
         },
       ],

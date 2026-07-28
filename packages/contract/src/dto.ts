@@ -2,6 +2,7 @@ export interface NavorDiagnostic {
   line: number
   message: string
   file?: string
+  code?: string
 }
 
 export interface MoneyAmount {

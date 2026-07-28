@@ -14,7 +14,12 @@ export function DiagnosticList({ diagnostics }: { diagnostics: NavorDiagnostic[]
           className="rounded-md border border-warning/20 bg-warning-soft px-4 py-3"
           key={`${diagnostic.file ?? 'file'}:${diagnostic.line}:${diagnostic.message}`}
         >
-          <p className="font-medium text-warning">{diagnostic.message}</p>
+          <p className="font-medium text-warning">
+            {diagnostic.code ? (
+              <span className="mr-2 font-mono text-xs">{diagnostic.code}</span>
+            ) : null}
+            {diagnostic.message}
+          </p>
           <p className="mt-1 text-xs text-ink-faint">
             {diagnostic.file ? `${diagnostic.file}:` : ''}
             {t('line')} {diagnostic.line}

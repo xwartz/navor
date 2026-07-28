@@ -1,4 +1,5 @@
 import { orderChronologically } from '../chronology'
+import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from '../diagnostics'
 import { resolveDateScopedReference } from '../relationships'
 import type {
   NavorAst,
@@ -46,7 +47,7 @@ export function generatePortfolio(ast: NavorAst): PortfolioResult {
     income: Array.from(income.values()),
     expenses: Array.from(expenses.values()),
     realizedPnl,
-    diagnostics,
+    diagnostics: withDiagnosticCode(diagnostics, NAVOR_DIAGNOSTIC_CODES.portfolio),
   }
 }
 

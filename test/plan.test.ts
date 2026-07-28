@@ -43,6 +43,7 @@ describe('generatePlanViews', () => {
     ])
     expect(plan.diagnostics).toEqual([
       {
+        code: 'NAV400',
         line: 7,
         message: 'Plan "Asset:Equity:US:NVDA" has min 15% above max 5%.',
       },

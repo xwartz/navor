@@ -1,6 +1,12 @@
 export { type ChronologicalEntry, compareChronology, orderChronologically } from './chronology'
 export { mergeFxRates } from './core/fx'
 export {
+  formatNavorDiagnosticCode,
+  NAVOR_DIAGNOSTIC_CODES,
+  type NavorDiagnosticCode,
+  withDiagnosticCode,
+} from './diagnostics'
+export {
   NAVOR_DIRECTIVE_SET,
   NAVOR_DIRECTIVES,
   type NavorDirectiveName,
@@ -22,6 +28,13 @@ export { buildMarketView, generateMarketView } from './market'
 export { parseNavor } from './parser'
 export { type ParsedPostingLine, parsePosting, parsePostingLine } from './postings'
 export { validateNavorSemantics } from './semantic'
+export {
+  classifyNavorSourceLine,
+  NAVOR_DIRECTIVE_PATTERN,
+  NAVOR_METADATA_PATTERN,
+  parseNavorMetadata,
+  splitNavorSource,
+} from './source-text'
 export type {
   AllocationAccount,
   AllocationAsset,

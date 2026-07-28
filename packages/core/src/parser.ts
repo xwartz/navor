@@ -1,11 +1,18 @@
+import { NAVOR_DIAGNOSTIC_CODES } from './diagnostics'
 import { NAVOR_DIRECTIVE_SET } from './directives'
 import { parsePosting } from './postings'
+import {
+  classifyNavorSourceLine,
+  NAVOR_DIRECTIVE_PATTERN,
+  parseNavorMetadata,
+  splitNavorSource,
+} from './source-text'
 import type { NavorAst, NavorDiagnostic, NavorDirective, ParseNavorResult } from './types'
 
 export function parseNavor(source: string, file?: string): ParseNavorResult {
   const ast: NavorAst = { directives: [] }
   const diagnostics: NavorDiagnostic[] = []
-  const lines = source.replace(/\r\n/g, '\n').split('\n')
+  const lines = splitNavorSource(source)
 
   let current: NavorDirective | null = null
   let bodyBlock: { lines: string[] } | null = null
@@ -34,16 +41,19 @@ export function parseNavor(source: string, file?: string): ParseNavorResult {
       diagnostics.push({
         line: lineNumber,
         file,
+        code: NAVOR_DIAGNOSTIC_CODES.bodyIndentation,
         message: 'Body lines must be indented by two spaces.',
       })
       continue
     }
 
-    if (line.trim() === '' || line.startsWith(';')) {
+    const kind = classifyNavorSourceLine(line)
+
+    if (kind === 'blank' || kind === 'comment') {
       continue
     }
 
-    if (line.startsWith('  ')) {
+    if (kind === 'indented') {
       const action = parseIndentedLine(line, lineNumber, current, diagnostics, file)
 
       if (action === 'start-body') {
@@ -65,6 +75,7 @@ export function parseNavor(source: string, file?: string): ParseNavorResult {
     diagnostics.push({
       line: lines.length,
       file,
+      code: NAVOR_DIAGNOSTIC_CODES.unclosedBody,
       message: 'Body block is missing a closing delimiter.',
     })
   }
@@ -83,6 +94,7 @@ function parseIndentedLine(
     diagnostics.push({
       line: lineNumber,
       file,
+      code: NAVOR_DIAGNOSTIC_CODES.orphanIndentedLine,
       message: 'Indented line must belong to a directive.',
     })
     return null
@@ -94,21 +106,10 @@ function parseIndentedLine(
     return 'start-body'
   }
 
-  const metadataMatch = content.match(/^([A-Za-z_][A-Za-z0-9_]*):\s+(.+)$/)
+  const metadata = parseNavorMetadata(content)
 
-  if (metadataMatch) {
-    const [, key, value] = metadataMatch
-
-    if (key === undefined || value === undefined) {
-      diagnostics.push({
-        line: lineNumber,
-        file,
-        message: 'Line is not valid metadata.',
-      })
-      return null
-    }
-
-    current.metadata[key] = value
+  if (metadata) {
+    current.metadata[metadata.key] = metadata.value
     return null
   }
 
@@ -118,6 +119,7 @@ function parseIndentedLine(
     diagnostics.push({
       line: lineNumber,
       file,
+      code: NAVOR_DIAGNOSTIC_CODES.invalidPosting,
       message: 'Line is not a valid posting.',
     })
     return null
@@ -133,14 +135,13 @@ function parseDirectiveLine(
   diagnostics: NavorDiagnostic[],
   file?: string,
 ): NavorDirective | null {
-  const directiveMatch = line.match(
-    /^(\d{4}-\d{2}-\d{2})\s+([A-Za-z]+)\s+([^\s"]+)(?:\s+"([^"]*)")?\s*$/,
-  )
+  const directiveMatch = line.match(NAVOR_DIRECTIVE_PATTERN)
 
   if (!directiveMatch) {
     diagnostics.push({
       line: lineNumber,
       file,
+      code: NAVOR_DIAGNOSTIC_CODES.invalidDirective,
       message: 'Line is not a valid directive.',
     })
     return null
@@ -152,6 +153,7 @@ function parseDirectiveLine(
     diagnostics.push({
       line: lineNumber,
       file,
+      code: NAVOR_DIAGNOSTIC_CODES.invalidDirective,
       message: 'Line is not a valid directive.',
     })
     return null
@@ -161,6 +163,7 @@ function parseDirectiveLine(
     diagnostics.push({
       line: lineNumber,
       file,
+      code: NAVOR_DIAGNOSTIC_CODES.unknownDirective,
       message: `Unknown directive "${directive}".`,
     })
     return null

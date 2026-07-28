@@ -1,4 +1,4 @@
-import { loadNavorWorkspace, type NavorDiagnostic } from '@navor/core'
+import { formatNavorDiagnosticCode, loadNavorWorkspace, type NavorDiagnostic } from '@navor/core'
 
 export type CheckNavorWorkspaceResult = {
   command: 'check'
@@ -34,5 +34,5 @@ function formatDiagnostic(diagnostic: NavorDiagnostic): string {
     ? `${diagnostic.file}:${diagnostic.line}`
     : `line ${diagnostic.line}`
 
-  return `${location}: ${diagnostic.message}`
+  return `${location} [${formatNavorDiagnosticCode(diagnostic)}]: ${diagnostic.message}`
 }

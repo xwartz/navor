@@ -1,5 +1,6 @@
 import { orderChronologically } from '../chronology'
 import { parseList } from '../core/values'
+import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from '../diagnostics'
 import { resolveDateScopedReference } from '../relationships'
 import type { KnowledgeViews, NavorAst, NavorDiagnostic } from '../types'
 
@@ -96,6 +97,6 @@ export function generateKnowledgeViews(
     research,
     theses,
     decisions,
-    diagnostics,
+    diagnostics: withDiagnosticCode(diagnostics, NAVOR_DIAGNOSTIC_CODES.knowledge),
   }
 }

@@ -247,6 +247,7 @@ describe('generateAllocation', () => {
     expect(allocation.assets[0]?.targetAmount).toEqual({ amount: 21000, currency: 'USD' })
     expect(allocation.diagnostics).toEqual([
       {
+        code: 'NAV200',
         line: 5,
         message:
           'allocation_value is deprecated and ignored; target amount is derived from Account budget or total and Asset target.',
@@ -274,6 +275,7 @@ describe('generateAllocation', () => {
     ])
     expect(allocation.diagnostics).toEqual([
       {
+        code: 'NAV200',
         line: 1,
         message: 'Asset "Asset:Crypto:BTC" references missing Account "Account:Crypto".',
       },
@@ -300,10 +302,12 @@ describe('generateAllocation', () => {
 
     expect(allocation.diagnostics).toEqual([
       {
+        code: 'NAV200',
         line: 1,
         message: 'Account targets total 110%, which exceeds 100%.',
       },
       {
+        code: 'NAV200',
         line: 7,
         message: 'Asset targets for Account "Account:US" total 110%, which exceeds 100%.',
       },

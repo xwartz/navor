@@ -2038,6 +2038,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
     ],
     "diagnostics": [
       {
+        "code": "NAV500",
         "line": 9,
         "message": "Thesis "Digital reserve asset" is past review_by 2026-05-11.",
       },
@@ -2897,6 +2898,7 @@ exports[`NavorRendererAppState snapshot > matches the contract DTO shape for the
     ],
     "diagnostics": [
       {
+        "code": "NAV500",
         "line": 9,
         "message": "Thesis "Digital reserve asset" is past review_by 2026-05-11.",
       },

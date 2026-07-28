@@ -188,6 +188,7 @@ describe('generatePortfolio', () => {
     ])
     expect(portfolio.diagnostics).toEqual([
       {
+        code: 'NAV300',
         line: 9,
         message: 'Transaction appears after Asset "Asset:Crypto:BTC" was closed.',
       },
@@ -253,6 +254,7 @@ describe('generatePortfolio', () => {
 
     expect(portfolio.diagnostics).toEqual([
       {
+        code: 'NAV300',
         line: 7,
         message: 'Sell quantity exceeds holdings for "Asset:Crypto:BTC". Applied partial fill.',
       },
@@ -281,6 +283,7 @@ describe('generatePortfolio', () => {
 
     expect(portfolio.diagnostics).toEqual([
       {
+        code: 'NAV300',
         line: 3,
         message: 'Sell exceeds holdings for "Asset:Crypto:BTC". Transaction skipped.',
       },

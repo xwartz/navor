@@ -13,7 +13,8 @@
     "format": "biome format --write .",
     "test": "vitest run",
     "build:example": "node packages/cli/dist/index.mjs build example --out dist/site",
-    "build:demo": "pnpm --filter @navor/demo build"
+    "build:demo": "pnpm --filter @navor/demo build",
+    "benchmark:parse": "pnpm build && node scripts/benchmark-parse.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",

@@ -111,6 +111,7 @@ describe('generateKnowledgeViews', () => {
 
     expect(views.diagnostics).toEqual([
       {
+        code: 'NAV500',
         line: 1,
         message: 'Thesis "Digital reserve asset" is past review_by 2026-05-11.',
       },

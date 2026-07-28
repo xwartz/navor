@@ -18,6 +18,8 @@ export interface NavorDiagnostic {
   line: number
   message: string
   file?: string
+  /** Stable identifier for CLI, Reader, editor, and documentation references. */
+  code?: string
 }
 
 export interface ParseNavorResult {
