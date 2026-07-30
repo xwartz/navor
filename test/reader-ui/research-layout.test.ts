@@ -22,4 +22,14 @@ describe('Investment cases layout', () => {
     )
     expect(source).not.toContain('grid gap-5 xl:grid-cols-2')
   })
+
+  it('keeps market and asset evidence as separate, non-overlapping research streams', () => {
+    const source = readFileSync(RESEARCH, 'utf8')
+
+    expect(source).toContain("{ id: 'market', label: 'Market evidence' }")
+    expect(source).toContain("{ id: 'evidence', label: 'Asset evidence' }")
+    expect(source).toContain("item.subject.startsWith('Market:')")
+    expect(source).toContain("item.subject.startsWith('Asset:')")
+    expect(source).toContain('rows={assetResearch.map((item) => ({')
+  })
 })

@@ -1,5 +1,6 @@
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel } from '../EntityLabelContext'
+import { readableEntityTitle } from '../entity-labels'
 import { formatOpenWorkspaceLabel } from '../i18n'
 import { MarkdownBody } from './MarkdownBody'
 import { Chip, EmptyState } from './ViewScaffold'
@@ -40,7 +41,7 @@ function KnowledgeRow({ row }: { row: KnowledgeTableRow }) {
   const { canOpenAsset, openAsset } = useAssetWorkspace()
   const label = useEntityLabel(row.subject)
   const canOpen = canOpenAsset(row.subject)
-  const entityName = label?.title ?? label?.symbol ?? null
+  const entityName = row.subject ? readableEntityTitle(label, row.subject) : null
   const metaLine = [row.meta, entityName].filter(Boolean).join(' · ')
   const tags = row.tags?.filter(Boolean) ?? []
 
@@ -60,7 +61,7 @@ function KnowledgeRow({ row }: { row: KnowledgeTableRow }) {
         </div>
         {canOpen && row.subject ? (
           <button
-            aria-label={formatOpenWorkspaceLabel(entityName ?? row.subject)}
+            aria-label={formatOpenWorkspaceLabel(entityName ?? '')}
             className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-sm text-accent transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-accent-ink"
             onClick={() => openAsset(row.subject as string)}
             type="button"

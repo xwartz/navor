@@ -24,7 +24,7 @@ describe('Reader App knowledge and process views', () => {
     const reviewsHtml = renderToStaticMarkup(<App initialView="reviews" state={state} />)
     const journalHtml = renderToStaticMarkup(<App initialView="journal" state={state} />)
 
-    expect(researchHtml).toContain('Market context')
+    expect(researchHtml).toContain('Market evidence')
     expect(researchHtml).not.toContain('ETF flow remains positive')
     expect(reviewsHtml).toContain('Quarterly crypto review')
     expect(journalHtml).toContain('Felt FOMO after BTC breakout')

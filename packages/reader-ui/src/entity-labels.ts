@@ -6,6 +6,20 @@ export interface EntityLabel {
   symbol: string | null
 }
 
+export function readableEntityTitle(
+  label: EntityLabel | null | undefined,
+  subject: string | null | undefined,
+  preferredTitle?: string | null,
+) {
+  if (preferredTitle && !isInternalSubject(preferredTitle)) return preferredTitle
+  if (label?.title && !isInternalSubject(label.title)) return label.title
+  return shortSubjectLabel(subject ?? '')
+}
+
+export function isInternalSubject(value: string) {
+  return value.startsWith('Asset:') || value.startsWith('Account:') || value.startsWith('Market:')
+}
+
 export function buildEntityLabelIndex(state: NavorRendererAppState) {
   const index = new Map<string, EntityLabel>()
 

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel, useEntityMeta } from '../EntityLabelContext'
+import { readableEntityTitle } from '../entity-labels'
 import { type MessageKey, t, translateText } from '../i18n'
 
 export interface SummaryItem {
@@ -141,7 +142,7 @@ export function EntityCell({
 }) {
   const { canOpenAsset, openAsset } = useAssetWorkspace()
   const label = useEntityLabel(subject)
-  const displayTitle = title ?? label?.title ?? subject ?? 'n/a'
+  const displayTitle = readableEntityTitle(label, subject, title) || 'n/a'
   const displayMeta = useEntityMeta(subject, meta ?? symbol)
   const content = (
     <>
@@ -153,7 +154,7 @@ export function EntityCell({
   )
 
   return (
-    <div className="min-w-0" title={subject ?? undefined}>
+    <div className="min-w-0" title={displayTitle}>
       {interactive && subject && canOpenAsset(subject) ? (
         <button
           aria-haspopup="dialog"
@@ -234,7 +235,7 @@ export function TimelineFeed({
               {item.subjectDisplay ? (
                 <div className="mt-1">{item.subjectDisplay}</div>
               ) : item.subject ? (
-                <p className="mt-1 truncate text-xs text-ink-muted">{item.subject}</p>
+                <TimelineSubject subject={item.subject} />
               ) : null}
               {item.body ? <div className="mt-3">{item.body}</div> : null}
             </div>
@@ -242,5 +243,13 @@ export function TimelineFeed({
         </article>
       ))}
     </div>
+  )
+}
+
+function TimelineSubject({ subject }: { subject: string }) {
+  const label = useEntityLabel(subject)
+
+  return (
+    <p className="mt-1 truncate text-xs text-ink-muted">{readableEntityTitle(label, subject)}</p>
   )
 }

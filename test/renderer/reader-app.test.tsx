@@ -50,7 +50,7 @@ describe('Reader App', () => {
     expect(allocationHtml).toContain('Portfolio weight')
     expect(allocationHtml).toContain('13.8%')
     expect(allocationHtml).toContain('Xiaomi')
-    expect(researchHtml).toContain('Market context')
+    expect(researchHtml).toContain('Market evidence')
     expect(researchHtml).not.toContain('ETF flow remains positive')
     expect(researchHtml).toContain('Case index')
     expect(driftHtml).toContain('Action center')

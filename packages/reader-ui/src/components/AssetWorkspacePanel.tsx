@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useRef, useState } from 'react'
 import type { AssetNarrativeIndex } from '../asset-workspace'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel } from '../EntityLabelContext'
+import { readableEntityTitle, shortSubjectLabel } from '../entity-labels'
 import {
   formatDashboardActionLabel,
   formatDashboardActionReason,
@@ -152,10 +153,10 @@ function AssetWorkspacePanel({
               className="mt-1 truncate text-xl font-bold tracking-[-0.018em] text-ink"
               id="asset-workspace-title"
             >
-              {label?.title ?? subject}
+              {readableEntityTitle(label, subject)}
             </h2>
             <p className="mt-1 truncate font-mono text-[11px] text-ink-faint">
-              {label?.symbol ?? subject}
+              {label?.symbol ?? shortSubjectLabel(subject)}
             </p>
           </div>
           <button
@@ -292,7 +293,7 @@ function AssetWorkspacePanel({
                   {facts.transactions.slice(0, 3).map((transaction) => (
                     <div className="px-3 py-3" key={`${transaction.date}:${transaction.line}`}>
                       <p className="text-xs font-semibold text-ink">
-                        {transaction.title ?? transaction.subject}
+                        {readableEntityTitle(label, transaction.subject, transaction.title)}
                       </p>
                       <p className="mt-1 text-xs tabular-nums text-ink-muted">{transaction.date}</p>
                       <p className="mt-1 text-xs text-ink-muted">

@@ -4,6 +4,7 @@ import {
   buildEntityLabelIndex,
   entityMetaLine,
   formatSubjectSublabel,
+  readableEntityTitle,
   shortSubjectLabel,
 } from '../../packages/reader-ui/src/entity-labels'
 
@@ -42,6 +43,21 @@ describe('entityMetaLine', () => {
 describe('shortSubjectLabel', () => {
   it('returns the leaf segment for asset subjects', () => {
     expect(shortSubjectLabel('Asset:Crypto:BNB')).toBe('BNB')
+  })
+})
+
+describe('readableEntityTitle', () => {
+  it('never exposes an internal asset subject as visible fallback text', () => {
+    expect(readableEntityTitle(null, 'Asset:Crypto:BTC', 'Asset:Crypto:BTC')).toBe('BTC')
+  })
+
+  it('prefers the registered asset name over its internal subject', () => {
+    expect(
+      readableEntityTitle(
+        { subject: 'Asset:Equity:CN:600036', title: '招商银行', symbol: '600036.SS' },
+        'Asset:Equity:CN:600036',
+      ),
+    ).toBe('招商银行')
   })
 })
 

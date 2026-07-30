@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
+import { useEntityLabel } from '../EntityLabelContext'
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters } from '../filters'
 import { t } from '../i18n'
@@ -145,7 +146,9 @@ function FacetControl({
   onChange: (value: string) => void
   onOpenChange: (open: boolean) => void
 }) {
-  const selected = value ? `${t(facet.label)} · ${compactValue(value)}` : t(facet.label)
+  const selectedEntity = useEntityLabel(facet.key === 'subject' ? value : null)
+  const selectedValue = selectedEntity?.title ?? compactValue(value)
+  const selected = value ? `${t(facet.label)} · ${selectedValue}` : t(facet.label)
   const choose = (nextValue: string) => {
     onChange(nextValue)
     onOpenChange(false)
@@ -156,16 +159,10 @@ function FacetControl({
       <button
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className={`press-scale flex h-10 cursor-pointer list-none items-center justify-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold leading-none transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden ${value ? 'border-accent/45 bg-accent-soft text-accent-ink' : 'border-border bg-paper-elevated text-ink-muted [@media(hover:hover)]:hover:bg-paper'}`}
+        className={`press-scale flex h-10 cursor-pointer list-none items-center justify-center rounded-md border px-2.5 text-xs font-semibold leading-none transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden ${value ? 'border-accent/45 bg-accent-soft text-accent-ink' : 'border-border bg-paper-elevated text-ink-muted [@media(hover:hover)]:hover:bg-paper'}`}
         onClick={() => onOpenChange(!isOpen)}
         type="button"
       >
-        <span
-          aria-hidden
-          className="inline-flex h-3 w-3 items-center justify-center text-xs leading-none"
-        >
-          +
-        </span>
         <span className="max-w-[10rem] leading-none truncate">{selected}</span>
       </button>
       {isOpen ? (
@@ -181,20 +178,44 @@ function FacetControl({
             {t('Clear filters')}
           </button>
           {facet.options.map((option) => (
-            <button
-              aria-selected={value === option}
-              className={`mt-0.5 w-full rounded px-2.5 py-2 text-left text-xs transition-colors ${value === option ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+            <FacetOption
+              facet={facet}
               key={option}
-              onClick={() => choose(value === option ? '' : option)}
-              role="option"
-              type="button"
-            >
-              {compactValue(option)}
-            </button>
+              onChoose={() => choose(value === option ? '' : option)}
+              option={option}
+              selected={value === option}
+            />
           ))}
         </div>
       ) : null}
     </div>
+  )
+}
+
+function FacetOption({
+  facet,
+  option,
+  selected,
+  onChoose,
+}: {
+  facet: ToolbarFacet
+  option: string
+  selected: boolean
+  onChoose: () => void
+}) {
+  const entity = useEntityLabel(facet.key === 'subject' ? option : null)
+  const label = entity?.title ?? compactValue(option)
+
+  return (
+    <button
+      aria-selected={selected}
+      className={`mt-0.5 w-full rounded px-2.5 py-2 text-left text-xs transition-colors ${selected ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+      onClick={onChoose}
+      role="option"
+      type="button"
+    >
+      {label}
+    </button>
   )
 }
 

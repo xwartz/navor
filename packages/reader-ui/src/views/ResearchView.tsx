@@ -13,11 +13,11 @@ export type CaseTab = 'cases' | 'market' | 'evidence' | 'theses' | 'decisions'
 
 const CASE_TABS: Array<{
   id: CaseTab
-  label: 'Cases' | 'Market context' | 'Evidence' | 'Theses' | 'Decisions'
+  label: 'Cases' | 'Market evidence' | 'Asset evidence' | 'Theses' | 'Decisions'
 }> = [
   { id: 'cases', label: 'Cases' },
-  { id: 'market', label: 'Market context' },
-  { id: 'evidence', label: 'Evidence' },
+  { id: 'market', label: 'Market evidence' },
+  { id: 'evidence', label: 'Asset evidence' },
   { id: 'theses', label: 'Theses' },
   { id: 'decisions', label: 'Decisions' },
 ]
@@ -47,6 +47,7 @@ export function ResearchView({
   const theses = state.knowledge.theses.filter((item) => matchesFilters(item, filters))
   const decisions = state.knowledge.decisions.filter((item) => matchesFilters(item, filters))
   const marketResearch = research.filter((item) => item.subject.startsWith('Market:'))
+  const assetResearch = research.filter((item) => item.subject.startsWith('Asset:'))
   const planBySubject = new Map(state.plan.current.map((item) => [item.subject, item]))
   const actionsBySubject = new Map<string, number>()
   for (const action of state.dashboard.actionInbox) {
@@ -54,7 +55,7 @@ export function ResearchView({
   }
   const caseSubjects = [
     ...new Set([
-      ...research.filter((item) => item.subject.startsWith('Asset:')).map((item) => item.subject),
+      ...assetResearch.map((item) => item.subject),
       ...theses.filter((item) => item.subject.startsWith('Asset:')).map((item) => item.subject),
       ...decisions.filter((item) => item.subject.startsWith('Asset:')).map((item) => item.subject),
       ...state.plan.current
@@ -64,7 +65,7 @@ export function ResearchView({
   ]
   const cases = caseSubjects
     .map((subject) => {
-      const caseResearch = research.filter((item) => item.subject === subject)
+      const caseResearch = assetResearch.filter((item) => item.subject === subject)
       const caseTheses = theses.filter((item) => item.subject === subject)
       const caseDecisions = decisions.filter((item) => item.subject === subject)
       const latestThesis = caseTheses.toSorted((left, right) =>
@@ -190,10 +191,10 @@ export function ResearchView({
         <section>
           <Panel
             description="Market-level evidence stays separate from an individual asset case, so the case index remains decision-ready."
-            title="Market context"
+            title="Market evidence"
           >
             <KnowledgeTable
-              emptyMessage="No market context matches the current filters."
+              emptyMessage="No market evidence matches the current filters."
               rows={marketResearch.map((item) => ({
                 id: `${item.date}:${item.subject}:${item.title}`,
                 title: item.title ?? item.subject,
@@ -209,10 +210,13 @@ export function ResearchView({
 
       {activeTab === 'evidence' && (
         <section>
-          <Panel title="Evidence">
+          <Panel
+            description="Evidence linked directly to an investment subject."
+            title="Asset evidence"
+          >
             <KnowledgeTable
-              emptyMessage="No research notes match the current filters."
-              rows={research.map((item) => ({
+              emptyMessage="No asset evidence matches the current filters."
+              rows={assetResearch.map((item) => ({
                 id: `${item.date}:${item.subject}:${item.title}`,
                 title: item.title ?? item.subject,
                 subject: item.subject,

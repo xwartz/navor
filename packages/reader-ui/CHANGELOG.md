@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.1
+
+### Patch Changes
+
+- Show human-readable entity titles in filters and tables, and rename Research market evidence labels.
+  - @navor/contract@0.6.1
+  - @navor/core@0.6.1
+  - @navor/adapters@0.6.1
+  - @navor/renderer@0.6.1
+
 ## 0.6.0
 
 ### Minor Changes

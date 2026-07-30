@@ -16,13 +16,17 @@ const chinese = {
   Research: '研究',
   'Investment cases': '投资案例',
   Cases: '案例总览',
-  'Market context': '市场证据',
+  'Market evidence': '市场证据',
+  'Asset evidence': '标的证据',
   'Market-level evidence stays separate from an individual asset case, so the case index remains decision-ready.':
     '市场层面的证据独立于单一资产案例，以保持案例索引可直接用于决策。',
+  'No market evidence matches the current filters.': '没有符合当前筛选条件的市场证据。',
+  'Evidence linked directly to an investment subject.': '与具体投资对象直接关联的研究证据。',
   'Case index': '案例清单',
   'One row per investment subject, connecting evidence, thesis, decisions, plans, and review dates.':
     '每个投资对象一行，连接证据、论点、决策、计划与复核日期。',
   'No investment cases match the current filters.': '没有符合当前筛选条件的投资案例。',
+  'No asset evidence matches the current filters.': '没有符合当前筛选条件的标的证据。',
   'Latest thesis': '最新论点',
   'Latest decision': '最新决策',
   'Current plan': '当前计划',
@@ -237,7 +241,6 @@ const chinese = {
   'No theses match the current filters.': '没有符合当前筛选条件的投资论点。',
   'No reviews match the current filters.': '没有符合当前筛选条件的复盘。',
   'No journal entries match the current filters.': '没有符合当前筛选条件的投资日志。',
-  'No research notes match the current filters.': '没有符合当前筛选条件的研究笔记。',
   'No realized gains or losses recorded yet.': '暂无已实现盈亏记录。',
   'Closed-position gains and losses, kept with the economic ledger rather than current holdings.':
     '已平仓盈亏归入经济账本，而不是当前持仓。',
