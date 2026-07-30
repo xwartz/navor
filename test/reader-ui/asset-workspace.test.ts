@@ -15,21 +15,18 @@ describe('shared asset workspace', () => {
     expect(source).toMatch(/data-asset-subject/)
   })
 
-  it('supports Escape, focus trapping, and view-preserving asset links', () => {
+  it('supports Escape, focus trapping, and a single contextual asset workspace', () => {
     const source = readFileSync(PANEL, 'utf8')
 
     expect(source).toMatch(/event\.key === 'Escape'/)
     expect(source).not.toMatch(/Escape' && isModal/)
     expect(source).toMatch(/document\.addEventListener\('keydown', handleKeyDown\)/)
     expect(source).toMatch(/event\.key !== 'Tab'/)
-    expect(source).toMatch(/href="#holdings"/)
-    expect(source).toMatch(/href="#research"/)
-    expect(source).toMatch(/href="#decisions"/)
-    expect(source).toMatch(/id="holdings"/)
-    expect(source).toMatch(/id="drift"/)
-    expect(source).toMatch(/id="plan"/)
-    expect(source).toMatch(/id="research"/)
-    expect(source).toMatch(/id="decisions"/)
+    expect(source).toMatch(/id="snapshot"/)
+    expect(source).toMatch(/id="position"/)
+    expect(source).toMatch(/id="actions"/)
+    expect(source).toMatch(/id="evidence"/)
+    expect(source).not.toMatch(/function WorkspaceLink/)
     expect(source).toMatch(/role=\{isModal \? 'dialog' : 'complementary'\}/)
     expect(source).toMatch(/isModal \? \(/)
     expect(source).toMatch(/xl:w-\[22rem\] 2xl:w-\[30rem\]/)
@@ -46,9 +43,9 @@ describe('shared asset workspace', () => {
   it('keeps the asset detail decision-ready and localizes system status labels', () => {
     const source = readFileSync(PANEL, 'utf8')
 
-    expect(source).toMatch(/title="Market snapshot"/)
-    expect(source).toMatch(/label="Price status"/)
-    expect(source).toMatch(/label="Action below band"/)
+    expect(source).toMatch(/t\('Decision basis'\)/)
+    expect(source).toMatch(/label="Price updated"/)
+    expect(source).toMatch(/title="Evidence and decisions"/)
     expect(source).toMatch(/title="Recent transactions"/)
     expect(source).toMatch(/severityLabel\(item\.severity\)/)
     expect(source).toMatch(/formatDashboardActionLabel\(item\.type\)/)
@@ -59,15 +56,14 @@ describe('shared asset workspace', () => {
     expect(source).toMatch(/label: t\('Decision'\)/)
   })
 
-  it('uses the Position section for account allocation progress, not duplicate drift facts', () => {
+  it('keeps position, plan, actions, and evidence in a single ordered read', () => {
     const source = readFileSync(PANEL, 'utf8')
-    const holdingsSection = source.split('id="holdings"')[1]?.split('id="drift"')[0]
 
-    expect(holdingsSection).toContain("t('Account allocation')")
-    expect(holdingsSection).toContain('label="Account target"')
-    expect(holdingsSection).toContain('label="Funding progress"')
-    expect(holdingsSection).toContain('<ProgressMeter value={execution?.investedPercent} />')
-    expect(holdingsSection).not.toContain('label="Actual weight"')
-    expect(holdingsSection).not.toContain('label="Drift"')
+    expect(source).toContain('const evidenceTimeline = [...researchTimeline, ...decisionsTimeline]')
+    expect(source).toContain('WorkspaceSection id="actions" title="Next actions"')
+    expect(source).not.toContain("actions.length} {t('Open actions').toLowerCase()")
+    expect(source).toContain('WorkspaceSection id="evidence" title="Evidence and decisions"')
+    expect(source).not.toContain('WorkspaceSection id="drift"')
+    expect(source).not.toContain('WorkspaceSection id="plan"')
   })
 })

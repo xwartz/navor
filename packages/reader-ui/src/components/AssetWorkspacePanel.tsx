@@ -18,8 +18,6 @@ import {
   formatSignedPercent,
   formatTimestamp,
 } from './format'
-import { MetaScroll } from './MetaScroll'
-import { ProgressMeter } from './PortfolioVisuals'
 import { Chip, TimelineFeed } from './ViewScaffold'
 
 export function AssetWorkspaceOverlay() {
@@ -57,12 +55,14 @@ function AssetWorkspacePanel({
   const drift = facts?.drift ?? null
   const plan = facts?.plan ?? null
   const price = facts?.price ?? null
-  const priceStatus = facts?.priceStatus ?? null
   const watchlist = facts?.watchlist ?? null
   const accountTitle = useEntityLabel(execution?.account ?? watchlist?.account)
   const actions = facts?.actions ?? []
   const researchTimeline = buildResearchTimeline(facts)
   const decisionsTimeline = buildDecisionsTimeline(facts)
+  const evidenceTimeline = [...researchTimeline, ...decisionsTimeline].toSorted((left, right) =>
+    right.date.localeCompare(left.date),
+  )
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1279px)')
@@ -169,19 +169,6 @@ function AssetWorkspacePanel({
           </button>
         </header>
 
-        <MetaScroll
-          aria-label={t('Asset workspace views')}
-          as="nav"
-          className="flex shrink-0 gap-1 border-b border-border px-3 py-2"
-          fade="paper-elevated"
-        >
-          <WorkspaceLink href="#holdings">{t('Holdings')}</WorkspaceLink>
-          <WorkspaceLink href="#drift">{t('Drift')}</WorkspaceLink>
-          <WorkspaceLink href="#plan">{t('Plan')}</WorkspaceLink>
-          <WorkspaceLink href="#research">{t('Research')}</WorkspaceLink>
-          <WorkspaceLink href="#decisions">{t('Decisions')}</WorkspaceLink>
-        </MetaScroll>
-
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="space-y-5">
             <section id="snapshot">
@@ -209,111 +196,66 @@ function AssetWorkspacePanel({
                 tone={(market?.pnl?.amount ?? 0) < 0 ? 'danger' : 'positive'}
                 value={formatSignedMoney(market?.pnl)}
               />
+              <WorkspaceMetric label="Actual weight" value={formatPercent(drift?.actualWeight)} />
               <WorkspaceMetric
-                label="Invested"
-                value={formatMoney(execution?.investedCost ?? holding?.cost)}
+                label="Drift"
+                tone={
+                  (drift?.drift ?? 0) > 0
+                    ? 'danger'
+                    : (drift?.drift ?? 0) < 0
+                      ? 'positive'
+                      : 'neutral'
+                }
+                value={formatSignedPercent(drift?.drift)}
               />
-              <WorkspaceMetric label="Target" value={formatMoney(execution?.targetAmount)} />
             </section>
 
-            <WorkspaceSection id="market" title="Market snapshot">
+            <section
+              className="overflow-hidden rounded-md border border-border bg-paper"
+              id="judgment"
+            >
+              <div className="border-b border-border px-3 py-2.5">
+                <h3 className="text-xs font-semibold text-ink">{t('Decision basis')}</h3>
+              </div>
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-3 py-3">
+                <WorkspaceFact
+                  label="Invested"
+                  value={formatMoney(execution?.investedCost ?? holding?.cost)}
+                />
+                <WorkspaceFact label="Target" value={formatMoney(execution?.targetAmount)} />
+                <WorkspaceFact label="Plan target" value={formatPercent(plan?.target)} />
+                <WorkspaceFact
+                  label="Plan band"
+                  value={
+                    plan
+                      ? `${formatPercent(plan.min)} / ${formatPercent(plan.max)}`
+                      : t('Not available')
+                  }
+                />
+              </dl>
+            </section>
+
+            <WorkspaceSection id="position" title="Position details">
               <dl className="grid grid-cols-2 gap-4">
                 <WorkspaceFact label="Price" value={formatMoney(price?.price)} />
                 <WorkspaceFact
-                  label="Price status"
-                  value={priceStatusLabel(priceStatus?.status, price)}
+                  label="Quantity"
+                  value={
+                    holding
+                      ? formatQuantityCommodity(holding.quantity, holding.commodity)
+                      : t('Not available')
+                  }
                 />
                 <WorkspaceFact
-                  label="Data source"
-                  value={priceStatus?.provider ?? price?.provider ?? t('No provider')}
+                  label="Cost"
+                  value={formatMoney(execution?.investedCost ?? holding?.cost)}
                 />
-                <WorkspaceFact
-                  label="Price as of"
-                  value={formatTimestamp(priceStatus?.asOf ?? price?.asOf)}
-                />
+                <WorkspaceFact label="Price updated" value={formatTimestamp(price?.asOf)} />
               </dl>
-              {!price ? (
-                <p className="mt-3 text-xs leading-5 text-ink-muted">
-                  {t('Price unavailable. Market value falls back to cost basis.')}
-                </p>
-              ) : null}
-            </WorkspaceSection>
-
-            <WorkspaceSection id="holdings" title="Position">
-              {holding ? (
-                <div className="space-y-4">
-                  <dl className="grid grid-cols-2 gap-4">
-                    <WorkspaceFact
-                      label="Quantity"
-                      value={formatQuantityCommodity(holding.quantity, holding.commodity)}
-                    />
-                    <WorkspaceFact label="Cost" value={formatMoney(holding.cost)} />
-                  </dl>
-                  <div className="border-t border-border pt-4">
-                    <h4 className="text-xs font-semibold text-ink">{t('Account allocation')}</h4>
-                    <dl className="mt-3 grid grid-cols-2 gap-4">
-                      <WorkspaceFact
-                        label="Account target"
-                        value={formatPercent(execution?.target)}
-                      />
-                      <WorkspaceFact
-                        label="Funding progress"
-                        value={formatPercent(execution?.investedPercent)}
-                      />
-                    </dl>
-                    <div className="mt-3">
-                      <ProgressMeter value={execution?.investedPercent} />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <QuietMessage>{t('No funded position is recorded for this asset.')}</QuietMessage>
-              )}
-            </WorkspaceSection>
-
-            <WorkspaceSection id="drift" title="Drift">
-              <dl className="grid grid-cols-2 gap-4">
-                <WorkspaceFact label="Actual weight" value={formatPercent(drift?.actualWeight)} />
-                <WorkspaceFact
-                  label="Target"
-                  value={formatPercent(plan?.target ?? facts?.allocation?.derivedPortfolioWeight)}
-                />
-                <WorkspaceFact label="Drift" value={formatSignedPercent(drift?.drift)} />
-                <WorkspaceFact
-                  label="Market value"
-                  value={formatMoney(drift?.marketValueInBase ?? drift?.marketValue)}
-                />
-              </dl>
-            </WorkspaceSection>
-
-            <WorkspaceSection id="plan" title="Plan">
-              {plan ? (
-                <dl className="grid grid-cols-2 gap-4">
-                  <WorkspaceFact label="Target" value={formatPercent(plan.target)} />
-                  <WorkspaceFact
-                    label="Band"
-                    value={`${formatPercent(plan.min)} / ${formatPercent(plan.max)}`}
-                  />
-                  <WorkspaceFact label="Rebalance" value={plan.rebalance ?? t('Not available')} />
-                  <WorkspaceFact label="Plan date" value={plan.date} />
-                  <WorkspaceFact
-                    label="Action below band"
-                    value={plan.actionWhenBelow ?? t('Not available')}
-                  />
-                  <WorkspaceFact
-                    label="Action above band"
-                    value={plan.actionWhenAbove ?? t('Not available')}
-                  />
-                </dl>
-              ) : (
-                <QuietMessage>
-                  {t('Execution target only. No portfolio band is linked to this asset.')}
-                </QuietMessage>
-              )}
             </WorkspaceSection>
 
             {actions.length > 0 ? (
-              <WorkspaceSection id="actions" title="Open actions">
+              <WorkspaceSection id="actions" title="Next actions">
                 <div className="divide-y divide-border overflow-hidden rounded-md border border-border">
                   {actions.map((item) => (
                     <div className="px-3 py-3" key={item.id}>
@@ -336,17 +278,9 @@ function AssetWorkspacePanel({
               </WorkspaceSection>
             ) : null}
 
-            <WorkspaceSection id="research" title="Investment context">
-              {researchTimeline.length > 0 ? (
-                <TimelineFeed items={researchTimeline} />
-              ) : (
-                <QuietMessage>{t('No research, thesis, or decision is linked yet.')}</QuietMessage>
-              )}
-            </WorkspaceSection>
-
-            <WorkspaceSection id="decisions" title="Decisions">
-              {decisionsTimeline.length > 0 ? (
-                <TimelineFeed items={decisionsTimeline} />
+            <WorkspaceSection id="evidence" title="Evidence and decisions">
+              {evidenceTimeline.length > 0 ? (
+                <TimelineFeed items={evidenceTimeline} />
               ) : (
                 <QuietMessage>{t('No research, thesis, or decision is linked yet.')}</QuietMessage>
               )}
@@ -375,17 +309,6 @@ function AssetWorkspacePanel({
         </div>
       </aside>
     </>
-  )
-}
-
-function WorkspaceLink({ children, href }: { children: string; href: string }) {
-  return (
-    <a
-      className="inline-flex min-h-10 shrink-0 items-center rounded-md px-2.5 text-xs font-semibold text-accent transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-accent-ink"
-      href={href}
-    >
-      {children}
-    </a>
   )
 }
 
@@ -525,14 +448,6 @@ function formatTransactionDecision(
     return `${t('Decision')}: ${reference.target?.title ?? reference.target?.date ?? reference.raw}`
   }
   return formatReference(reference) ?? t('No decision is linked to this transaction.')
-}
-
-function priceStatusLabel(
-  status: NavorRendererAppState['enrichment']['prices'][number]['status'] | undefined,
-  price: NavorRendererAppState['market']['prices'][number] | null,
-) {
-  if (!status) return price ? t('fresh') : t('missing')
-  return t(status)
 }
 
 function severityLabel(

@@ -1,15 +1,13 @@
 import type { NavorRendererAppState } from '@navor/contract'
-import { useState } from 'react'
-
+import { useAssetWorkspace } from '../asset-workspace-context'
 import { AccountTree } from '../components/AccountTree'
-import { AssetDetailPanel } from '../components/AssetDetailPanel'
 import { formatMoney, formatMoneyList, groupMoneyValues } from '../components/format'
 import { Panel } from '../components/Panel'
-import { SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { PortfolioSectionNav, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import { t } from '../i18n'
 
 export function AccountsView({ state }: { state: NavorRendererAppState }) {
-  const [selectedAssetSubject, setSelectedAssetSubject] = useState<string | null>(null)
+  const { openAsset } = useAssetWorkspace()
   const targetAmounts = state.dashboard.accountExecutions.map((account) => account.targetAmount)
   const targetCurrencies = groupMoneyValues(targetAmounts)
   const fundedAssetCount = state.dashboard.assetExecutions.filter(
@@ -23,6 +21,8 @@ export function AccountsView({ state }: { state: NavorRendererAppState }) {
         eyebrow="Portfolio"
         title="Accounts"
       />
+
+      <PortfolioSectionNav active="accounts" />
 
       <SummaryStrip
         items={[
@@ -51,18 +51,7 @@ export function AccountsView({ state }: { state: NavorRendererAppState }) {
           accounts={state.dashboard.accountExecutions}
           actions={state.dashboard.actionInbox}
           assets={state.dashboard.assetExecutions}
-          onSelectAsset={(subject) =>
-            setSelectedAssetSubject((current) => (current === subject ? null : subject))
-          }
-          renderAssetDetail={(subject) => (
-            <AssetDetailPanel
-              onClose={() => setSelectedAssetSubject(null)}
-              state={state}
-              subject={subject}
-              variant="compact"
-            />
-          )}
-          selectedAssetSubject={selectedAssetSubject}
+          onSelectAsset={openAsset}
         />
       </Panel>
     </div>

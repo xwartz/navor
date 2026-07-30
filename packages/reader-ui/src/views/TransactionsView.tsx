@@ -1,13 +1,13 @@
 import type { NavorRendererAppState, PortfolioTransactionView } from '@navor/contract'
-
+import { useState } from 'react'
+import { DataTable, type DataTableRow } from '../components/DataTable'
 import { formatMoney } from '../components/format'
 import { Panel } from '../components/Panel'
 import { QuantityCommodity } from '../components/QuantityCommodity'
 import { Chip, EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { formatTransactionCount, t } from '../i18n'
-import { groupTransactionsByMonth } from '../transaction-ledger'
+import { type MessageKey, t } from '../i18n'
 import { transactionTone, transactionType } from '../transaction-type'
 
 export function TransactionsView({
@@ -17,8 +17,12 @@ export function TransactionsView({
   state: NavorRendererAppState
   filters: ReaderFilters
 }) {
-  const transactions = (state.portfolio.transactions ?? []).filter((transaction) =>
-    matchesFilters(transaction, filters),
+  const [activeTab, setActiveTab] = useState<'transactions' | 'realized' | 'flows'>('transactions')
+  const { type: transactionTypeFilter, ...baseFilters } = filters
+  const transactions = (state.portfolio.transactions ?? []).filter(
+    (transaction) =>
+      matchesFilters(transaction, baseFilters) &&
+      (!transactionTypeFilter || transactionType(transaction) === transactionTypeFilter),
   )
   const typeCounts = transactions.reduce<Record<string, number>>((counts, transaction) => {
     const type = transactionType(transaction)
@@ -29,6 +33,34 @@ export function TransactionsView({
   return (
     <div className="space-y-5">
       <ViewHeader description="All portfolio activity." eyebrow="Portfolio" title="Ledger" />
+
+      <div
+        aria-label="Ledger views"
+        className="meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/80 px-1 pb-3"
+        role="tablist"
+      >
+        {(
+          [
+            { id: 'transactions' as const, label: 'Transactions' },
+            { id: 'realized' as const, label: 'Realized PnL' },
+            { id: 'flows' as const, label: 'Cash & flows' },
+          ] as Array<{ id: 'transactions' | 'realized' | 'flows'; label: MessageKey }>
+        ).map((tab) => {
+          const selected = activeTab === tab.id
+          return (
+            <button
+              aria-selected={selected}
+              className={`press-scale min-h-10 shrink-0 rounded-md px-3 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${selected ? 'bg-paper-elevated text-ink shadow-[inset_0_-1px_0_var(--color-accent)]' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink'}`}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              type="button"
+            >
+              {t(tab.label)}
+            </button>
+          )
+        })}
+      </div>
 
       <SummaryStrip
         items={[
@@ -52,13 +84,97 @@ export function TransactionsView({
         ]}
       />
 
-      <Panel
-        description="Scan the economic event first, then open a row only when you need its double-entry detail."
-        title="Transaction history"
-      >
-        <TransactionLedger transactions={transactions} />
-      </Panel>
+      {activeTab === 'transactions' && (
+        <Panel
+          description="Scan the economic event first, then open a row only when you need its double-entry detail."
+          title="Transaction history"
+        >
+          <TransactionLedger transactions={transactions} />
+        </Panel>
+      )}
+      {activeTab === 'realized' && <RealizedPnlTable state={state} />}
+      {activeTab === 'flows' && <CashAndFlows state={state} />}
     </div>
+  )
+}
+
+function RealizedPnlTable({ state }: { state: NavorRendererAppState }) {
+  return (
+    <Panel
+      description="Closed-position gains and losses, kept with the economic ledger rather than current holdings."
+      title="Realized PnL"
+    >
+      <DataTable
+        columns={[
+          { key: 'date', label: 'Date', sortable: true, sticky: true },
+          { key: 'asset', label: 'Asset', sortable: true },
+          { key: 'title', label: 'Transaction', sortable: true },
+          { key: 'amount', label: 'Realized', align: 'right', sortable: true },
+        ]}
+        emptyMessage="No realized gains or losses recorded yet."
+        rows={(state.portfolio.realizedPnl ?? []).map((entry) => ({
+          id: `${entry.date}:${entry.asset}:${entry.title ?? ''}:${entry.amount.amount}`,
+          cells: {
+            date: entry.date,
+            asset: <EntityCell interactive subject={entry.asset} />,
+            title: entry.title ?? 'n/a',
+            amount: formatMoney(entry.amount),
+          },
+          sortValues: {
+            date: entry.date,
+            asset: entry.asset,
+            title: entry.title ?? '',
+            amount: entry.amount.amount,
+          },
+        }))}
+      />
+    </Panel>
+  )
+}
+
+function CashAndFlows({ state }: { state: NavorRendererAppState }) {
+  return (
+    <section className="grid gap-5 lg:grid-cols-3">
+      <Panel title="Cash">
+        <DataTable
+          columns={[
+            { key: 'currency', label: 'Currency', sortable: true, sticky: true },
+            { key: 'amount', label: 'Amount', align: 'right', sortable: true },
+          ]}
+          rows={state.portfolio.cash.map((balance) => ({
+            id: balance.currency,
+            cells: { currency: balance.currency, amount: balance.amount.toLocaleString() },
+            sortValues: { currency: balance.currency, amount: balance.amount },
+          }))}
+        />
+      </Panel>
+      <Panel title="Income">
+        <FlowTable flows={state.portfolio.income} />
+      </Panel>
+      <Panel title="Expenses">
+        <FlowTable flows={state.portfolio.expenses} />
+      </Panel>
+    </section>
+  )
+}
+
+function FlowTable({ flows }: { flows: NavorRendererAppState['portfolio']['income'] }) {
+  if (flows.length === 0) return <p className="text-sm text-ink-muted">{t('No flows recorded.')}</p>
+  return (
+    <DataTable
+      columns={[
+        { key: 'account', label: 'Account', sortable: true, sticky: true },
+        { key: 'amount', label: 'Amount', align: 'right', sortable: true },
+      ]}
+      rows={flows.map((flow) => ({
+        id: `${flow.account}:${flow.amount}:${flow.currency}`,
+        cells: {
+          account: <EntityCell subject={flow.account} />,
+          amount: `${flow.amount} ${flow.currency}`,
+        },
+        sortValues: { account: flow.account, amount: flow.amount },
+      }))}
+    />
   )
 }
 
@@ -71,86 +187,87 @@ function TransactionLedger({ transactions }: { transactions: PortfolioTransactio
     )
   }
 
-  const groups = groupTransactionsByMonth(transactions)
+  const rows = transactions.map((transaction) => transactionRow(transaction))
+  const transactionsById = new Map(
+    transactions.map((transaction) => [transactionId(transaction), transaction]),
+  )
 
   return (
-    <div className="space-y-6">
-      {groups.map(([month, monthTransactions]) => (
-        <section key={month}>
-          <div className="mb-2 flex items-baseline justify-between gap-4 border-b border-border pb-2">
-            <h3 className="font-ui text-sm font-semibold text-ink">{formatMonth(month)}</h3>
-            <span className="text-xs tabular-nums text-ink-faint">
-              {formatTransactionCount(monthTransactions.length)}
-            </span>
-          </div>
-          <div className="divide-y divide-border/80">
-            {monthTransactions.map((transaction) => (
-              <TransactionRow
-                key={`${transaction.date}:${transaction.subject}:${transaction.line}`}
-                transaction={transaction}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+    <DataTable
+      columns={[
+        { key: 'type', label: 'Type', sortable: true },
+        { key: 'date', label: 'Date', sortable: true, sticky: true, hideable: false },
+        { key: 'asset', label: 'Asset', sortable: true },
+        { key: 'quantity', label: 'Quantity', align: 'right', sortable: true },
+        { key: 'price', label: 'Price', align: 'right', mobileHidden: true, sortable: true },
+        { key: 'account', label: 'Market', sortable: true },
+      ]}
+      defaultSortDirection="desc"
+      defaultSortKey="date"
+      emptyMessage="No transactions match the current filters."
+      renderExpandedRow={(row) => {
+        const transaction = transactionsById.get(row.id)
+        return transaction ? <TransactionDetails transaction={transaction} /> : null
+      }}
+      rows={rows}
+      storageKey="ledger"
+    />
   )
 }
 
-function TransactionRow({ transaction }: { transaction: PortfolioTransactionView }) {
+function transactionRow(transaction: PortfolioTransactionView): DataTableRow {
   const primaryPosting =
     transaction.postings.find(
       (posting) =>
         posting.account.startsWith('Assets:') && !posting.account.startsWith('Assets:Cash:'),
     ) ?? transaction.postings[0]
 
+  return {
+    id: transactionId(transaction),
+    cells: {
+      type: <Chip tone={transactionTone(transaction)}>{transactionType(transaction)}</Chip>,
+      date: <time className="tabular-nums text-ink-muted">{transaction.date}</time>,
+      asset: (
+        <EntityCell
+          subject={transaction.subject}
+          title={transaction.title ?? transaction.subject}
+        />
+      ),
+      quantity: primaryPosting ? (
+        <QuantityCommodity
+          commodity={primaryPosting.commodity}
+          quantity={primaryPosting.quantity}
+        />
+      ) : (
+        '—'
+      ),
+      price: primaryPosting?.price ? formatPrice(primaryPosting.price) : '—',
+      account: primaryPosting ? marketCategory(primaryPosting.account) : '—',
+    },
+    sortValues: {
+      type: transactionType(transaction),
+      date: transaction.date,
+      asset: transaction.title ?? transaction.subject,
+      quantity: primaryPosting?.quantity ?? 0,
+      price: primaryPosting?.price?.amount ?? 0,
+      account: primaryPosting?.account ?? '',
+    },
+  }
+}
+
+function TransactionDetails({ transaction }: { transaction: PortfolioTransactionView }) {
   return (
-    <details className="group">
-      <summary className="grid min-h-16 cursor-pointer list-none grid-cols-[4.75rem_minmax(0,1fr)_1rem] items-center gap-x-3 gap-y-1 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 md:grid-cols-[6.5rem_5.5rem_minmax(12rem,1fr)_minmax(10rem,0.75fr)_1rem] md:gap-3 [&::-webkit-details-marker]:hidden">
-        <time className="col-start-1 row-start-1 text-xs font-medium tabular-nums text-ink-faint md:col-auto md:row-auto">
-          {transaction.date}
-        </time>
-        <div className="col-start-1 row-start-2 md:col-auto md:row-auto">
-          <Chip tone={transactionTone(transaction)}>{transactionType(transaction)}</Chip>
-        </div>
-        <div className="col-start-2 row-start-1 min-w-0 md:col-auto md:row-auto">
-          <EntityCell
-            subject={transaction.subject}
-            title={transaction.title ?? transaction.subject}
-          />
-        </div>
-        <div className="col-start-2 row-start-2 min-w-0 md:col-auto md:row-auto md:text-right">
-          {primaryPosting ? (
-            <>
-              <p className="font-medium tabular-nums text-ink">
-                <QuantityCommodity
-                  commodity={primaryPosting.commodity}
-                  quantity={primaryPosting.quantity}
-                />
-              </p>
-              {primaryPosting.price ? (
-                <p className="text-xs tabular-nums text-ink-faint">
-                  {formatPrice(primaryPosting.price)}
-                </p>
-              ) : null}
-            </>
-          ) : null}
-        </div>
-        <span
-          aria-hidden
-          className="col-start-3 row-span-2 row-start-1 text-right text-xs text-ink-faint transition-transform duration-150 group-open:rotate-90 md:col-auto md:row-auto md:row-span-1"
-        >
-          ›
-        </span>
-      </summary>
-      <div className="pb-4 md:pl-[12rem]">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
-          {t('Double-entry postings')}
-        </p>
-        <PostingList transaction={transaction} />
-      </div>
-    </details>
+    <div className="max-w-3xl">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
+        {t('Double-entry postings')}
+      </p>
+      <PostingList transaction={transaction} />
+    </div>
   )
+}
+
+function transactionId(transaction: PortfolioTransactionView) {
+  return `${transaction.date}:${transaction.subject}:${transaction.line}`
 }
 
 function PostingList({ transaction }: { transaction: PortfolioTransactionView }) {
@@ -180,20 +297,6 @@ function PostingList({ transaction }: { transaction: PortfolioTransactionView })
   )
 }
 
-function formatMonth(month: string) {
-  const [year, monthNumber] = month.split('-').map(Number)
-
-  if (!year || !monthNumber) {
-    return month
-  }
-
-  return new Intl.DateTimeFormat('en', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(Date.UTC(year, monthNumber - 1, 1)))
-}
-
 function compactAccount(account: string) {
   const parts = account.split(':')
 
@@ -202,6 +305,16 @@ function compactAccount(account: string) {
   }
 
   return parts.slice(-2).join(':')
+}
+
+function marketCategory(account: string) {
+  const parts = account.split(':')
+  if (parts[1] === 'Crypto') return 'Digital assets'
+  if (parts[1] === 'Equity' && parts[2] === 'US') return 'US equities'
+  if (parts[1] === 'Equity' && parts[2] === 'CN') return 'A shares'
+  if (parts[1] === 'Equity' && parts[2] === 'HK') return 'Hong Kong equities'
+  if (parts[1] === 'Cash') return 'Cash'
+  return compactAccount(account)
 }
 
 function formatPrice(price: NonNullable<PortfolioTransactionView['postings'][number]['price']>) {

@@ -30,7 +30,7 @@ export function buildSearchHits(state: NavorRendererAppState): SearchHit[] {
   for (const item of state.knowledge.theses) {
     hits.push({
       id: `thesis:${item.date}:${item.subject}`,
-      view: 'thesis',
+      view: 'research',
       subject: item.subject,
       title: item.title ?? item.subject,
       meta: `${item.date} · ${item.status ?? t('Thesis')}`,
@@ -41,7 +41,7 @@ export function buildSearchHits(state: NavorRendererAppState): SearchHit[] {
   for (const item of state.knowledge.decisions) {
     hits.push({
       id: `decision:${item.date}:${item.subject}`,
-      view: 'decisions',
+      view: 'research',
       subject: item.subject,
       title: item.title ?? item.subject,
       meta: `${item.date} · ${item.action ?? t('Decision')}`,

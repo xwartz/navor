@@ -1,15 +1,15 @@
 # 文档
 
-Documentation for Navor. Start with **why**, then **how**, then the **language**, then **reference**.
+Navor documentation. Start by understanding the investment record, then learn the language and operating workflow.
 
 [中文文档](README.zh.md)
 
-## Why
+## Start here
 
 - [Manifesto](manifesto.md): why Navor exists
 - [Philosophy](philosophy.md): design principles
 
-## Getting started
+## Build an investment record
 
 - [Installation](getting-started/installation.md)
 - [Your first `.nav` file](getting-started/your-first-nav.md)
@@ -17,7 +17,7 @@ Documentation for Navor. Start with **why**, then **how**, then the **language**
 - [Editor support](getting-started/editor-support.md)
 - [AI assistant skills](getting-started/ai-skills.md)
 
-## Language
+## Learn the language
 
 - [Overview](language/overview.md)
 - [Files](language/files.md)
@@ -28,7 +28,7 @@ Documentation for Navor. Start with **why**, then **how**, then the **language**
 - [Portfolio](language/portfolio.md)
 - [Comments and bodies](language/comments.md)
 
-## CLI
+## Use the tools
 
 - [Overview](cli/overview.md)
 - [`nav serve`](cli/serve.md)
@@ -36,7 +36,7 @@ Documentation for Navor. Start with **why**, then **how**, then the **language**
 - [`nav check`](cli/check.md)
 - [`nav format`](cli/format.md)
 
-## Concepts
+## Design principles
 
 - [Investment repository](concepts/investment-repository.md)
 - [Reasoning](concepts/reasoning.md)

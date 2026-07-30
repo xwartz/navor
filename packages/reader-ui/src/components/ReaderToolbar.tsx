@@ -1,37 +1,38 @@
-import { type ReactNode, useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters } from '../filters'
 import { t } from '../i18n'
+import type { ToolbarContext, ToolbarFacet } from '../toolbar-context'
 
 interface ReaderToolbarProps {
   filters: ReaderFilters
-  filtersEnabled: boolean
+  context: ToolbarContext
   leading?: ReactNode
   resultCount: number | null
+  searchScope: 'view' | 'workspace'
   onChange: (filters: ReaderFilters) => void
+  onSearchScopeChange: (scope: 'view' | 'workspace') => void
 }
 
 export function ReaderToolbar({
   filters,
-  filtersEnabled,
+  context,
   leading,
   resultCount,
+  searchScope,
   onChange,
+  onSearchScopeChange,
 }: ReaderToolbarProps) {
   const active = hasActiveFilters(filters)
-  const activeCount = Object.values(filters).filter(Boolean).length
   const searchRef = useRef<HTMLInputElement>(null)
-  const filtersRef = useRef<HTMLDetailsElement>(null)
+  const toolbarRef = useRef<HTMLElement>(null)
+  const [openFacet, setOpenFacet] = useState<keyof ReaderFilters | null>(null)
 
   useEffect(() => {
     const focusSearch = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null
-
-      if (event.key !== '/' || target?.matches('input, textarea, select, [contenteditable]')) {
-        return
-      }
-
+      if (event.key !== '/' || target?.matches('input, textarea, select, [contenteditable]')) return
       event.preventDefault()
       searchRef.current?.focus()
     }
@@ -41,38 +42,33 @@ export function ReaderToolbar({
   }, [])
 
   useEffect(() => {
-    const closeFilters = (event: PointerEvent | KeyboardEvent) => {
-      const details = filtersRef.current
-
-      if (!details?.open) {
-        return
-      }
-
-      if (event instanceof KeyboardEvent && event.key === 'Escape') {
-        details.removeAttribute('open')
-        details.querySelector('summary')?.focus()
-        return
-      }
-
-      if (event instanceof PointerEvent && !details.contains(event.target as Node)) {
-        details.removeAttribute('open')
-      }
+    const closeFacetOnOutsidePointerDown = (event: PointerEvent) => {
+      if (toolbarRef.current?.contains(event.target as Node)) return
+      setOpenFacet(null)
+    }
+    const closeFacetOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpenFacet(null)
     }
 
-    document.addEventListener('pointerdown', closeFilters)
-    document.addEventListener('keydown', closeFilters)
+    document.addEventListener('pointerdown', closeFacetOnOutsidePointerDown, true)
+    window.addEventListener('keydown', closeFacetOnEscape)
     return () => {
-      document.removeEventListener('pointerdown', closeFilters)
-      document.removeEventListener('keydown', closeFilters)
+      document.removeEventListener('pointerdown', closeFacetOnOutsidePointerDown, true)
+      window.removeEventListener('keydown', closeFacetOnEscape)
     }
   }, [])
 
   return (
-    <section className="sticky top-0 z-30 border-b border-border bg-paper/95 px-4 py-3 lg:px-7">
-      <div className="flex items-center gap-2.5">
+    <section
+      className="sticky top-0 z-30 border-b border-border bg-paper/95 px-4 py-3 lg:px-7"
+      ref={toolbarRef}
+    >
+      <div className="mx-auto flex w-full max-w-[96rem] min-w-0 flex-wrap items-center gap-2">
         {leading}
-        <label className="relative min-w-0 flex-1">
-          <span className="sr-only">{t('Search workspace')}</span>
+        <label className="relative min-w-[11rem] flex-1 lg:max-w-[19rem]">
+          <span className="sr-only">
+            {t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
+          </span>
           <span
             aria-hidden
             className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-faint"
@@ -80,9 +76,9 @@ export function ReaderToolbar({
             ⌕
           </span>
           <input
-            className="h-10 w-full rounded-md border border-border bg-paper-elevated/80 pl-8 pr-14 text-sm text-ink outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/70 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/20"
+            className="h-10 w-full rounded-md border border-border bg-paper-elevated/80 pl-8 pr-10 text-sm text-ink outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/70 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/20"
             onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
-            placeholder={t('Search workspace')}
+            placeholder={t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
             ref={searchRef}
             type="search"
             value={filters.query ?? ''}
@@ -92,99 +88,117 @@ export function ReaderToolbar({
           </kbd>
         </label>
 
-        {filtersEnabled ? (
-          <details className="group relative shrink-0" ref={filtersRef}>
-            <summary className="press-scale flex h-10 cursor-pointer list-none items-center gap-2 rounded-md border border-border bg-paper-elevated px-3 text-xs font-semibold text-ink-muted transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:border-border-strong [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
-              <span className="inline-flex items-center gap-2 whitespace-nowrap">
-                {t('Filters')}
-                {activeCount > 0 ? (
-                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[10px] tabular-nums text-paper-elevated">
-                    {activeCount}
-                  </span>
-                ) : null}
-                <span
-                  aria-hidden
-                  className="text-ink-faint transition-transform duration-150 group-open:rotate-180"
-                >
-                  ▾
-                </span>
-              </span>
-            </summary>
-            <div className="absolute right-0 z-40 mt-2 w-[min(25rem,calc(100vw-2rem))] rounded-lg bg-paper-elevated p-4 shadow-[0_18px_48px_rgba(34,31,26,0.18)] ring-1 ring-border-strong/70">
-              <div className="mb-4 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-ink">{t('Refine workspace')}</p>
-                  <p className="mt-0.5 text-xs text-ink-faint">
-                    {t('Filters apply to the current view.')}
-                  </p>
-                </div>
-                {active ? (
-                  <button
-                    className="h-10 rounded-md px-3 text-xs font-semibold text-accent transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft"
-                    onClick={() => onChange({})}
-                    type="button"
-                  >
-                    {t('Clear all')}
-                  </button>
-                ) : null}
-              </div>
-              <div className="grid gap-3">
-                <FilterField
-                  label={t('Subject')}
-                  onChange={(value) => onChange({ ...filters, subject: value || undefined })}
-                  placeholder="Asset:Crypto:BTC"
-                  value={filters.subject ?? ''}
-                />
-                <FilterField
-                  label={t('Tag')}
-                  onChange={(value) => onChange({ ...filters, tag: value || undefined })}
-                  placeholder="ETF"
-                  value={filters.tag ?? ''}
-                />
-                <FilterField
-                  label={t('Date')}
-                  onChange={(value) => onChange({ ...filters, date: value || undefined })}
-                  placeholder="2026-02"
-                  value={filters.date ?? ''}
-                />
-              </div>
-              {active && resultCount !== null ? (
-                <p className="mt-3 text-xs text-ink-muted">
-                  {resultCount} {t('matching')} {resultCount === 1 ? t('record') : t('records')}{' '}
-                  {t('in this view')}
-                </p>
-              ) : null}
-            </div>
-          </details>
+        {context.mode !== 'brief' ? (
+          <button
+            aria-label={t(searchScope === 'workspace' ? 'Entire workspace' : 'This view')}
+            className="press-scale h-10 shrink-0 rounded-md border border-border bg-paper-elevated px-2.5 text-xs font-semibold text-ink-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink"
+            onClick={() => onSearchScopeChange(searchScope === 'workspace' ? 'view' : 'workspace')}
+            type="button"
+          >
+            {t(searchScope === 'workspace' ? 'Entire workspace' : 'This view')}
+          </button>
+        ) : null}
+
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+          {context.facets.map((facet) => (
+            <FacetControl
+              facet={facet}
+              isOpen={openFacet === facet.key}
+              key={facet.key}
+              onChange={(value) => onChange({ ...filters, [facet.key]: value || undefined })}
+              onOpenChange={(open) => setOpenFacet(open ? facet.key : null)}
+              value={filters[facet.key] ?? ''}
+            />
+          ))}
+        </div>
+
+        {active ? (
+          <button
+            className="press-scale h-10 shrink-0 rounded-md px-2.5 text-xs font-semibold text-accent transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft"
+            onClick={() => onChange({})}
+            type="button"
+          >
+            {t('Clear filters')}
+          </button>
+        ) : null}
+
+        {resultCount !== null ? (
+          <p className="ml-auto shrink-0 text-xs tabular-nums text-ink-faint">
+            {resultCount} {t('matching')}
+          </p>
         ) : null}
       </div>
     </section>
   )
 }
 
-function FilterField({
-  label,
+function FacetControl({
+  facet,
+  isOpen,
   value,
-  placeholder,
   onChange,
+  onOpenChange,
 }: {
-  label: string
+  facet: ToolbarFacet
+  isOpen: boolean
   value: string
-  placeholder: string
   onChange: (value: string) => void
+  onOpenChange: (open: boolean) => void
 }) {
+  const selected = value ? `${t(facet.label)} · ${compactValue(value)}` : t(facet.label)
+  const choose = (nextValue: string) => {
+    onChange(nextValue)
+    onOpenChange(false)
+  }
+
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-        {label}
-      </span>
-      <input
-        className="h-10 w-full rounded-md border border-border bg-paper px-3 text-sm text-ink outline-none transition-[border-color,box-shadow,background-color] focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/20"
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        type="text"
-        value={value}
-      />
-    </label>
+    <div className="relative shrink-0">
+      <button
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        className={`press-scale flex h-10 cursor-pointer list-none items-center justify-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold leading-none transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden ${value ? 'border-accent/45 bg-accent-soft text-accent-ink' : 'border-border bg-paper-elevated text-ink-muted [@media(hover:hover)]:hover:bg-paper'}`}
+        onClick={() => onOpenChange(!isOpen)}
+        type="button"
+      >
+        <span
+          aria-hidden
+          className="inline-flex h-3 w-3 items-center justify-center text-xs leading-none"
+        >
+          +
+        </span>
+        <span className="max-w-[10rem] leading-none truncate">{selected}</span>
+      </button>
+      {isOpen ? (
+        <div
+          className="absolute left-0 z-40 mt-2 max-h-72 w-56 overflow-y-auto rounded-md border border-border-strong bg-paper-elevated p-1.5 shadow-[0_18px_48px_rgba(17,19,24,0.16)]"
+          role="listbox"
+        >
+          <button
+            className="w-full rounded px-2.5 py-2 text-left text-xs text-ink-muted transition-colors [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink"
+            onClick={() => choose('')}
+            type="button"
+          >
+            {t('Clear filters')}
+          </button>
+          {facet.options.map((option) => (
+            <button
+              aria-selected={value === option}
+              className={`mt-0.5 w-full rounded px-2.5 py-2 text-left text-xs transition-colors ${value === option ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+              key={option}
+              onClick={() => choose(value === option ? '' : option)}
+              role="option"
+              type="button"
+            >
+              {compactValue(option)}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   )
+}
+
+function compactValue(value: string) {
+  const parts = value.split(':')
+  return parts[parts.length - 1] || value
 }

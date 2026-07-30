@@ -1,15 +1,15 @@
 # 文档
 
-Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** → **参考**。
+先理解投资记录如何工作，再学习语言和日常工作流。
 
 [English](README.md)
 
-## 为什么
+## 从这里开始
 
 - [宣言](manifesto.zh.md)：Navor 为何存在
 - [设计哲学](philosophy.zh.md)：设计原则和边界
 
-## 快速开始
+## 建立投资记录
 
 - [安装](getting-started/installation.zh.md)
 - [第一个 `.nav` 文件](getting-started/your-first-nav.zh.md)
@@ -17,7 +17,7 @@ Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** 
 - [编辑器支持](getting-started/editor-support.zh.md)
 - [AI 助手 skills](getting-started/ai-skills.zh.md)
 
-## 语言
+## 学习语言
 
 - [概览](language/overview.zh.md)
 - [文件](language/files.zh.md)
@@ -28,7 +28,7 @@ Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** 
 - [组合](language/portfolio.zh.md)
 - [注释与正文](language/comments.zh.md)
 
-## CLI
+## 使用工具
 
 - [概览](cli/overview.zh.md)
 - [`nav serve`](cli/serve.zh.md)
@@ -36,7 +36,7 @@ Navor 文档按这个顺序读：**为什么** → **怎么用** → **语言** 
 - [`nav check`](cli/check.zh.md)
 - [`nav format`](cli/format.zh.md)
 
-## 概念
+## 设计原则
 
 - [投资仓库](concepts/investment-repository.zh.md)
 - [推理链](concepts/reasoning.zh.md)

@@ -6,7 +6,7 @@ import {
   convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
-  formatMoneyList,
+  formatPercent,
   groupMoneyValues,
   pickMoneyCurrency,
   sumMoneyInBase,
@@ -14,17 +14,17 @@ import {
 import { Panel } from '../components/Panel'
 import { MoneyDelta, RankedExposureList } from '../components/PortfolioVisuals'
 import { QuantityCommodity } from '../components/QuantityCommodity'
-import { EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import {
+  EntityCell,
+  PortfolioSectionNav,
+  SummaryStrip,
+  ViewHeader,
+} from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel, resolveEntityLabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters, matchesFilters } from '../filters'
-import {
-  formatCurrencyCount,
-  formatPortfolioPositionCount,
-  formatUnconvertedCurrencyCount,
-  t,
-} from '../i18n'
+import { formatPortfolioPositionCount, formatUnconvertedCurrencyCount, t } from '../i18n'
 
 export function PortfolioView({
   state,
@@ -36,26 +36,34 @@ export function PortfolioView({
   const [groupMode, setGroupMode] = useState<'all' | 'account'>('all')
   const { openAsset } = useAssetWorkspace()
   const labelIndex = useEntityLabelIndex()
-  const holdings = state.portfolio.holdings.filter((holding) => matchesFilters(holding, filters))
+  const assetExecutionBySubject = new Map(
+    state.dashboard.assetExecutions.map((asset) => [asset.subject, asset]),
+  )
+  const holdings = state.portfolio.holdings.filter(
+    (holding) =>
+      matchesFilters(holding, filters) &&
+      (!filters.account || assetExecutionBySubject.get(holding.asset)?.account === filters.account),
+  )
   const filtersActive = hasActiveFilters(filters)
   const holdingSubjects = new Set(holdings.map((holding) => holding.asset))
   const portfolioValues = state.market.portfolioValues.filter((value) =>
     holdingSubjects.has(value.subject),
   )
-  const realizedPnl = (state.portfolio.realizedPnl ?? []).filter((entry) =>
-    matchesFilters(entry, filters),
-  )
   const valueBySubject = new Map(
     state.market.portfolioValues.map((value) => [value.subject, value]),
   )
-  const assetExecutionBySubject = new Map(
-    state.dashboard.assetExecutions.map((asset) => [asset.subject, asset]),
-  )
+  const priceBySubject = new Map(state.market.prices.map((price) => [price.subject, price.price]))
   const holdingsByAccount = groupHoldingsByAccount(holdings, assetExecutionBySubject)
   const marketMix = calculateMarketMix(
     portfolioValues,
     state.drift.baseCurrency,
     state.drift.fxRates,
+  )
+  const weightBySubject = new Map(
+    marketMix.values.map(({ source, amount }) => [
+      source.subject,
+      marketMix.total > 0 ? (amount / marketMix.total) * 100 : null,
+    ]),
   )
   const costByCurrency = groupMoneyValues(holdings.map((holding) => holding.cost))
   const costInBase = sumMoneyInBase(
@@ -73,30 +81,16 @@ export function PortfolioView({
   const otherCostCount = costInBase.total
     ? costInBase.unconvertedCurrencies.length
     : countOtherCurrencies(costByCurrency, primaryCost)
-  const realizedByCurrency = groupMoneyValues(realizedPnl.map((entry) => entry.amount))
-  const realizedInBase = sumMoneyInBase(
-    realizedPnl.map((entry) => entry.amount),
-    state.drift.baseCurrency,
-    state.drift.fxRates,
-  )
-  const primaryRealizedPnl =
-    realizedInBase.total ?? pickMoneyCurrency(realizedByCurrency, state.drift.baseCurrency)
-  const otherRealizedPnlCount = realizedInBase.total
-    ? realizedInBase.unconvertedCurrencies.length
-    : countOtherCurrencies(realizedByCurrency, primaryRealizedPnl)
-  const cashInBase = sumMoneyInBase(
-    state.portfolio.cash,
-    state.drift.baseCurrency,
-    state.drift.fxRates,
-  )
 
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Positions, cash, cost, and PnL."
+        description="Current positions, cost, market value, and unrealized PnL."
         eyebrow="Portfolio"
         title="Holdings"
       />
+
+      <PortfolioSectionNav active="holdings" />
 
       <SummaryStrip
         items={[
@@ -123,23 +117,6 @@ export function PortfolioView({
             detail: marketValueInBase.total
               ? `${t('Converted to')} ${state.drift.baseCurrency}`
               : undefined,
-          },
-          {
-            label: t('Realized PnL'),
-            value: formatMoney(primaryRealizedPnl),
-            detail:
-              otherRealizedPnlCount > 0
-                ? formatUnconvertedCurrencyCount(otherRealizedPnlCount)
-                : undefined,
-          },
-          {
-            label: t('Cash'),
-            value: cashInBase.total
-              ? formatMoney(cashInBase.total)
-              : formatMoneyList(state.portfolio.cash),
-            detail: cashInBase.total
-              ? `${t('Portfolio total, converted to')} ${state.drift.baseCurrency}`
-              : formatCurrencyCount(state.portfolio.cash.length),
           },
         ]}
       />
@@ -186,7 +163,9 @@ export function PortfolioView({
           <HoldingsTable
             holdings={holdings}
             onOpenAsset={openAsset}
+            priceBySubject={priceBySubject}
             valueBySubject={valueBySubject}
+            weightBySubject={weightBySubject}
           />
         ) : (
           <div className="space-y-4">
@@ -209,7 +188,9 @@ export function PortfolioView({
                   <HoldingsTable
                     holdings={accountHoldings}
                     onOpenAsset={openAsset}
+                    priceBySubject={priceBySubject}
                     valueBySubject={valueBySubject}
+                    weightBySubject={weightBySubject}
                   />
                 </div>
               </section>
@@ -217,61 +198,6 @@ export function PortfolioView({
           </div>
         )}
       </Panel>
-
-      <Panel title="Realized PnL">
-        <DataTable
-          columns={[
-            { key: 'date', label: 'Date', sortable: true, sticky: true },
-            { key: 'asset', label: 'Asset', sortable: true },
-            { key: 'title', label: 'Transaction', sortable: true },
-            { key: 'amount', label: 'Realized', align: 'right', sortable: true },
-          ]}
-          emptyMessage="No realized gains or losses recorded yet."
-          rows={realizedPnl.map((entry) => ({
-            id: `${entry.date}:${entry.asset}:${entry.title ?? ''}:${entry.amount.amount}`,
-            cells: {
-              date: entry.date,
-              asset: <EntityCell interactive subject={entry.asset} />,
-              title: entry.title ?? 'n/a',
-              amount: formatMoney(entry.amount),
-            },
-            sortValues: {
-              date: entry.date,
-              asset: entry.asset,
-              title: entry.title ?? '',
-              amount: entry.amount.amount,
-            },
-          }))}
-        />
-      </Panel>
-
-      <section className="grid gap-5 lg:grid-cols-3">
-        <Panel title="Cash">
-          <DataTable
-            columns={[
-              { key: 'currency', label: 'Currency', sortable: true, sticky: true },
-              { key: 'amount', label: 'Amount', align: 'right', sortable: true },
-            ]}
-            rows={state.portfolio.cash.map((balance) => ({
-              id: balance.currency,
-              cells: {
-                currency: balance.currency,
-                amount: balance.amount.toLocaleString(),
-              },
-              sortValues: {
-                currency: balance.currency,
-                amount: balance.amount,
-              },
-            }))}
-          />
-        </Panel>
-        <Panel title="Income">
-          <FlowTable flows={state.portfolio.income} />
-        </Panel>
-        <Panel title="Expenses">
-          <FlowTable flows={state.portfolio.expenses} />
-        </Panel>
-      </section>
     </div>
   )
 }
@@ -311,56 +237,52 @@ export function calculateMarketMix(
   }
 }
 
-function FlowTable({ flows }: { flows: NavorRendererAppState['portfolio']['income'] }) {
-  if (flows.length === 0) {
-    return <p className="text-sm text-ink-muted">{t('No flows recorded.')}</p>
-  }
-
-  return (
-    <DataTable
-      columns={[
-        { key: 'account', label: 'Account', sortable: true, sticky: true },
-        { key: 'amount', label: 'Amount', align: 'right', sortable: true },
-      ]}
-      rows={flows.map((flow) => ({
-        id: `${flow.account}:${flow.amount}:${flow.currency}`,
-        cells: {
-          account: <EntityCell subject={flow.account} />,
-          amount: `${flow.amount} ${flow.currency}`,
-        },
-        sortValues: {
-          account: flow.account,
-          amount: flow.amount,
-        },
-      }))}
-    />
-  )
-}
-
 function HoldingsTable({
   holdings,
   onOpenAsset,
+  priceBySubject,
   valueBySubject,
+  weightBySubject,
 }: {
   holdings: NavorRendererAppState['portfolio']['holdings']
   onOpenAsset: (subject: string) => void
+  priceBySubject: Map<string, NavorRendererAppState['market']['prices'][number]['price']>
   valueBySubject: Map<string, NavorRendererAppState['market']['portfolioValues'][number]>
+  weightBySubject: Map<string, number | null>
 }) {
   return (
     <DataTable
       columns={[
-        { key: 'asset', label: 'Asset', sortable: true, sticky: true },
+        { key: 'asset', label: 'Asset', sortable: true, sticky: true, hideable: false },
         { key: 'quantity', label: 'Quantity', align: 'right', mobileHidden: true, sortable: true },
+        { key: 'price', label: 'Price', align: 'right', mobileHidden: true, sortable: true },
+        {
+          key: 'average',
+          label: 'Average cost',
+          align: 'right',
+          mobileHidden: true,
+          sortable: true,
+        },
         { key: 'cost', label: 'Cost', align: 'right', sortable: true },
         { key: 'market', label: 'Market', align: 'right', sortable: true },
+        { key: 'weight', label: 'Weight', align: 'right', mobileHidden: true, sortable: true },
         { key: 'pnl', label: 'PnL', align: 'right', sortable: true },
       ]}
       defaultSortDirection="asc"
       defaultSortKey="pnl"
       emptyMessage="No holdings match the current filters."
       onRowClick={(row) => onOpenAsset(row.id)}
+      storageKey="holdings"
       rows={holdings.map((holding) => {
         const value = valueBySubject.get(holding.asset)
+        const price = priceBySubject.get(holding.asset)
+        const average =
+          holding.cost && holding.quantity !== 0
+            ? {
+                amount: holding.cost.amount / Math.abs(holding.quantity),
+                currency: holding.cost.currency,
+              }
+            : null
 
         return {
           id: holding.asset,
@@ -369,15 +291,21 @@ function HoldingsTable({
             quantity: (
               <QuantityCommodity commodity={holding.commodity} quantity={holding.quantity} />
             ),
+            price: formatMoney(price),
+            average: formatMoney(average),
             cost: formatMoney(holding.cost),
             market: formatMoney(value?.marketValue),
+            weight: formatPercent(weightBySubject.get(holding.asset) ?? null),
             pnl: <MoneyDelta value={value?.pnlInMarketCurrency} />,
           },
           sortValues: {
             asset: holding.asset,
             quantity: holding.quantity,
+            price: price?.amount ?? 0,
+            average: average?.amount ?? 0,
             cost: holding.cost?.amount ?? 0,
             market: value?.marketValue.amount ?? 0,
+            weight: weightBySubject.get(holding.asset) ?? 0,
             pnl: value?.pnl?.amount ?? 0,
           },
         }

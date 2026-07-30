@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest'
 const STYLES = 'packages/reader-ui/src/styles.css'
 const META_SCROLL = 'packages/reader-ui/src/components/MetaScroll.tsx'
 const META_BAR = 'packages/reader-ui/src/components/WorkspaceMetaBar.tsx'
+const RESEARCH = 'packages/reader-ui/src/views/ResearchView.tsx'
+const DIAGNOSTICS = 'packages/reader-ui/src/views/DiagnosticsView.tsx'
 const WORKSPACE = 'packages/reader-ui/src/components/AssetWorkspacePanel.tsx'
 const APP = 'packages/reader-ui/src/App.tsx'
 const SIDEBAR = 'packages/reader-ui/src/components/Sidebar.tsx'
@@ -14,7 +16,8 @@ describe('meta-scroll overflow affordance', () => {
     const css = readFileSync(STYLES, 'utf8')
     const metaScroll = readFileSync(META_SCROLL, 'utf8')
     const metaBar = readFileSync(META_BAR, 'utf8')
-    const workspace = readFileSync(WORKSPACE, 'utf8')
+    const research = readFileSync(RESEARCH, 'utf8')
+    const diagnostics = readFileSync(DIAGNOSTICS, 'utf8')
 
     expect(css).toContain('.meta-scroll')
     expect(metaScroll).toContain('meta-scroll')
@@ -22,8 +25,8 @@ describe('meta-scroll overflow affordance', () => {
     expect(metaScroll).toContain('scrollWidth')
     expect(metaBar).toContain('<MetaScroll')
     expect(metaBar).toContain('fade="sidebar"')
-    expect(workspace).toContain('<MetaScroll')
-    expect(workspace).toContain('fade="paper-elevated"')
+    expect(research).toContain('className="meta-scroll')
+    expect(diagnostics).toContain('className="meta-scroll')
   })
 })
 

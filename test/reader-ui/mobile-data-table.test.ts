@@ -9,13 +9,11 @@ const portfolioViewPath = new URL(
   '../../packages/reader-ui/src/views/PortfolioView.tsx',
   import.meta.url,
 )
-const primaryColumnViews = [
-  'AllocationView.tsx',
-  'DecisionsView.tsx',
-  'MarketView.tsx',
-  'ResearchView.tsx',
-  'WatchlistView.tsx',
-]
+const transactionsViewPath = new URL(
+  '../../packages/reader-ui/src/views/TransactionsView.tsx',
+  import.meta.url,
+)
+const primaryColumnViews = ['AllocationView.tsx', 'ResearchView.tsx', 'WatchlistView.tsx']
 
 test('DataTable supports a focused mobile scrolling and row-action experience', async () => {
   const source = await readFile(dataTablePath, 'utf8')
@@ -24,8 +22,9 @@ test('DataTable supports a focused mobile scrolling and row-action experience', 
   expect(source).toContain('sticky?: boolean')
   expect(source).toContain('onRowClick?: (row: DataTableRow) => void')
   expect(source).toContain('bg-gradient-to-l')
-  expect(source).toContain('activateRowWithKeyboard')
-  expect(source).not.toContain('columnSelector')
+  expect(source).toContain('renderExpandedRow?: (row: DataTableRow) => ReactNode')
+  expect(source).toContain("t('Columns')")
+  expect(source).toContain('storageKey?: string')
   expect(source).not.toContain('toggleMobileColumn')
 })
 
@@ -46,11 +45,15 @@ test('DataTable applies row hover background through every cell, including stick
 test('holdings retain asset, market, and PnL while opening the asset workspace from a row', async () => {
   const source = await readFile(portfolioViewPath, 'utf8')
 
-  expect(source).toContain("{ key: 'asset', label: 'Asset', sortable: true, sticky: true }")
+  expect(source).toContain(
+    "key: 'asset', label: 'Asset', sortable: true, sticky: true, hideable: false",
+  )
   expect(source).toContain("key: 'quantity', label: 'Quantity', align: 'right', mobileHidden: true")
+  expect(source).toContain("key: 'price', label: 'Price', align: 'right', mobileHidden: true")
+  expect(source).toContain("key: 'average',\n          label: 'Average cost'")
   expect(source).toContain("{ key: 'market', label: 'Market', align: 'right', sortable: true }")
   expect(source).toContain("{ key: 'pnl', label: 'PnL', align: 'right', sortable: true }")
-  expect(source).not.toContain('columnSelector')
+  expect(source).toContain('storageKey="holdings"')
   expect(source).toContain('onRowClick={(row) => onOpenAsset(row.id)}')
 })
 
@@ -61,9 +64,11 @@ test('every cross-scroll table declares its primary identity column as sticky', 
     ),
   )
   const portfolio = await readFile(portfolioViewPath, 'utf8')
+  const transactions = await readFile(transactionsViewPath, 'utf8')
 
   for (const source of sources) {
     expect(source).toContain('sticky: true')
   }
-  expect(portfolio.match(/sticky: true/g)).toHaveLength(4)
+  expect(portfolio.match(/sticky: true/g)).toHaveLength(1)
+  expect(transactions.match(/sticky: true/g)).toHaveLength(4)
 })

@@ -1,7 +1,6 @@
 import type { PriceAdapter } from '@navor/adapters'
-import { App, renderNavorReaderHtml } from '@navor/reader-ui'
+import { renderNavorReaderHtml } from '@navor/reader-ui'
 import { compileNavorWorkspace } from '@navor/renderer'
-import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 describe('Price Adapter enrichment', () => {
@@ -62,11 +61,7 @@ describe('Price Adapter enrichment', () => {
     )
 
     const html = renderNavorReaderHtml(state)
-    const marketHtml = renderToStaticMarkup(<App initialView="market-data" state={state} />)
 
     expect(html).toContain('Asset:Crypto:BTC')
-    expect(marketHtml).toContain('stale')
-    expect(marketHtml).toContain('failed')
-    expect(marketHtml).toContain('missing')
   })
 })

@@ -1,5 +1,5 @@
 import type { NavorRendererAppState } from '@navor/contract'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { AssetWorkspaceProvider } from './AssetWorkspaceProvider'
 import { useAssetWorkspace } from './asset-workspace-context'
@@ -9,12 +9,16 @@ import { SearchOverview } from './components/SearchOverview'
 import { Sidebar } from './components/Sidebar'
 import { EntityLabelProvider } from './EntityLabelContext'
 import type { ReaderFilters } from './filters'
-import { matchesFilters } from './filters'
+import { hasActiveFilters, matchesFilters } from './filters'
 import { readerLocale, t } from './i18n'
 import { getNavGroups, getViewLabels, type ReaderView } from './navigation'
 import { useReaderNavigationSession } from './navigation-session'
 import { buildSearchHits } from './search'
+import { type DiagnosticsToolbarTab, getToolbarContext } from './toolbar-context'
+import { transactionType } from './transaction-type'
 import { getReaderView } from './view-catalog'
+import { DiagnosticsView } from './views/DiagnosticsView'
+import { ResearchView } from './views/ResearchView'
 
 interface AppProps {
   state?: NavorRendererAppState | null
@@ -77,6 +81,8 @@ function ReaderAppShell({
 }) {
   const {
     activeView,
+    activeCaseTab,
+    activeHealthTab,
     navOpen,
     setNavOpen,
     navCollapsed,
@@ -84,18 +90,22 @@ function ReaderAppShell({
     filters,
     setFilters,
     selectView,
+    selectCaseTab,
+    selectHealthTab,
     shouldFocusViewRef,
   } = useReaderNavigationSession(initialView, initialFilters)
   const navButtonRef = useRef<HTMLButtonElement>(null)
+  const [searchScope, setSearchScope] = useState<'view' | 'workspace'>('view')
   const { selectedAssetSubject } = useAssetWorkspace()
   const diagnosticCount = state ? countDiagnostics(state) : 0
-  const showSearch = Boolean(state && filters.query?.trim())
+  const toolbarContext = getToolbarContext(activeView, state, activeHealthTab)
+  const showSearch = Boolean(
+    filters.query?.trim() && (toolbarContext.mode === 'brief' || searchScope === 'workspace'),
+  )
   const viewFocusToken = showSearch ? 'search' : activeView
-  const filtersEnabled = showSearch || Boolean(getReaderView(activeView).filterSource)
-  const filterResultCount =
-    state && filtersEnabled && Object.values(filters).some(Boolean)
-      ? countFilterMatches(showSearch ? null : activeView, state, filters)
-      : null
+  const filterResultCount = hasActiveFilters(filters)
+    ? countFilterMatches(showSearch ? null : activeView, state, filters, activeHealthTab)
+    : null
 
   useEffect(() => {
     if (!shouldFocusViewRef.current || !viewFocusToken) {
@@ -140,8 +150,8 @@ function ReaderAppShell({
 
         <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <ReaderToolbar
+            context={toolbarContext}
             filters={filters}
-            filtersEnabled={filtersEnabled}
             leading={
               <button
                 aria-expanded={navOpen}
@@ -155,7 +165,9 @@ function ReaderAppShell({
               </button>
             }
             onChange={setFilters}
+            onSearchScopeChange={setSearchScope}
             resultCount={filterResultCount}
+            searchScope={searchScope}
           />
           <main className="flex-1 px-4 py-6 lg:px-7 lg:py-8" id="main-content">
             <div
@@ -164,6 +176,20 @@ function ReaderAppShell({
             >
               {showSearch ? (
                 <SearchOverview filters={filters} onSelectView={selectReaderView} state={state} />
+              ) : activeView === 'research' ? (
+                <ResearchView
+                  filters={filters}
+                  initialTab={activeCaseTab}
+                  onActiveTabChange={selectCaseTab}
+                  state={state}
+                />
+              ) : activeView === 'diagnostics' ? (
+                <DiagnosticsReaderView
+                  activeTab={activeHealthTab}
+                  filters={filters}
+                  onActiveTabChange={selectHealthTab}
+                  state={state}
+                />
               ) : (
                 getReaderView(activeView).render(state, filters, liveEnabled)
               )}
@@ -176,18 +202,129 @@ function ReaderAppShell({
   )
 }
 
+function DiagnosticsReaderView({
+  state,
+  filters,
+  activeTab,
+  onActiveTabChange,
+}: {
+  state: NavorRendererAppState
+  filters: ReaderFilters
+  activeTab: DiagnosticsToolbarTab
+  onActiveTabChange: (tab: DiagnosticsToolbarTab) => void
+}) {
+  return (
+    <DiagnosticsView
+      activeTab={activeTab}
+      filters={filters}
+      onActiveTabChange={onActiveTabChange}
+      state={state}
+    />
+  )
+}
+
 function countFilterMatches(
   view: ReaderView | null,
   state: NavorRendererAppState,
   filters: ReaderFilters,
+  diagnosticsTab: DiagnosticsToolbarTab,
 ) {
   if (view === null) {
     return buildSearchHits(state).filter((hit) => matchesFilters(hit, filters)).length
   }
 
+  if (view === 'diagnostics') {
+    if (diagnosticsTab === 'issues') {
+      return [
+        ...state.workspace.diagnostics,
+        ...state.dashboard.diagnostics,
+        ...state.portfolio.diagnostics,
+        ...state.allocation.diagnostics,
+        ...state.knowledge.diagnostics,
+        ...state.plan.diagnostics,
+        ...state.drift.diagnostics,
+      ].filter((diagnostic) =>
+        matchesFilters({ ...diagnostic, type: diagnostic.code ?? 'Uncoded' }, filters),
+      ).length
+    }
+
+    if (diagnosticsTab === 'sources') {
+      return state.workspace.files.filter((file) =>
+        matchesFilters({ type: file.match(/\.[^./]+$/)?.[0] ?? '', line: file }, filters),
+      ).length
+    }
+
+    const { type: provider, ...baseFilters } = filters
+    const marketBySubject = new Map(state.market.prices.map((price) => [price.subject, price]))
+    const enrichmentBySubject = new Map(
+      state.enrichment.prices.map((price) => [price.subject, price]),
+    )
+    return [...new Set([...marketBySubject.keys(), ...enrichmentBySubject.keys()])].filter(
+      (subject) => {
+        const marketPrice = marketBySubject.get(subject)
+        const enrichment = enrichmentBySubject.get(subject)
+        return (
+          matchesFilters({ subject, ...marketPrice, ...enrichment }, baseFilters) &&
+          (!provider || (enrichment?.provider ?? marketPrice?.provider) === provider)
+        )
+      },
+    ).length
+  }
+
   return (getReaderView(view).filterSource?.(state) ?? []).filter((item) =>
-    matchesFilters(item, filters),
+    matchesCurrentViewFilters(view, item, filters, state),
   ).length
+}
+
+function matchesCurrentViewFilters(
+  view: ReaderView,
+  item: unknown,
+  filters: ReaderFilters,
+  state: NavorRendererAppState,
+) {
+  if (view === 'ledger') {
+    const transaction = item as NonNullable<
+      NavorRendererAppState['portfolio']['transactions']
+    >[number]
+    const { type, ...baseFilters } = filters
+    return (
+      matchesFilters(transaction, baseFilters) && (!type || transactionType(transaction) === type)
+    )
+  }
+
+  if (view === 'drift') {
+    const action = item as NavorRendererAppState['dashboard']['actionInbox'][number]
+    const { type, ...baseFilters } = filters
+    return matchesFilters(action, baseFilters) && (!type || action.category === type)
+  }
+
+  if (view === 'watchlist') {
+    const watchlistItem = item as NavorRendererAppState['process']['watchlist'][number]
+    const stage = !state.knowledge.research.some((entry) => entry.subject === watchlistItem.subject)
+      ? 'Capture evidence'
+      : !state.knowledge.theses.some((entry) => entry.subject === watchlistItem.subject)
+        ? 'Form thesis'
+        : !state.knowledge.decisions.some((entry) => entry.subject === watchlistItem.subject)
+          ? 'Decide'
+          : 'Review case'
+    return matchesFilters({ ...watchlistItem, status: stage }, filters)
+  }
+
+  if (view === 'journal') {
+    const entry = item as NavorRendererAppState['process']['journal'][number]
+    return matchesFilters({ ...entry, status: entry.mood ?? '' }, filters)
+  }
+
+  if (view === 'holdings') {
+    const holding = item as NavorRendererAppState['portfolio']['holdings'][number]
+    const account = state.dashboard.assetExecutions.find(
+      (execution) => execution.subject === holding.asset,
+    )?.account
+    const { account: accountFilter, ...baseFilters } = filters
+    return matchesFilters(holding, baseFilters) && (!accountFilter || account === accountFilter)
+  }
+
+  return matchesFilters(item, filters)
 }
 
 export { resolveReaderView } from './navigation'

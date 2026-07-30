@@ -42,20 +42,15 @@ export function PlanView({
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Set targets, allowed ranges, and actions for when a plan moves outside them."
-        eyebrow="Controls"
-        title="Plan"
+        description="Targets, limits, and the action each boundary triggers."
+        eyebrow="Operations"
+        title="Execution plans"
       />
 
       <SummaryStrip
         items={[
-          { label: 'Plans in use', value: String(visibleGroups.length) },
-          { label: 'Plans with actions', value: String(actionPlans), tone: 'accent' },
-          {
-            label: 'Diagnostics',
-            value: String(state.plan.diagnostics.length),
-            tone: state.plan.diagnostics.length > 0 ? 'warning' : 'positive',
-          },
+          { label: 'Active plans', value: String(visibleGroups.length) },
+          { label: 'With actions', value: String(actionPlans), tone: 'accent' },
         ]}
       />
 

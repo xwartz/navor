@@ -1,10 +1,10 @@
 # Navor
 
-**An open specification for representing investment state as human-readable documents.**
+**A plain-text investment record for evidence, judgment, execution, and review.**
 
-Navor is a plain-text language and toolchain for investment knowledge, portfolio plans, decisions, transactions, and reviews. A repository is reviewable in Git, readable in the local Navor Reader, and exportable as a static site.
+Navor is a plain-text language and toolchain for long-term investors. Record confirmed facts, connect research to a thesis and a decision, execute in a ledger, then review what changed. The repository stays reviewable in Git, readable in the local Reader, and exportable as a static site.
 
-Research, theses, decisions, reviews, and journals are first-class facts alongside holdings. The portfolio is derived; reasoning is the source of truth.
+Research, theses, decisions, reviews, journals, and transactions are first-class facts. Holdings, allocation, and PnL are derived views, so the reasoning behind a portfolio remains auditable.
 
 [中文文档](README.zh.md) · [Manifesto](docs/manifesto.md) · [Documentation](docs/README.md)
 

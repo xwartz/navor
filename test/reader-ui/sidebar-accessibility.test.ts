@@ -17,9 +17,12 @@ describe('mobile sidebar accessibility', () => {
   it('can collapse to an accessible desktop navigation rail', () => {
     const source = readFileSync(SIDEBAR, 'utf8')
 
-    expect(source).toContain("isRail ? 'lg:w-20' : 'lg:w-[15.5rem]'")
+    expect(source).toContain("isRail ? 'lg:w-[4.5rem]' : 'lg:w-[15.5rem]'")
     expect(source).toContain("isCollapsed ? 'Expand navigation' : 'Collapse navigation'")
-    expect(source).toContain('compactNavLabel(item.id)')
+    expect(source).toContain('<CompactNavIcon view={item.id} />')
+    expect(source).toContain('strokeWidth="1.8"')
+    expect(source).not.toContain('compactNavGlyph')
+    expect(source).toContain('group-hover:lg:block')
     expect(source).toContain('aria-label={isRail ? item.label : undefined}')
   })
 

@@ -72,6 +72,6 @@ describe('compiled nav cli', () => {
     })
 
     expect(checked.status).toBe(1)
-    expect(checked.stdout).toContain(`${file}:3: Line is not a valid directive.`)
+    expect(checked.stdout).toContain(`${file}:3 [NAV001]: Line is not a valid directive.`)
   })
 })

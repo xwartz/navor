@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react'
-import type { AssetWorkspaceIndex } from './asset-workspace'
+import type { AssetNarrativeIndex } from './asset-workspace'
 
 export interface AssetWorkspaceContextValue {
   canOpenAsset: (subject: string | null | undefined) => boolean
   closeAsset: () => void
   openAsset: (subject: string) => void
-  assetWorkspace: AssetWorkspaceIndex
+  assetWorkspace: AssetNarrativeIndex
   selectedAssetSubject: string | null
 }
 

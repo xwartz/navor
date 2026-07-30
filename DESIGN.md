@@ -41,16 +41,20 @@ The shell uses a 248px desktop rail and a fluid workspace. Spacing follows a 4, 
 
 Navigation follows four investor tasks rather than source-file taxonomy:
 
-1. Monitor: current posture, exceptions, and watch items.
-2. Capital: holdings, allocation, accounts, and ledger activity.
-3. Research: evidence, thesis, decisions, reviews, and behavioral journal.
-4. System: plans, market data, workspace sources, and diagnostics.
+1. Monitor: current posture, ranked actions, and watch items.
+2. Portfolio: one portfolio workspace with positions, allocation, and accounts, plus a separate ledger for economic activity.
+3. Investment process: investment cases, reviews, and behavioral journal.
+4. Operations: execution plans and a health workspace with source issues, market coverage, and source files.
 
 The Overview page orders information by decision urgency: portfolio state, open actions, allocation posture, liquidity, recent activity, then contextual evidence. Healthy empty states collapse into a quiet confirmation instead of occupying a full diagnostic panel.
 
 Allocation follows a plan-to-execution hierarchy: account sleeves and capital first, funded-position deviations second, and the complete asset target ledger last. Transaction history shows economic events as compact rows and reveals double-entry postings on demand. Market data combines price, source, freshness, and timestamp in one coverage table before showing downstream valuation and research.
 
-Asset selection is a persistent desktop-side workspace and a focus-trapped mobile drawer. It keeps market facts, target and drift, open actions, research, decisions, and recent transactions in one contextual read without making the investor lose their place in the source view. Asset rows use the same elevated surface as other data tables, with a quiet pine selection tint only for the active row.
+Investment cases are asset-only by default. Market-level evidence belongs to a separate market-context tab, preventing a generic market subject from receiving empty thesis, decision, or plan columns. Watchlist candidates expose the next missing process step, from evidence through decision.
+
+Asset selection is a persistent desktop-side workspace and a focus-trapped mobile drawer. It keeps market facts, target and drift, open actions, research, decisions, and recent transactions in one contextual read without making the investor lose their place in the source view. Accounts open this same workspace instead of expanding a second compact detail surface inline. Asset rows use the same elevated surface as other data tables, with a quiet pine selection tint only for the active row.
+
+The Portfolio workspace is limited to live positions and allocation. Realized PnL, cash, income, and expenses live under Ledger tabs alongside transaction history, so current exposure and historical economic activity are not mixed in one scroll.
 
 ## 6. Depth and elevation
 

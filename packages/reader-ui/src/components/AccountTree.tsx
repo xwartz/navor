@@ -3,10 +3,8 @@ import type {
   DashboardActionItem,
   DashboardAssetExecution,
 } from '@navor/contract'
-import type { ReactNode } from 'react'
 
 import {
-  formatAssetDisclosure,
   formatDashboardActionLabel,
   formatFundedPercent,
   formatMarketAmount,
@@ -23,18 +21,9 @@ interface AccountTreeProps {
   assets: DashboardAssetExecution[]
   actions: DashboardActionItem[]
   onSelectAsset: (subject: string) => void
-  selectedAssetSubject?: string | null
-  renderAssetDetail?: (subject: string) => ReactNode
 }
 
-export function AccountTree({
-  accounts,
-  assets,
-  actions,
-  onSelectAsset,
-  selectedAssetSubject = null,
-  renderAssetDetail,
-}: AccountTreeProps) {
+export function AccountTree({ accounts, assets, actions, onSelectAsset }: AccountTreeProps) {
   const actionsBySubject = new Map(actions.map((item) => [item.subject, item.type]))
   const assetsByAccount = new Map<string, DashboardAssetExecution[]>()
 
@@ -96,86 +85,48 @@ export function AccountTree({
                 <p className="px-4 py-3 text-sm text-ink-muted">{t('No assets assigned.')}</p>
               ) : (
                 accountAssets.map((asset) => {
-                  const isSelected = selectedAssetSubject === asset.subject
                   const actionType = actionsBySubject.get(asset.subject)
                   const nextStep = actionType
                     ? formatDashboardActionLabel(actionType)
                     : statusAction(asset.status)
 
                   return (
-                    <div
-                      className={
-                        isSelected
-                          ? 'bg-paper shadow-[inset_3px_0_0_0_var(--color-accent)]'
-                          : '[@media(hover:hover)]:hover:bg-paper'
-                      }
-                      key={asset.subject}
-                    >
-                      <div className="flex flex-col gap-3 px-4 py-3.5 lg:flex-row lg:items-center lg:gap-3">
-                        <button
-                          aria-expanded={isSelected}
-                          className="grid min-w-0 w-full flex-1 grid-cols-2 gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 lg:grid-cols-[minmax(0,1fr)_11rem_11rem_10rem]"
-                          onClick={() => onSelectAsset(asset.subject)}
-                          type="button"
-                        >
-                          <div className="col-span-2 min-w-0 lg:col-span-1">
-                            <EntityCell
-                              subject={asset.subject}
-                              title={asset.title ?? asset.subject}
-                            />
-                          </div>
-                          <MetricCell
-                            label="Funding"
-                            primary={fundingLabel(asset)}
-                            secondary={formatTargetAmount(formatMoney(asset.targetAmount))}
+                    <div className="[@media(hover:hover)]:hover:bg-paper" key={asset.subject}>
+                      <button
+                        className="grid w-full grid-cols-2 gap-3 px-4 py-3.5 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper lg:grid-cols-[minmax(0,1fr)_11rem_11rem_10rem_9.5rem]"
+                        onClick={() => onSelectAsset(asset.subject)}
+                        type="button"
+                      >
+                        <div className="col-span-2 min-w-0 lg:col-span-1">
+                          <EntityCell
+                            subject={asset.subject}
+                            title={asset.title ?? asset.subject}
                           />
-                          <MetricCell
-                            label="Position"
-                            primary={positionLabel(asset)}
-                            secondary={
-                              asset.marketValue
-                                ? formatMarketAmount(formatMoney(asset.marketValue))
-                                : ''
-                            }
-                          />
-                          <MetricCell
-                            className="col-span-2 min-w-0 lg:col-span-1"
-                            label="To deploy"
-                            primary={formatMoney(remainingAmount(asset))}
-                            secondary={statusReason(asset)}
-                          />
-                        </button>
-                        <div className="flex shrink-0 items-center justify-end gap-2 lg:min-w-[9.5rem]">
+                        </div>
+                        <MetricCell
+                          label="Funding"
+                          primary={fundingLabel(asset)}
+                          secondary={formatTargetAmount(formatMoney(asset.targetAmount))}
+                        />
+                        <MetricCell
+                          label="Position"
+                          primary={positionLabel(asset)}
+                          secondary={
+                            asset.marketValue
+                              ? formatMarketAmount(formatMoney(asset.marketValue))
+                              : ''
+                          }
+                        />
+                        <MetricCell
+                          className="col-span-2 min-w-0 lg:col-span-1"
+                          label="To deploy"
+                          primary={formatMoney(remainingAmount(asset))}
+                          secondary={statusReason(asset)}
+                        />
+                        <div className="flex shrink-0 items-center justify-end lg:min-w-[9.5rem]">
                           <Chip tone={chipTone(asset.status)}>{nextStep}</Chip>
-                          {isSelected ? (
-                            <button
-                              aria-label={formatAssetDisclosure(true, asset.title ?? asset.subject)}
-                              className="grid h-7 w-7 place-items-center rounded-md text-sm text-ink-muted transition-[color,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink"
-                              onClick={() => onSelectAsset(asset.subject)}
-                              type="button"
-                            >
-                              <span aria-hidden>⌃</span>
-                            </button>
-                          ) : (
-                            <button
-                              aria-label={formatAssetDisclosure(
-                                false,
-                                asset.title ?? asset.subject,
-                              )}
-                              className="grid h-7 w-7 place-items-center text-base text-ink-faint transition-[color,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink"
-                              onClick={() => onSelectAsset(asset.subject)}
-                              type="button"
-                            >
-                              <span aria-hidden>›</span>
-                            </button>
-                          )}
                         </div>
-                      </div>
-                      {isSelected && renderAssetDetail ? (
-                        <div className="border-t border-border">
-                          {renderAssetDetail(asset.subject)}
-                        </div>
-                      ) : null}
+                      </button>
                     </div>
                   )
                 })

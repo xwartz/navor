@@ -1,5 +1,18 @@
 # @navor/reader-ui
 
+## 0.6.0
+
+### Minor Changes
+
+- Redesign the Reader around a unified investor workspace, with clearer navigation, actionable filters, asset context, and bilingual investment terminology.
+
+### Patch Changes
+
+- @navor/contract@0.6.0
+- @navor/core@0.6.0
+- @navor/adapters@0.6.0
+- @navor/renderer@0.6.0
+
 ## 0.5.5
 
 ### Patch Changes

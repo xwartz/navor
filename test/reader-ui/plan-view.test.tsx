@@ -14,8 +14,8 @@ describe('Plan view', () => {
     const html = renderToStaticMarkup(<App initialView="plan" state={state} />)
 
     expect(html).toContain('Plan')
-    expect(html).toContain('Plans in use')
-    expect(html).toContain('Plans with actions')
+    expect(html).toContain('Active plans')
+    expect(html).toContain('With actions')
     expect(html).toContain('Account allocation boundaries')
     expect(html).toContain('Asset plans')
     expect(html).toContain('ETH 回撤后计划')

@@ -1,14 +1,7 @@
-import type { DriftEntry, NavorRendererAppState } from '@navor/contract'
-
-import { DiagnosticList } from '../components/DiagnosticList'
-import {
-  driftStatusLabel,
-  formatMoney,
-  formatPercent,
-  formatSignedPercent,
-} from '../components/format'
+import type { NavorRendererAppState } from '@navor/contract'
+import { useAssetWorkspace } from '../asset-workspace-context'
 import { Panel } from '../components/Panel'
-import { EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { Chip, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
 import { t } from '../i18n'
@@ -20,188 +13,109 @@ export function DriftView({
   state: NavorRendererAppState
   filters: ReaderFilters
 }) {
-  const entries = state.drift.entries
-    .filter((entry) => matchesFilters(entry, filters))
-    .sort((left, right) => Math.abs(right.drift ?? 0) - Math.abs(left.drift ?? 0))
-  const offBand = state.drift.entries.filter(
-    (entry) => entry.status === 'above_max' || entry.status === 'below_min',
+  const { openAsset } = useAssetWorkspace()
+  const { type: category, ...baseFilters } = filters
+  const actions = state.dashboard.actionInbox.filter(
+    (item) => matchesFilters(item, baseFilters) && (!category || item.category === category),
   )
-  const hasFxRates = Object.keys(state.drift.fxRates ?? {}).length > 0
-  const maxAbsDrift = Math.max(1, ...entries.map((entry) => Math.abs(entry.drift ?? 0)))
+  const categoryCounts = new Map([
+    [
+      'investment_risk',
+      state.dashboard.actionInbox.filter((item) => item.category === 'investment_risk').length,
+    ],
+    [
+      'process_due',
+      state.dashboard.actionInbox.filter((item) => item.category === 'process_due').length,
+    ],
+    [
+      'data_integrity',
+      state.dashboard.actionInbox.filter((item) => item.category === 'data_integrity').length,
+    ],
+  ])
 
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Sorted by distance from target. Bars grow from center: right is overweight, left is underweight."
-        eyebrow="Command"
-        title="Drift"
+        description="Ranked work that can change risk, process quality, or data confidence."
+        eyebrow="Monitor"
+        title="Action center"
       />
 
       <SummaryStrip
         items={[
-          { label: 'Base currency', value: state.drift.baseCurrency ?? 'n/a' },
           {
-            label: 'Market value',
-            value: formatMoney(state.drift.totalMarketValue),
-            detail:
-              (state.drift.unconvertedCurrencies ?? []).length > 0
-                ? `${(state.drift.unconvertedCurrencies ?? []).length} unconverted ${
-                    (state.drift.unconvertedCurrencies ?? []).length === 1
-                      ? 'currency'
-                      : 'currencies'
-                  }`
-                : hasFxRates
-                  ? 'Converted via FX'
-                  : undefined,
+            label: 'Open actions',
+            value: String(state.dashboard.actionInbox.length),
+            tone: state.dashboard.actionInbox.length > 0 ? 'warning' : 'positive',
           },
           {
-            label: 'Off band',
-            value: String(offBand.length),
-            tone: offBand.length > 0 ? 'warning' : 'positive',
+            label: 'Allocation risk',
+            value: String(categoryCounts.get('investment_risk') ?? 0),
+            tone: (categoryCounts.get('investment_risk') ?? 0) > 0 ? 'warning' : 'positive',
           },
           {
-            label: 'Diagnostics',
-            value: String(state.drift.diagnostics.length),
-            tone: state.drift.diagnostics.length > 0 ? 'warning' : 'positive',
+            label: 'Process due',
+            value: String(categoryCounts.get('process_due') ?? 0),
+            tone: (categoryCounts.get('process_due') ?? 0) > 0 ? 'warning' : 'positive',
+          },
+          {
+            label: 'Data integrity',
+            value: String(categoryCounts.get('data_integrity') ?? 0),
+            tone: (categoryCounts.get('data_integrity') ?? 0) > 0 ? 'warning' : 'positive',
           },
         ]}
       />
 
-      <Panel title="Distance from target">
-        {entries.length === 0 ? (
-          <p className="text-sm text-ink-muted">
-            {t('No drift entries match the current filters.')}
-          </p>
+      <Panel
+        description="Open an item for its evidence, position context, and next action."
+        title="Next actions"
+      >
+        {actions.length === 0 ? (
+          <p className="text-sm text-ink-muted">{t('No actions match the current filters.')}</p>
         ) : (
-          <div className="min-w-0">
-            <div className="hidden grid-cols-[minmax(0,1fr)_11rem_minmax(8rem,1fr)] gap-x-8 border-b border-border/70 pb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint lg:grid">
-              <span>{t('Asset')}</span>
-              <span>{t('Drift')}</span>
-              <span className="text-right">{hasFxRates ? 'Value (base)' : 'Value'}</span>
-            </div>
-            <ul className="divide-y divide-border/60">
-              {entries.map((entry) => (
-                <DriftRow
-                  entry={entry}
-                  key={entry.subject}
-                  maxAbsDrift={maxAbsDrift}
-                  valueLabel={formatOverviewMoney(entry.marketValueInBase ?? entry.marketValue)}
-                />
-              ))}
-            </ul>
+          <div className="divide-y divide-border overflow-hidden rounded-md border border-border bg-paper">
+            {actions.map((item, index) => (
+              <button
+                aria-haspopup="dialog"
+                className="grid min-h-16 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-4 px-3 py-3 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-elevated"
+                key={item.id}
+                onClick={() => openAsset(item.subject)}
+                type="button"
+              >
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+                    {t('Priority')} {index + 1} · {actionCategoryLabel(item.category)}
+                  </p>
+                  <p className="mt-1 truncate text-sm font-semibold text-ink">
+                    {item.title ?? item.subject}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-ink-muted">{item.message}</p>
+                  <p className="mt-1 text-xs font-medium text-accent-ink">{item.action}</p>
+                </div>
+                <Chip
+                  tone={
+                    item.severity === 'high'
+                      ? 'danger'
+                      : item.severity === 'medium'
+                        ? 'warning'
+                        : 'neutral'
+                  }
+                >
+                  {item.severity}
+                </Chip>
+              </button>
+            ))}
           </div>
         )}
       </Panel>
-
-      {state.drift.diagnostics.length > 0 ? (
-        <Panel title="Drift diagnostics">
-          <DiagnosticList diagnostics={state.drift.diagnostics} />
-        </Panel>
-      ) : null}
     </div>
   )
 }
 
-function DriftRow({
-  entry,
-  maxAbsDrift,
-  valueLabel,
-}: {
-  entry: DriftEntry
-  maxAbsDrift: number
-  valueLabel: string
-}) {
-  const drift = entry.drift
-  const offBand = entry.status === 'above_max' || entry.status === 'below_min'
-
-  return (
-    <li className="grid grid-cols-1 gap-2 py-2.5 lg:grid-cols-[minmax(0,1fr)_11rem_minmax(8rem,1fr)] lg:items-center lg:gap-x-8">
-      <div className="min-w-0">
-        <EntityCell interactive subject={entry.subject} title={entry.title ?? entry.subject} />
-        <p className="mt-0.5 truncate text-xs tabular-nums text-ink-faint">
-          {formatPercent(entry.actualWeight)}
-          <span className="mx-1 opacity-70">→</span>
-          {formatPercent(entry.targetWeight)}
-          {offBand ? (
-            <span className={`ml-2 font-medium ${bandTextClass(entry.status)}`}>
-              {driftStatusLabel(entry.status)}
-            </span>
-          ) : null}
-        </p>
-      </div>
-
-      <div className="flex items-center gap-2.5">
-        <DivergingDriftBar drift={drift} maxAbs={maxAbsDrift} />
-        <p
-          className={`w-[3.75rem] shrink-0 text-right text-sm font-semibold tabular-nums ${driftTextClass(drift)}`}
-        >
-          {formatSignedPercent(drift)}
-        </p>
-      </div>
-
-      <p className="text-sm tabular-nums text-ink-muted lg:text-right">{valueLabel}</p>
-    </li>
-  )
-}
-
-function DivergingDriftBar({ drift, maxAbs }: { drift: number | null; maxAbs: number }) {
-  const value = drift ?? 0
-  const magnitude = Math.abs(value)
-  const halfWidthPct = maxAbs <= 0 ? 0 : Math.min((magnitude / maxAbs) * 50, 50)
-  const isQuiet = magnitude <= 0.05
-
-  return (
-    <div
-      aria-hidden
-      className="relative h-2 w-24 shrink-0 rounded-full bg-paper"
-      role="presentation"
-    >
-      <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border-strong/80" />
-      {!isQuiet && value > 0 ? (
-        <div
-          className="absolute inset-y-0 left-1/2 rounded-r-full bg-danger"
-          style={{ width: `${halfWidthPct}%` }}
-        />
-      ) : null}
-      {!isQuiet && value < 0 ? (
-        <div
-          className="absolute inset-y-0 right-1/2 rounded-l-full bg-warning"
-          style={{ width: `${halfWidthPct}%` }}
-        />
-      ) : null}
-    </div>
-  )
-}
-
-function formatOverviewMoney(value: { amount: number; currency: string } | null | undefined) {
-  if (!value) {
-    return 'n/a'
-  }
-
-  const magnitude = Math.abs(value.amount)
-  const amount =
-    magnitude > 0 && magnitude < 1
-      ? value.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })
-      : value.amount.toLocaleString(undefined, {
-          maximumFractionDigits: magnitude >= 100 ? 0 : 1,
-        })
-
-  return `${amount} ${value.currency}`
-}
-
-function driftTextClass(drift: number | null) {
-  if (drift === null || Math.abs(drift) <= 1) {
-    return 'text-ink-muted'
-  }
-  return drift > 0 ? 'text-danger' : 'text-warning'
-}
-
-function bandTextClass(status: DriftEntry['status']) {
-  if (status === 'above_max') {
-    return 'text-danger'
-  }
-  if (status === 'below_min') {
-    return 'text-warning'
-  }
-  return 'text-ink-muted'
+function actionCategoryLabel(
+  category: NavorRendererAppState['dashboard']['actionInbox'][number]['category'],
+) {
+  if (category === 'investment_risk') return t('Allocation risk')
+  if (category === 'process_due') return t('Process due')
+  return t('Data integrity')
 }

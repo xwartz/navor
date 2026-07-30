@@ -103,7 +103,3 @@ export function buildAssetNarrativeIndex(state: NavorRendererAppState): AssetNar
     },
   }
 }
-
-/** @deprecated Use the Asset narrative interface instead. */
-export const buildAssetWorkspaceIndex = buildAssetNarrativeIndex
-export type AssetWorkspaceIndex = AssetNarrativeIndex

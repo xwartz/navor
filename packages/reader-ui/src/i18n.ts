@@ -2,10 +2,9 @@ export type ReaderLocale = 'en' | 'zh-CN'
 
 const chinese = {
   Monitor: '工作台',
-  System: '系统',
-  Command: '工作台',
-  Overview: '总览',
+  Briefing: '投资简报',
   Drift: '偏离',
+  Actions: '行动中心',
   Watchlist: '观察列表',
   Portfolio: '投资组合',
   Holdings: '持仓',
@@ -13,17 +12,33 @@ const chinese = {
   Accounts: '账户',
   Ledger: '账本',
   'Investment process': '投资流程',
+  Operations: '运行与数据',
   Research: '研究',
+  'Investment cases': '投资案例',
+  Cases: '案例总览',
+  'Market context': '市场证据',
+  'Market-level evidence stays separate from an individual asset case, so the case index remains decision-ready.':
+    '市场层面的证据独立于单一资产案例，以保持案例索引可直接用于决策。',
+  'Case index': '案例清单',
+  'One row per investment subject, connecting evidence, thesis, decisions, plans, and review dates.':
+    '每个投资对象一行，连接证据、论点、决策、计划与复核日期。',
+  'No investment cases match the current filters.': '没有符合当前筛选条件的投资案例。',
+  'Latest thesis': '最新论点',
+  'Latest decision': '最新决策',
+  'Current plan': '当前计划',
+  'Investment case views': '投资案例视图',
   Thesis: '投资论点',
   Decisions: '决策',
   Decision: '决策',
   Reviews: '复盘',
   Journal: '投资日志',
-  Controls: '组合控制',
   Plan: '计划',
+  'Execution plans': '执行计划',
+  'Active plans': '生效计划',
+  'With actions': '含动作',
+  'Targets, limits, and the action each boundary triggers.': '目标、边界及其触发动作。',
+  'Portfolio workspace': '组合工作台',
   'Plan date': '计划日期',
-  'Plans in use': '当前计划',
-  'Plans with actions': '含越界动作的计划',
   'Account allocation boundaries': '账户配置范围',
   'Asset plans': '资产计划',
   'Portfolio-level boundaries for each account sleeve.': '每个账户资金分组的组合级配置边界。',
@@ -36,10 +51,35 @@ const chinese = {
   'Show history': '查看历史',
   'Hide history': '收起历史',
   revision: '个修订版本',
-  'Market data': '市场数据',
-  Workspace: '工作区',
   Diagnostics: '诊断',
+  'Data health': '数据健康',
+  Issues: '问题',
+  'Market coverage': '行情覆盖',
+  'Input quality and source facts behind this reader. Investment and review actions stay in Actions.':
+    '阅读器背后的输入质量与源事实。投资和复核事项保留在行动中心。',
+  'One row per valuation input. A non-fresh quote is an input-quality issue, not a portfolio fact.':
+    '每项估值输入一行。非最新报价属于输入质量问题，并非投资组合事实。',
+  'Data issues': '数据问题',
+  'Resolve the source fact before it changes a decision or valuation.':
+    '先修复源事实，再处理受影响的决策或估值。',
+  'No health issues need attention.': '暂无需要处理的数据健康问题。',
   'Investment ledger': '投资账本',
+  'Advance each candidate to its next decision.': '推动每个候选标的进入下一步决策。',
+  'The next missing step keeps research work moving without mixing it into the action queue.':
+    '显示缺失的下一步，避免将研究工作混入行动队列。',
+  'Resolve the next scheduled check and record its follow-up.':
+    '完成下一项定期检查，并记录后续动作。',
+  'Status and follow-up stay beside the recorded review.': '状态和后续动作与复盘记录保持在一起。',
+  'Record the reasoning and behaviour behind a decision.': '记录决策背后的推理与行为。',
+  'Read chronologically, then filter by asset, directive, or mood.':
+    '按时间阅读，再按资产、指令或心态筛选。',
+  'Ranked work that can change risk, process quality, or data confidence.':
+    '按风险、流程质量和数据可信度排序的待办。',
+  'Open an item for its evidence, position context, and next action.':
+    '打开事项以查看证据、持仓背景和下一步。',
+  'Next actions': '下一步行动',
+  'Evidence and decisions': '证据与决策',
+  'One evidence trail from research to a recorded decision.': '从研究到已记录决策的一条证据链。',
   'Facts first. Plans explicit.': '事实优先，计划明确。',
   'A human-first language for long-term investing.': '为长期投资而设计的、以人为本的语言。',
   'Describe capital, accounts, assets, research, thesis, decisions, transactions, and reviews in plain text, then read them here as a portfolio ledger.':
@@ -52,17 +92,20 @@ const chinese = {
   'Collapse navigation': '收起导航',
   'Reader views': '阅读器视图',
   'Search workspace': '搜索工作区',
-  Filters: '筛选',
-  'Refine workspace': '筛选工作区',
-  'Filters apply to the current view.': '筛选条件仅应用于当前视图。',
-  'Clear all': '清除全部',
+  Type: '类型',
+  'This view': '当前视图',
+  'Entire workspace': '整个工作区',
+  'Search this view': '搜索当前视图',
+  Columns: '列',
+  'Table options': '表格选项',
+  'Compact rows': '紧凑行高',
+  'Comfortable rows': '标准行高',
+  'Clear filters': '清除筛选',
   Subject: '对象',
   Tag: '标签',
   Date: '日期',
-  record: '条记录',
   records: '条记录',
   matching: '匹配',
-  'in this view': '位于当前视图中',
   'Price refresh failed:': '价格刷新失败：',
   'Loading live market prices…': '正在加载实时市场价格…',
   'Live prices unavailable. Views use cost basis until a price proxy is configured.':
@@ -89,6 +132,9 @@ const chinese = {
   Unknown: '未知',
   'Portfolio posture, target-range exceptions, and the next decisions to make.':
     '投资组合状态、目标区间例外以及下一步需要作出的决策。',
+  'Largest positions': '最大头寸',
+  'Largest marked positions, with the current allocation distance kept visible.':
+    '按已标记市值排序的最大头寸，并同时显示当前配置偏离。',
   'Portfolio value': '投资组合价值',
   'Holdings market value': '持仓市值',
   'Invested capital': '已投入资金',
@@ -105,22 +151,22 @@ const chinese = {
   'Positions outside target range': '持仓超出目标区间',
   'All positions within target range': '所有持仓均在目标区间内',
   'Open actions': '待处理事项',
+  'Decision basis': '判断依据',
+  'Position details': '持仓明细',
+  'Price updated': '价格更新于',
+  'Plan target': '计划目标',
+  'Plan band': '计划区间',
   'Review queue': '待复核队列',
   'Nothing requires action': '暂无需处理事项',
   'Allocation posture': '配置状态',
   'Capital sleeves and current funding progress.': '资金分组及当前建仓进度。',
   'Funding progress': '建仓进度',
   sleeves: '个资金分组',
-  'Recent activity': '近期活动',
-  'Most recent capital movements in the ledger.': '账本中最近的资金变动。',
-  'No transactions recorded.': '暂无交易记录。',
   Transaction: '交易',
   'Decision queue': '决策队列',
   'Ranked by risk severity, portfolio exposure, and urgency.':
     '按风险严重程度、投资组合敞口和紧急程度排序。',
   'more actions': '项待处理事项',
-  'Review allocation drift': '查看配置偏离',
-  'Check prices': '检查价格',
   Liquidity: '流动性',
   'Cash and PnL that affect deployable capital.': '影响可部署资金的现金和盈亏。',
   'Cash by currency': '按币种列示现金',
@@ -129,10 +175,6 @@ const chinese = {
   'FX required for a base total.': '汇总本位币金额需要汇率。',
   'PnL by currency': '按币种列示盈亏',
   'Base currency:': '本位币：',
-  'Latest updates': '最新动态',
-  'Evidence, theses, and decisions that may change posture.':
-    '可能改变投资立场的证据、论点和决策。',
-  'No knowledge events yet.': '暂无研究动态。',
   'Investment risk': '投资风险',
   'Data integrity': '数据完整性',
   'Process due': '流程待办',
@@ -142,23 +184,13 @@ const chinese = {
   'No amounts recorded.': '暂无金额记录。',
   'No timeline items.': '暂无时间线记录。',
   'No rows to display.': '暂无可显示的记录。',
-  'Positions, cash, cost, and PnL.': '持仓、现金、成本与盈亏。',
-  'All portfolio activity.': '全部投资组合活动。',
-  'Candidates before allocation.': '配置前的候选标的。',
   'Capital sleeves and funding progress.': '资金分组和建仓进度。',
+  'All portfolio activity.': '全部投资组合活动。',
   'Target structure: account sleeves and how asset targets resolve into portfolio weight.':
     '目标结构：账户分组及资产目标如何换算为组合权重。',
-  'Beliefs, confidence, and invalidation rules.': '投资信念、置信度和失效规则。',
-  'Committed actions and their basis.': '已确认的操作及其依据。',
-  'Scheduled checks and follow-up actions.': '计划内检查与后续操作。',
-  'Process notes and decision context.': '流程记录和决策上下文。',
-  'Price coverage, freshness, and valuation inputs.': '价格覆盖率、时效性和估值输入。',
-  'Source files behind this reader.': '此阅读器使用的源文件。',
-  'Warnings that affect data trust and decision quality.': '影响数据可信度和决策质量的警告。',
-  'Set targets, allowed ranges, and actions for when a plan moves outside them.':
-    '为账户和资产设定目标、允许范围，以及越界后的处理方式。',
-  'Sorted by distance from target. Bars grow from center: right is overweight, left is underweight.':
-    '按与目标的偏离程度排序。柱形从中心延伸：右侧表示超配，左侧表示低配。',
+  'Action center': '行动中心',
+  'Allocation risk': '配置风险',
+  'No actions match the current filters.': '没有符合当前筛选条件的待处理事项。',
   'Market mix': '市场分布',
   Positions: '持仓明细',
   'Realized PnL': '已实现盈亏',
@@ -167,18 +199,10 @@ const chinese = {
   Expenses: '支出',
   Candidates: '候选标的',
   Evidence: '证据',
-  Timeline: '时间线',
   Theses: '投资论点',
   'Decision ledger': '决策账本',
-  'Investment theses': '投资论点',
   'Plan diagnostics': '计划诊断',
-  'Distance from target': '与目标的偏离',
-  'Drift diagnostics': '偏离诊断',
-  'All diagnostics': '全部诊断',
   'Source files': '源文件',
-  'Price coverage': '价格覆盖',
-  'Portfolio valuation': '投资组合估值',
-  'Market research': '市场研究',
   'Account targets': '账户目标',
   'Asset targets': '资产目标',
   'Allocation diagnostics': '配置诊断',
@@ -208,7 +232,6 @@ const chinese = {
   'Based on': '依据',
   'No holdings match the current filters.': '没有符合当前筛选条件的持仓。',
   'No assets match the current filters.': '没有符合当前筛选条件的资产。',
-  'No drift entries match the current filters.': '没有符合当前筛选条件的偏离记录。',
   'No watchlist items match the current filters.': '没有符合当前筛选条件的观察列表项目。',
   'No decisions match the current filters.': '没有符合当前筛选条件的决策。',
   'No theses match the current filters.': '没有符合当前筛选条件的投资论点。',
@@ -216,6 +239,9 @@ const chinese = {
   'No journal entries match the current filters.': '没有符合当前筛选条件的投资日志。',
   'No research notes match the current filters.': '没有符合当前筛选条件的研究笔记。',
   'No realized gains or losses recorded yet.': '暂无已实现盈亏记录。',
+  'Closed-position gains and losses, kept with the economic ledger rather than current holdings.':
+    '已平仓盈亏归入经济账本，而不是当前持仓。',
+  'Cash & flows': '现金与资金流',
   'No chart data.': '暂无图表数据。',
   'No exposure data.': '暂无敞口数据。',
   'No allocation data.': '暂无配置数据。',
@@ -252,23 +278,14 @@ const chinese = {
   Exposure: '敞口',
   'One working table for quantity, cost, market value, and PnL. Losses appear first.':
     '用于查看数量、成本、市值和盈亏的统一表格，亏损项优先显示。',
-  'Portfolio total, converted to': '投资组合总额，已换算为',
+  'Current positions, cost, market value, and unrealized PnL.':
+    '当前持仓、成本、市值和未实现盈亏。',
   'Position grouping': '持仓分组',
   'No flows recorded.': '暂无资金流记录。',
   Unassigned: '未分配',
   All: '全部',
   'By account': '按账户',
   positions: '个持仓',
-  'Decision brief': '决策摘要',
-  'Collapse decision brief': '收起决策摘要',
-  'Open workspace': '打开工作区',
-  'Account weight': '账户权重',
-  'Investment context': '投资背景',
-  'No position exists yet. The full target remains available for the first transaction.':
-    '尚未建立持仓，全部目标金额可用于首次交易。',
-  'No research, thesis, or decision is linked to this asset yet.':
-    '此资产尚未关联研究、投资论点或决策。',
-  linked: '项关联',
   'No transaction has been recorded against this target.': '该目标尚未记录交易。',
   'The position is funded but remains below its target amount.':
     '该持仓已投入资金，但仍低于目标金额。',
@@ -279,13 +296,6 @@ const chinese = {
   'Target and invested cost use different currencies, so funding progress is not comparable.':
     '目标金额和投入成本使用不同货币，无法比较建仓进度。',
   'Directory tree under the workspace root.': '工作区根目录下的目录树。',
-  'Evidence, thesis, and committed decisions.': '证据、投资论点和已确认决策。',
-  'Market value against carrying cost, using the covered prices above.':
-    '基于上述覆盖价格对比市值与账面成本。',
-  'One row per asset, combining the valuation input with its freshness and source.':
-    '每项资产一行，展示估值输入、时效和数据源。',
-  'Recent evidence that may change assumptions, sizing, or timing.':
-    '可能改变假设、仓位或时机的最新证据。',
   'Scan the economic event first, then open a row only when you need its double-entry detail.':
     '先浏览经济事件，仅在需要时打开行查看复式记账明细。',
   'Strategic mix across accounts. Asset-level distance from target lives on Drift.':
@@ -296,67 +306,42 @@ const chinese = {
   'No rule': '无规则',
   'No sleeve target': '无资金分组目标',
   'No target, execution, or data issue needs attention.': '暂无需要关注的目标、执行或数据问题。',
-  'Converted via FX': '已通过汇率换算',
   'Portfolio weight': '组合权重',
   'Target amount': '目标金额',
   'Target capital': '目标资金',
   'Funded assets': '已建仓资产',
   'Multiple currencies': '多币种',
-  'Price states': '价格状态',
-  'Price checks': '价格检查',
-  'Workspace diagnostics': '工作区诊断',
-  'With action': '含操作',
-  'With basis': '含依据',
-  'With reason': '含原因',
-  'Review dated': '已设复核日期',
   'Review due': '待复核',
-  'Pending thesis reviews': '待复核投资论点',
-  'Action types': '操作类型',
-  'Affected groups': '受影响分组',
   'Tracked prices': '已跟踪价格',
-  'Portfolio values': '组合估值',
   'Income and fees': '收入与费用',
-  'Related notes': '关联笔记',
   Active: '活跃',
-  Moods: '情绪',
   Entries: '条目',
-  Warnings: '警告',
-  Notes: '笔记',
   Assets: '资产',
-  Budget: '预算',
   Transactions: '交易记录',
   Buys: '买入',
   Sells: '卖出',
   'No assets in this account.': '此账户没有资产。',
   'No plans match the current filters.': '没有符合当前筛选条件的计划。',
-  'No research context yet.': '暂无研究上下文。',
   'No price records match the current filters.': '没有符合当前筛选条件的价格记录。',
   'No reason recorded': '未记录原因',
+  'Next required': '下一项要求',
+  'Capture evidence': '记录证据',
+  'Form thesis': '形成论点',
+  Decide: '作出决策',
+  'Review case': '复核案例',
   'No provider': '无数据源',
   'No FX rates configured': '未配置汇率',
   'Actual weight': '实际权重',
   'Asset workspace': '资产工作区',
   'Close asset workspace': '关闭资产工作区',
-  'Asset workspace views': '资产工作区视图',
-  'Account allocation': '账户内配置',
-  'Market snapshot': '市场快照',
-  'Price status': '价格状态',
-  'Data source': '数据源',
-  'Price as of': '报价时间',
-  'Price unavailable. Market value falls back to cost basis.': '暂无可用报价，市值将以成本价估算。',
   stale: '已过期',
   missing: '缺失',
   failed: '失败',
-  'Action below band': '低于区间时操作',
-  'Action above band': '高于区间时操作',
   'Recent transactions': '近期交易',
   'No transactions are recorded for this asset.': '该资产暂无交易记录。',
   'Not available': '暂无',
   'No account assigned': '未分配账户',
   'No funded position or execution target yet.': '尚未建立持仓或执行目标。',
-  'No funded position is recorded for this asset.': '该资产尚无持仓记录。',
-  'Execution target only. No portfolio band is linked to this asset.':
-    '仅有执行目标，尚未关联投资组合目标区间。',
   'Reference needs clarification': '引用有歧义',
   'Reference does not resolve': '引用无法解析',
   'Legacy reference': '旧版引用格式',
@@ -364,19 +349,14 @@ const chinese = {
   'No research, thesis, or decision is linked yet.': '尚未关联研究、投资论点或决策。',
   'Asset tracking': '资产跟踪信息',
   Tracked: '已跟踪',
-  Band: '区间',
   Rebalance: '再平衡',
   Price: '价格',
+  'Average cost': '平均成本',
   Cost: '成本',
-  Value: '价值',
-  'Value (base)': '价值（本位币）',
-  Root: '根目录',
   line: '行',
   Sleeve: '资金分组',
   'Navor Reader': 'Navor 阅读器',
   'Account target': '账户目标',
-  'Base currency': '本位币',
-  'Off band': '超出区间',
   'Needs attention': '需要关注',
   Realized: '已实现',
   Priority: '优先级',
@@ -540,7 +520,8 @@ export function formatOpenActionDetail(
     if (urgentCount > 0) return `${urgentCount} 项高优先级事项`
     return `${dataCount} 项数据问题`
   }
-  if (urgentCount > 0 && dataCount > 0) return `${urgentCount} high · ${dataCount} data`
+  if (urgentCount > 0 && dataCount > 0)
+    return `${urgentCount} high-priority · ${dataCount} data issues`
   if (urgentCount > 0) return `${urgentCount} high priority`
   return `${dataCount} data ${dataCount === 1 ? 'issue' : 'issues'}`
 }
@@ -560,7 +541,7 @@ export function formatDashboardActionContext(
 }
 
 export function formatPortfolioPositionCount(count: number, locale = readerLocale) {
-  return locale === 'zh-CN' ? `共 ${count} 个持仓` : `of ${count} positions`
+  return locale === 'zh-CN' ? `共 ${count} 个持仓` : `${count} positions`
 }
 
 export function formatUnconvertedCurrencyCount(count: number, locale = readerLocale) {
@@ -578,20 +559,11 @@ export function formatFundedPercent(value: string, locale = readerLocale) {
 }
 
 export function formatTargetAmount(value: string, locale = readerLocale) {
-  return locale === 'zh-CN' ? `目标 ${value}` : `of ${value}`
+  return locale === 'zh-CN' ? `目标 ${value}` : `Target ${value}`
 }
 
 export function formatMarketAmount(value: string, locale = readerLocale) {
-  return locale === 'zh-CN' ? `市值 ${value}` : `Market ${value}`
-}
-
-export function formatAssetDisclosure(expanded: boolean, asset: string, locale = readerLocale) {
-  if (locale === 'zh-CN') return `${expanded ? '收起' : '展开'} ${asset}`
-  return `${expanded ? 'Collapse' : 'Expand'} ${asset}`
-}
-
-export function formatDecisionBriefLabel(asset: string, locale = readerLocale) {
-  return locale === 'zh-CN' ? `${asset} 的决策摘要` : `Decision brief for ${asset}`
+  return locale === 'zh-CN' ? `市值 ${value}` : `Market value ${value}`
 }
 
 export function formatOpenWorkspaceLabel(asset: string, locale = readerLocale) {

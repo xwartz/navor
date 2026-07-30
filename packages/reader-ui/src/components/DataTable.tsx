@@ -1,7 +1,6 @@
 import {
   type Dispatch,
-  type KeyboardEvent,
-  type MouseEvent,
+  Fragment,
   type ReactNode,
   type SetStateAction,
   useEffect,
@@ -18,6 +17,9 @@ interface DataTableProps {
   defaultSortKey?: string | null
   defaultSortDirection?: 'asc' | 'desc'
   onRowClick?: (row: DataTableRow) => void
+  renderExpandedRow?: (row: DataTableRow) => ReactNode
+  storageKey?: string
+  showTableOptions?: boolean
 }
 
 export interface DataTableColumn {
@@ -27,6 +29,7 @@ export interface DataTableColumn {
   sortable?: boolean
   mobileHidden?: boolean
   sticky?: boolean
+  hideable?: boolean
   sortValue?: (row: DataTableRow) => string | number
 }
 
@@ -43,13 +46,21 @@ export function DataTable({
   defaultSortKey = null,
   defaultSortDirection = 'asc',
   onRowClick,
+  renderExpandedRow,
+  storageKey,
+  showTableOptions = columns.length > 3,
 }: DataTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(defaultSortKey)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(defaultSortDirection)
   const [isMobile, setIsMobile] = useState(false)
   const [canScroll, setCanScroll] = useState(false)
   const [atScrollEnd, setAtScrollEnd] = useState(false)
+  const [density, setDensity] = useState<'compact' | 'comfortable'>('comfortable')
+  const [visibleKeys, setVisibleKeys] = useState(() => new Set(columns.map((column) => column.key)))
+  const [expandedRowIds, setExpandedRowIds] = useState<Set<string>>(() => new Set())
+  const [hasRestoredOptions, setHasRestoredOptions] = useState(!storageKey)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const restoredStorageKeyRef = useRef<string | null>(null)
 
   const sortedRows = useMemo(() => {
     if (!sortKey) {
@@ -105,9 +116,47 @@ export function DataTable({
   }, [])
 
   const visibleColumns = useMemo(
-    () => columns.filter((column) => !isMobile || !column.mobileHidden),
-    [columns, isMobile],
+    () =>
+      columns.filter(
+        (column) => visibleKeys.has(column.key) && (!isMobile || !column.mobileHidden),
+      ),
+    [columns, isMobile, visibleKeys],
   )
+
+  useEffect(() => {
+    if (!storageKey || typeof window === 'undefined') return
+    if (restoredStorageKeyRef.current === storageKey) return
+    restoredStorageKeyRef.current = storageKey
+    const saved = window.localStorage.getItem(`navor:table:${storageKey}`)
+    if (!saved) {
+      setHasRestoredOptions(true)
+      return
+    }
+    try {
+      const parsed = JSON.parse(saved) as {
+        density?: 'compact' | 'comfortable'
+        visibleKeys?: string[]
+      }
+      if (parsed.density === 'compact' || parsed.density === 'comfortable')
+        setDensity(parsed.density)
+      if (Array.isArray(parsed.visibleKeys)) {
+        const available = new Set(columns.map((column) => column.key))
+        const next = parsed.visibleKeys.filter((key) => available.has(key))
+        if (next.length > 0) setVisibleKeys(new Set(next))
+      }
+    } catch {
+      window.localStorage.removeItem(`navor:table:${storageKey}`)
+    }
+    setHasRestoredOptions(true)
+  }, [columns, storageKey])
+
+  useEffect(() => {
+    if (!storageKey || typeof window === 'undefined' || !hasRestoredOptions) return
+    window.localStorage.setItem(
+      `navor:table:${storageKey}`,
+      JSON.stringify({ density, visibleKeys: [...visibleKeys] }),
+    )
+  }, [density, hasRestoredOptions, storageKey, visibleKeys])
 
   if (rows.length === 0) {
     return <p className="text-sm text-ink-muted">{emptyMessage ? t(emptyMessage) : null}</p>
@@ -115,6 +164,68 @@ export function DataTable({
 
   return (
     <div className="relative overflow-hidden rounded-md border border-border bg-paper-elevated">
+      {showTableOptions ? (
+        <div className="flex items-center justify-between border-b border-border bg-paper px-3 py-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+            {rows.length} {t('records')}
+          </span>
+          <details className="group relative">
+            <summary className="press-scale flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-paper-elevated px-2 text-[11px] font-semibold text-ink-muted transition-[background-color,color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
+              <span>{t('Columns')}</span>
+              <span
+                aria-hidden
+                className="text-ink-faint transition-transform duration-150 group-open:rotate-180"
+              >
+                ▾
+              </span>
+            </summary>
+            <div className="absolute right-0 z-20 mt-2 w-52 rounded-md border border-border-strong bg-paper-elevated p-2 shadow-[0_16px_40px_rgba(17,19,24,0.18)]">
+              <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+                {t('Table options')}
+              </p>
+              <button
+                aria-pressed={density === 'compact'}
+                className={`mt-1 w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'compact' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+                onClick={() => setDensity('compact')}
+                type="button"
+              >
+                {t('Compact rows')}
+              </button>
+              <button
+                aria-pressed={density === 'comfortable'}
+                className={`w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'comfortable' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+                onClick={() => setDensity('comfortable')}
+                type="button"
+              >
+                {t('Comfortable rows')}
+              </button>
+              <div className="my-2 border-t border-border" />
+              {columns.map((column) => (
+                <label
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-xs text-ink-muted [@media(hover:hover)]:hover:bg-paper"
+                  key={column.key}
+                >
+                  <input
+                    checked={visibleKeys.has(column.key)}
+                    disabled={column.hideable === false}
+                    onChange={() =>
+                      setVisibleKeys((current) => {
+                        if (column.hideable === false) return current
+                        const next = new Set(current)
+                        if (next.has(column.key) && next.size > 1) next.delete(column.key)
+                        else next.add(column.key)
+                        return next
+                      })
+                    }
+                    type="checkbox"
+                  />
+                  <span>{t(column.label)}</span>
+                </label>
+              ))}
+            </div>
+          </details>
+        </div>
+      ) : null}
       <div className="overflow-x-auto" ref={scrollRef}>
         <table className="w-full min-w-max border-collapse text-sm">
           <thead className="bg-paper">
@@ -163,38 +274,83 @@ export function DataTable({
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map((row) => (
-              <tr
-                className={`group border-b border-border last:border-b-0 ${
-                  onRowClick ? 'cursor-pointer' : ''
-                }`}
-                key={row.id}
-                onClick={onRowClick ? (event) => activateRow(event, row, onRowClick) : undefined}
-                onKeyDown={
-                  onRowClick
-                    ? (event) => activateRowWithKeyboard(event, row, onRowClick)
-                    : undefined
-                }
-                tabIndex={onRowClick ? 0 : undefined}
-              >
-                {visibleColumns.map((column) => (
-                  <td
-                    className={`px-3 py-2.5 align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper ${
-                      column.sticky
-                        ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_rgba(47,43,36,0.06)]'
-                        : ''
-                    } ${
-                      column.align === 'right'
-                        ? 'whitespace-nowrap text-right font-medium tabular-nums text-ink'
-                        : 'text-left text-ink-muted'
-                    }`}
-                    key={column.key}
+            {sortedRows.map((row) => {
+              const expanded = expandedRowIds.has(row.id)
+              const interactive = Boolean(onRowClick || renderExpandedRow)
+              return (
+                <Fragment key={row.id}>
+                  <tr
+                    aria-expanded={renderExpandedRow ? expanded : undefined}
+                    className={`group border-b border-border ${interactive ? 'cursor-pointer' : ''}`}
+                    onClick={
+                      interactive
+                        ? (event) => {
+                            if (
+                              (event.target as HTMLElement).closest(
+                                'button, a, input, label, summary',
+                              )
+                            )
+                              return
+                            if (renderExpandedRow) {
+                              setExpandedRowIds((current) => {
+                                const next = new Set(current)
+                                if (next.has(row.id)) next.delete(row.id)
+                                else next.add(row.id)
+                                return next
+                              })
+                              return
+                            }
+                            onRowClick?.(row)
+                          }
+                        : undefined
+                    }
+                    onKeyDown={
+                      interactive
+                        ? (event) => {
+                            if (event.key !== 'Enter' && event.key !== ' ') return
+                            event.preventDefault()
+                            if (renderExpandedRow) {
+                              setExpandedRowIds((current) => {
+                                const next = new Set(current)
+                                if (next.has(row.id)) next.delete(row.id)
+                                else next.add(row.id)
+                                return next
+                              })
+                              return
+                            }
+                            onRowClick?.(row)
+                          }
+                        : undefined
+                    }
+                    tabIndex={interactive ? 0 : undefined}
                   >
-                    {row.cells[column.key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
+                    {visibleColumns.map((column) => (
+                      <td
+                        className={`px-3 ${density === 'compact' ? 'py-2' : 'py-3'} align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper ${
+                          column.sticky
+                            ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_rgba(47,43,36,0.06)]'
+                            : ''
+                        } ${
+                          column.align === 'right'
+                            ? 'whitespace-nowrap text-right font-medium tabular-nums text-ink'
+                            : 'text-left text-ink-muted'
+                        }`}
+                        key={column.key}
+                      >
+                        {row.cells[column.key]}
+                      </td>
+                    ))}
+                  </tr>
+                  {renderExpandedRow && expanded ? (
+                    <tr className="border-b border-border bg-paper">
+                      <td className="px-3 py-3" colSpan={visibleColumns.length}>
+                        {renderExpandedRow(row)}
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
+              )
+            })}
           </tbody>
         </table>
       </div>
@@ -208,25 +364,6 @@ export function DataTable({
       ) : null}
     </div>
   )
-}
-
-function activateRow(
-  event: MouseEvent<HTMLTableRowElement>,
-  row: DataTableRow,
-  onRowClick: (row: DataTableRow) => void,
-) {
-  if ((event.target as HTMLElement).closest('button, a, input, label, summary')) return
-  onRowClick(row)
-}
-
-function activateRowWithKeyboard(
-  event: KeyboardEvent<HTMLTableRowElement>,
-  row: DataTableRow,
-  onRowClick: (row: DataTableRow) => void,
-) {
-  if (event.key !== 'Enter' && event.key !== ' ') return
-  event.preventDefault()
-  onRowClick(row)
 }
 
 function toggleSort(

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- Align the extension with the Navor 0.6.0 Reader release.
+
 ## 0.5.5
 
 - Fix Markdown body highlighting so directives after the first block keep syntax highlighting.

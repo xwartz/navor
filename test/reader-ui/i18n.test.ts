@@ -7,7 +7,11 @@ import {
   createReaderLocalization,
   formatDashboardActionLabel,
   formatDashboardActionReason,
+  formatMarketAmount,
+  formatOpenActionDetail,
+  formatPortfolioPositionCount,
   formatSearchResultCount,
+  formatTargetAmount,
   resolveReaderLocale,
   t,
   translateText,
@@ -26,22 +30,23 @@ describe('reader localization', () => {
     expect(resolveReaderLocale()).toBe('en')
   })
 
-  it('localizes navigation labels without changing hash routes', () => {
+  it('localizes the decision-desk navigation labels', () => {
     const command = getNavGroups('zh-CN')[0]
 
     expect(command?.label).toBe('工作台')
-    expect(command?.items[0]).toEqual({ id: 'overview', label: '总览' })
+    expect(command?.items[0]).toEqual({ id: 'overview', label: '投资简报' })
   })
 
   it('requires product copy to be registered before it can use the typed translator', () => {
     expect(t('Decision', 'zh-CN')).toBe('决策')
     expect(t('Decision', 'en')).toBe('Decision')
-    expect(t('Market snapshot', 'zh-CN')).toBe('市场快照')
-    expect(t('Action below band', 'zh-CN')).toBe('低于区间时操作')
+    expect(t('Cases', 'zh-CN')).toBe('案例总览')
+    expect(t('Case index', 'zh-CN')).toBe('案例清单')
+    expect(t('Market coverage', 'zh-CN')).toBe('行情覆盖')
     expect(t('stale', 'zh-CN')).toBe('已过期')
     expect(t('sleeves', 'zh-CN')).toBe('个资金分组')
     expect(t('Not available', 'zh-CN')).toBe('暂无')
-    expect(t('Account allocation', 'zh-CN')).toBe('账户内配置')
+    expect(t('No health issues need attention.', 'zh-CN')).toBe('暂无需要处理的数据健康问题。')
   })
 
   it('keeps locale, messages, and number formatting behind one Reader localization entry', () => {
@@ -79,6 +84,13 @@ describe('reader localization', () => {
         'en',
       ),
     ).toBe('Position is 3.2% above its target amount.')
+  })
+
+  it('uses complete count and amount labels in both locales', () => {
+    expect(formatOpenActionDetail(9, 5, 'en')).toBe('9 high-priority · 5 data issues')
+    expect(formatPortfolioPositionCount(4, 'en')).toBe('4 positions')
+    expect(formatTargetAmount('USD 25,000', 'en')).toBe('Target USD 25,000')
+    expect(formatMarketAmount('USD 25,000', 'en')).toBe('Market value USD 25,000')
   })
 
   it('does not use document mutation to localize Reader product copy', () => {

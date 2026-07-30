@@ -1,5 +1,5 @@
 import { type ReaderLocale, translateText } from './i18n'
-import { READER_VIEW_CATALOG, type ReaderView, VIEW_LABELS } from './view-catalog'
+import { getReaderView, READER_VIEW_CATALOG, type ReaderView } from './view-catalog'
 
 export type { ReaderView } from './view-catalog'
 
@@ -8,9 +8,16 @@ export interface NavGroup {
   items: Array<{ id: ReaderView; label: string }>
 }
 
-export const NAV_GROUPS: NavGroup[] = ['Monitor', 'Capital', 'Research', 'System'].map((label) => ({
+export const NAV_GROUPS: NavGroup[] = [
+  'Monitor',
+  'Portfolio',
+  'Investment process',
+  'Operations',
+].map((label) => ({
   label,
-  items: READER_VIEW_CATALOG.filter((view) => view.group === label).map(({ id, label }) => ({
+  items: READER_VIEW_CATALOG.filter(
+    (view) => view.group === label && view.navigation !== 'hidden',
+  ).map(({ id, label }) => ({
     id,
     label,
   })),
@@ -20,7 +27,11 @@ export { VIEW_LABELS } from './view-catalog'
 
 export function resolveReaderView(hash: string, fallback: ReaderView): ReaderView {
   const candidate = hash.replace(/^#/, '')
-  return Object.hasOwn(VIEW_LABELS, candidate) ? (candidate as ReaderView) : fallback
+  return READER_VIEW_CATALOG.find((view) => view.route === candidate)?.id ?? fallback
+}
+
+export function getReaderRoute(view: ReaderView): string {
+  return getReaderView(view).route
 }
 
 export function getNavGroups(locale: ReaderLocale): NavGroup[] {
@@ -37,6 +48,6 @@ export function getNavGroups(locale: ReaderLocale): NavGroup[] {
 
 export function getViewLabels(locale: ReaderLocale): Record<ReaderView, string> {
   return Object.fromEntries(
-    getNavGroups(locale).flatMap((group) => group.items.map((item) => [item.id, item.label])),
+    READER_VIEW_CATALOG.map((view) => [view.id, translateText(view.label, locale)]),
   ) as Record<ReaderView, string>
 }

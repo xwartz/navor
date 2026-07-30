@@ -7,24 +7,24 @@ import {
 describe('Reader location behavior', () => {
   it('preserves Asset selection when changing views and preserves the view when closing an Asset', () => {
     const selected = updateReaderLocation(
-      'https://navor.test/?asset=Asset%3ACrypto%3ABTC#overview',
+      'https://navor.test/?asset=Asset%3ACrypto%3ABTC#briefing',
       {
         view: 'holdings',
       },
     )
     const closed = updateReaderLocation(`https://navor.test${selected}`, { asset: null })
 
-    expect(selected).toBe('/?asset=Asset%3ACrypto%3ABTC#holdings')
-    expect(closed).toBe('/#holdings')
+    expect(selected).toBe('/?asset=Asset%3ACrypto%3ABTC#portfolio')
+    expect(closed).toBe('/#portfolio')
   })
 
   it('restores only known Asset deep links', () => {
     expect(
       readReaderLocation(
-        'https://navor.test/?asset=Asset%3ACrypto%3ABTC#holdings',
+        'https://navor.test/?asset=Asset%3ACrypto%3ABTC#portfolio',
         'overview',
         (subject) => subject === 'Asset:Crypto:BTC',
       ),
-    ).toEqual({ asset: 'Asset:Crypto:BTC', view: 'holdings' })
+    ).toMatchObject({ asset: 'Asset:Crypto:BTC', view: 'holdings' })
   })
 })

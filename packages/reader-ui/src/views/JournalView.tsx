@@ -2,7 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { joinKnowledgeMeta, KnowledgeTable } from '../components/KnowledgeTable'
 import { Panel } from '../components/Panel'
-import { SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { ViewHeader } from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { resolveEntityLabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
@@ -16,29 +16,21 @@ export function JournalView({
   filters: ReaderFilters
 }) {
   const labelIndex = useEntityLabelIndex()
-  const items = state.process.journal.filter((item) => matchesFilters(item, filters))
-  const moods = new Set(state.process.journal.map((item) => item.mood).filter(Boolean))
-
+  const items = state.process.journal.filter((item) =>
+    matchesFilters({ ...item, status: item.mood ?? '' }, filters),
+  )
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Process notes and decision context."
+        description="Record the reasoning and behaviour behind a decision."
         eyebrow="Investment process"
         title="Journal"
       />
 
-      <SummaryStrip
-        items={[
-          { label: 'Entries', value: String(state.process.journal.length) },
-          { label: 'Moods', value: String(moods.size) },
-          {
-            label: 'Related notes',
-            value: String(state.process.journal.filter((item) => item.related).length),
-          },
-        ]}
-      />
-
-      <Panel title="Journal">
+      <Panel
+        description="Read chronologically, then filter by asset, directive, or mood."
+        title="Entries"
+      >
         <KnowledgeTable
           emptyMessage="No journal entries match the current filters."
           rows={items.map((item) => ({

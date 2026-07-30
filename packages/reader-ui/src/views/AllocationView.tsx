@@ -5,7 +5,12 @@ import { DiagnosticList } from '../components/DiagnosticList'
 import { formatMoney, formatMoneyList, formatPercent } from '../components/format'
 import { Panel } from '../components/Panel'
 import { DonutChart } from '../components/PortfolioVisuals'
-import { EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import {
+  EntityCell,
+  PortfolioSectionNav,
+  SummaryStrip,
+  ViewHeader,
+} from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
@@ -32,6 +37,8 @@ export function AllocationView({
         eyebrow="Portfolio"
         title="Allocation"
       />
+
+      <PortfolioSectionNav active="allocation" />
 
       <SummaryStrip
         items={[

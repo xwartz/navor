@@ -2,33 +2,23 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { useAssetWorkspace } from '../asset-workspace-context'
 import {
+  convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
   formatMoneyList,
   formatPercent,
   formatPnlCoverageDetail,
+  formatSignedPercent,
   groupMoneyValues,
   pickMoneyCurrency,
   sumMoneyInBase,
 } from '../components/format'
 import { Panel } from '../components/Panel'
 import { DonutChart, ProgressMeter } from '../components/PortfolioVisuals'
-import {
-  EmptyState,
-  SubjectTicker,
-  SummaryStrip,
-  TimelineFeed,
-  ViewHeader,
-} from '../components/ViewScaffold'
+import { EmptyState, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel } from '../entity-labels'
-import {
-  formatDashboardActionContext,
-  formatDashboardActionReason,
-  formatOpenActionDetail,
-  t,
-  translateText,
-} from '../i18n'
+import { formatDashboardActionReason, formatOpenActionDetail, t, translateText } from '../i18n'
 
 export function DashboardView({
   state,
@@ -51,34 +41,6 @@ export function DashboardView({
   const pnlByCurrency = groupMoneyValues(totalPnl)
   const primaryPnl = pickMoneyCurrency(pnlByCurrency, state.drift.baseCurrency)
   const otherPnlCount = countOtherCurrencies(pnlByCurrency, primaryPnl)
-  const recentKnowledge = [
-    ...state.knowledge.research.map((item) => ({
-      id: `research:${item.date}:${item.subject}:${item.title}`,
-      date: item.date,
-      label: t('Research'),
-      title: item.title ?? item.subject,
-      subject: item.subject,
-      subjectDisplay: <SubjectTicker subject={item.subject} />,
-    })),
-    ...state.knowledge.theses.map((item) => ({
-      id: `thesis:${item.date}:${item.subject}:${item.title}`,
-      date: item.date,
-      label: t('Thesis'),
-      title: item.title ?? item.subject,
-      subject: item.subject,
-      subjectDisplay: <SubjectTicker subject={item.subject} />,
-    })),
-    ...state.knowledge.decisions.map((item) => ({
-      id: `decision:${item.date}:${item.subject}:${item.title}`,
-      date: item.date,
-      label: t('Decision'),
-      title: item.title ?? item.subject,
-      subject: item.subject,
-      subjectDisplay: <SubjectTicker subject={item.subject} />,
-    })),
-  ]
-    .sort((left, right) => right.date.localeCompare(left.date))
-    .slice(0, 6)
 
   const hasLiveValuation = state.drift.totalMarketValue !== null
   const investedCapital = groupMoneyValues(
@@ -111,13 +73,45 @@ export function DashboardView({
   const dataActionCount = state.dashboard.actionInbox.filter((item) =>
     ['currency_mismatch', 'missing_price', 'stale_price', 'failed_price'].includes(item.type),
   ).length
+  const driftBySubject = new Map(state.drift.entries.map((entry) => [entry.subject, entry]))
+  const marketValueBySubject = new Map(
+    state.market.portfolioValues.map((value) => [value.subject, value.marketValue]),
+  )
+  const titleBySubject = new Map(
+    state.dashboard.assetExecutions.map((asset) => [asset.subject, asset.title]),
+  )
+  const topPositions = state.portfolio.holdings
+    .flatMap((holding) => {
+      const rawValue = marketValueBySubject.get(holding.asset) ?? holding.cost
+      if (!rawValue) {
+        return []
+      }
+      const value = convertToBaseCurrency(
+        rawValue,
+        state.drift.baseCurrency ?? rawValue.currency,
+        state.drift.fxRates,
+      )
+
+      return value
+        ? [
+            {
+              drift: driftBySubject.get(holding.asset),
+              subject: holding.asset,
+              title: titleBySubject.get(holding.asset) ?? holding.asset,
+              value,
+            },
+          ]
+        : []
+    })
+    .sort((left, right) => right.value.amount - left.value.amount)
+    .slice(0, 5)
 
   return (
     <div className="space-y-5">
       <ViewHeader
         description="Portfolio posture, target-range exceptions, and the next decisions to make."
         eyebrow="Monitor"
-        title="Overview"
+        title="Briefing"
       />
 
       <SummaryStrip
@@ -191,7 +185,17 @@ export function DashboardView({
         ]}
       />
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] xl:items-start">
+        <div className="order-first space-y-5 xl:order-last">
+          <DecisionQueue
+            actions={state.dashboard.actionInbox}
+            openActionCount={openActionCount}
+            onOpenAsset={openAsset}
+            selectedAssetSubject={selectedAssetSubject}
+          />
+          <LargestPositions onOpenAsset={openAsset} positions={topPositions} />
+        </div>
+
         <div className="space-y-5">
           <Panel
             description="Capital sleeves and current funding progress."
@@ -242,115 +246,6 @@ export function DashboardView({
             </div>
           </Panel>
 
-          <Panel description="Most recent capital movements in the ledger." title="Recent activity">
-            {state.dashboard.recentTransactions.length === 0 ? (
-              <EmptyState>{t('No transactions recorded.')}</EmptyState>
-            ) : (
-              <TimelineFeed
-                items={state.dashboard.recentTransactions
-                  .slice()
-                  .sort((left, right) => right.date.localeCompare(left.date))
-                  .slice(0, 5)
-                  .map((transaction) => ({
-                    id: `${transaction.date}:${transaction.subject}:${transaction.title}`,
-                    date: transaction.date,
-                    label: t('Transaction'),
-                    title: transaction.title ?? transaction.subject,
-                    subject: transaction.subject,
-                    subjectDisplay: <SubjectTicker subject={transaction.subject} />,
-                  }))}
-              />
-            )}
-          </Panel>
-        </div>
-
-        <div className="order-first space-y-5 xl:order-last">
-          <Panel
-            description={
-              openActionCount > 0
-                ? 'Ranked by risk severity, portfolio exposure, and urgency.'
-                : 'No target, execution, or data issue needs attention.'
-            }
-            title="Decision queue"
-          >
-            {state.dashboard.actionInbox.length === 0 ? (
-              <div className="flex items-center gap-3 rounded-md bg-positive-soft px-3 py-3 text-sm text-accent-ink">
-                <span aria-hidden className="h-2 w-2 rounded-full bg-positive" />
-                {t('Nothing requires action')}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="divide-y divide-border overflow-hidden rounded-md border border-border bg-paper-elevated">
-                  {state.dashboard.actionInbox.slice(0, 5).map((item, index) => {
-                    const isSelected = selectedAssetSubject === item.subject
-                    const context = actionContext(item, state)
-
-                    return (
-                      <div
-                        className={
-                          isSelected
-                            ? 'bg-paper shadow-[inset_3px_0_0_0_var(--color-accent)]'
-                            : '[@media(hover:hover)]:hover:bg-paper'
-                        }
-                        key={item.id}
-                        title={item.subject}
-                      >
-                        <button
-                          aria-current={isSelected ? 'true' : undefined}
-                          aria-haspopup="dialog"
-                          className="flex w-full items-start gap-2 px-3 py-3 text-left transition-[background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink"
-                          onClick={() => openAsset(item.subject)}
-                          type="button"
-                        >
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                              {t('Priority')} {index + 1} · {actionCategoryLabel(item.category)}
-                            </p>
-                            <h3 className="mt-1 text-sm font-semibold text-ink">
-                              {item.title ?? item.subject}
-                            </h3>
-                            <p className="mt-1 text-[11px] leading-5 text-ink-faint">
-                              {formatDashboardActionReason(item.reason)}
-                            </p>
-                            {context ? (
-                              <p className="mt-1 text-[11px] leading-5 tabular-nums text-ink-faint">
-                                {context}
-                              </p>
-                            ) : null}
-                          </div>
-                          <div className="flex shrink-0 items-center pt-0.5">
-                            <SeverityChip severity={item.severity} />
-                          </div>
-                        </button>
-                      </div>
-                    )
-                  })}
-                </div>
-                {openActionCount > 5 ? (
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-faint">
-                    <span>
-                      {openActionCount - 5} {t('more actions')}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <a
-                        className="inline-flex min-h-10 items-center rounded-md px-2.5 font-semibold text-accent transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft"
-                        href="#drift"
-                      >
-                        {t('Review allocation drift')}
-                      </a>
-                      <a
-                        className="inline-flex min-h-10 items-center rounded-md px-2.5 font-semibold text-accent transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft"
-                        href="#market-data"
-                      >
-                        {t('Check prices')}
-                      </a>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            )}
-          </Panel>
-
           <Panel description="Cash and PnL that affect deployable capital." title="Liquidity">
             <div className="space-y-5">
               <div>
@@ -384,44 +279,157 @@ export function DashboardView({
               ) : null}
             </div>
           </Panel>
-
-          <Panel
-            description="Evidence, theses, and decisions that may change posture."
-            title="Latest updates"
-          >
-            <TimelineFeed items={recentKnowledge} emptyMessage="No knowledge events yet." />
-          </Panel>
         </div>
       </section>
     </div>
   )
 }
 
-function actionContext(
-  item: NavorRendererAppState['dashboard']['actionInbox'][number],
-  state: NavorRendererAppState,
-) {
-  const asset = state.dashboard.assetExecutions.find((entry) => entry.subject === item.subject)
+function LargestPositions({
+  onOpenAsset,
+  positions,
+}: {
+  onOpenAsset: (subject: string) => void
+  positions: Array<{
+    drift: NavorRendererAppState['drift']['entries'][number] | undefined
+    subject: string
+    title: string
+    value: { amount: number; currency: string }
+  }>
+}) {
+  return (
+    <Panel
+      description="Largest marked positions, with the current allocation distance kept visible."
+      title="Largest positions"
+    >
+      {positions.length === 0 ? (
+        <EmptyState>{t('No exposure data.')}</EmptyState>
+      ) : (
+        <div className="divide-y divide-border/80">
+          {positions.map(({ drift, subject, title, value }) => (
+            <button
+              aria-haspopup="dialog"
+              className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-2.5 text-left transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper"
+              key={subject}
+              onClick={() => onOpenAsset(subject)}
+              type="button"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-ink">{title}</p>
+                <p className="mt-0.5 text-xs tabular-nums text-ink-faint">
+                  {drift
+                    ? `${t('Actual')} ${formatPercent(drift.actualWeight)} · ${t(
+                        'Target',
+                      )} ${formatPercent(drift.targetWeight)}`
+                    : t('Cost basis')}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-semibold tabular-nums text-ink">{formatMoney(value)}</p>
+                {drift ? (
+                  <p
+                    className={`mt-0.5 text-xs font-medium tabular-nums ${
+                      (drift.drift ?? 0) > 0
+                        ? 'text-danger'
+                        : (drift.drift ?? 0) < 0
+                          ? 'text-warning'
+                          : 'text-ink-faint'
+                    }`}
+                  >
+                    {formatSignedPercent(drift.drift ?? 0)}
+                  </p>
+                ) : null}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </Panel>
+  )
+}
 
-  if (!asset) {
-    return null
-  }
+function DecisionQueue({
+  actions,
+  onOpenAsset,
+  openActionCount,
+  selectedAssetSubject,
+}: {
+  actions: NavorRendererAppState['dashboard']['actionInbox']
+  onOpenAsset: (subject: string) => void
+  openActionCount: number
+  selectedAssetSubject: string | null
+}) {
+  return (
+    <Panel
+      description={
+        openActionCount > 0
+          ? 'Ranked by risk severity, portfolio exposure, and urgency.'
+          : 'No target, execution, or data issue needs attention.'
+      }
+      title="Decision queue"
+    >
+      {actions.length === 0 ? (
+        <div className="flex items-center gap-3 rounded-md bg-positive-soft px-3 py-3 text-sm text-accent-ink">
+          <span aria-hidden className="h-2 w-2 rounded-full bg-positive" />
+          {t('Nothing requires action')}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="divide-y divide-border overflow-hidden rounded-md border border-border bg-paper-elevated">
+            {actions.slice(0, 5).map((item, index) => {
+              const isSelected = selectedAssetSubject === item.subject
 
-  if (item.type === 'over_invested' || item.type === 'currency_mismatch') {
-    return formatDashboardActionContext(item.reason.kind, {
-      invested: formatMoney(asset.investedCost),
-      target: formatMoney(asset.targetAmount),
-    })
-  }
-
-  if (item.type === 'above_max' || item.type === 'below_min') {
-    return formatDashboardActionContext(item.reason.kind, {
-      drift: formatPercent(asset.drift),
-      target: formatPercent(asset.target),
-    })
-  }
-
-  return null
+              return (
+                <div
+                  className={
+                    isSelected
+                      ? 'bg-paper shadow-[inset_3px_0_0_0_var(--color-accent)]'
+                      : '[@media(hover:hover)]:hover:bg-paper'
+                  }
+                  key={item.id}
+                  title={item.subject}
+                >
+                  <button
+                    aria-current={isSelected ? 'true' : undefined}
+                    aria-haspopup="dialog"
+                    className="flex w-full items-start gap-3 px-3 py-3 text-left transition-[background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink"
+                    onClick={() => onOpenAsset(item.subject)}
+                    type="button"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+                        {t('Priority')} {index + 1} · {actionCategoryLabel(item.category)}
+                      </p>
+                      <h3 className="mt-1 text-sm font-semibold text-ink">
+                        {item.title ?? item.subject}
+                      </h3>
+                      <p className="mt-1 text-[11px] leading-5 text-ink-faint">
+                        {formatDashboardActionReason(item.reason)}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2 pt-0.5">
+                      <SeverityChip severity={item.severity} />
+                    </div>
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-faint">
+            <span>
+              {openActionCount > 5 ? `${openActionCount - 5} ${t('more actions')}` : null}
+            </span>
+            <a
+              className="inline-flex min-h-10 items-center rounded-md px-2.5 font-semibold text-accent transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft"
+              href="#actions"
+            >
+              {t('Action center')}
+            </a>
+          </div>
+        </div>
+      )}
+    </Panel>
+  )
 }
 
 function actionCategoryLabel(

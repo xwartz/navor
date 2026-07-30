@@ -84,6 +84,39 @@ export function SummaryStrip({ items }: { items: SummaryItem[] }) {
   )
 }
 
+const PORTFOLIO_TABS = [
+  { id: 'holdings', label: 'Positions', route: 'portfolio' },
+  { id: 'allocation', label: 'Allocation', route: 'portfolio/allocation' },
+  { id: 'accounts', label: 'Accounts', route: 'portfolio/accounts' },
+] as const
+
+export function PortfolioSectionNav({ active }: { active: (typeof PORTFOLIO_TABS)[number]['id'] }) {
+  return (
+    <nav
+      aria-label={t('Portfolio workspace')}
+      className="meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/80 px-1 pb-3"
+    >
+      {PORTFOLIO_TABS.map((item) => {
+        const isActive = item.id === active
+        return (
+          <a
+            aria-current={isActive ? 'page' : undefined}
+            className={`press-scale inline-flex min-h-10 shrink-0 items-center rounded-md px-3 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${
+              isActive
+                ? 'bg-paper-elevated text-ink shadow-[inset_0_-1px_0_var(--color-accent)]'
+                : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink'
+            }`}
+            href={`#${item.route}`}
+            key={item.id}
+          >
+            {t(item.label)}
+          </a>
+        )
+      })}
+    </nav>
+  )
+}
+
 export function SubjectTicker({ subject }: { subject: string }) {
   const meta = useEntityMeta(subject)
 

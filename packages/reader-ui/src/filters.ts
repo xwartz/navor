@@ -3,10 +3,21 @@ export interface ReaderFilters {
   subject?: string
   tag?: string
   date?: string
+  account?: string
+  type?: string
+  status?: string
 }
 
 export function hasActiveFilters(filters: ReaderFilters) {
-  return Boolean(filters.query || filters.subject || filters.tag || filters.date)
+  return Boolean(
+    filters.query ||
+      filters.subject ||
+      filters.tag ||
+      filters.date ||
+      filters.account ||
+      filters.type ||
+      filters.status,
+  )
 }
 
 export function matchesFilters(item: unknown, filters: ReaderFilters) {
@@ -15,68 +26,76 @@ export function matchesFilters(item: unknown, filters: ReaderFilters) {
   }
 
   const text = JSON.stringify(item).toLowerCase()
+  const record = asRecord(item)
 
   if (filters.query && !text.includes(filters.query.trim().toLowerCase())) {
     return false
   }
 
-  const subjectTokens = filters.subject?.split(':').filter((part) => part.length > 2) ?? []
-
-  if (
-    filters.subject &&
-    !text.includes(filters.subject.toLowerCase()) &&
-    !subjectTokens.some((token) => text.includes(token.toLowerCase()))
-  ) {
+  if (filters.subject && !matchesAny(subjectValues(record), filters.subject)) {
     return false
   }
 
-  if (filters.tag && hasTagField(item)) {
-    const tagText = item.tags.join(' ').toLowerCase()
-    if (!tagText.includes(filters.tag.toLowerCase()) && !text.includes(filters.tag.toLowerCase())) {
-      return false
-    }
+  if (filters.tag && !matchesAny(stringValues(record.tags), filters.tag)) {
+    return false
   }
 
-  if (filters.date) {
-    const subject = getSubject(item)
-    const datedKnowledge =
-      hasTagField(item) && hasDateField(item) && !subject?.startsWith('Market:')
+  if (filters.date && !matchesAny(stringValues(record.date), filters.date, 'prefix')) {
+    return false
+  }
 
-    if (datedKnowledge && !item.date.includes(filters.date)) {
-      return false
-    }
+  if (filters.account && !matchesAny(accountValues(record), filters.account)) {
+    return false
+  }
 
-    if (!datedKnowledge && !hasDateField(item) && !text.includes(filters.date)) {
-      return false
-    }
+  if (filters.type && !matchesAny(stringValues(record.type), filters.type)) {
+    return false
+  }
+
+  if (filters.status && !matchesAny(statusValues(record), filters.status)) {
+    return false
   }
 
   return true
 }
 
-function hasTagField(item: unknown): item is { tags: string[] } {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'tags' in item &&
-    Array.isArray((item as { tags: unknown }).tags)
+function asRecord(item: unknown): Record<string, unknown> {
+  return typeof item === 'object' && item !== null ? (item as Record<string, unknown>) : {}
+}
+
+function matchesAny(values: string[], filter: string, mode: 'exact' | 'prefix' = 'exact') {
+  const normalized = filter.toLowerCase()
+  return values.some((value) =>
+    mode === 'prefix'
+      ? value.toLowerCase().startsWith(normalized)
+      : value.toLowerCase() === normalized,
   )
 }
 
-function hasDateField(item: unknown): item is { date: string } {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'date' in item &&
-    typeof (item as { date: unknown }).date === 'string'
-  )
+function stringValues(value: unknown): string[] {
+  if (typeof value === 'string') return [value]
+  if (Array.isArray(value)) return value.flatMap(stringValues)
+  return []
 }
 
-function getSubject(item: unknown) {
-  if (typeof item === 'object' && item !== null && 'subject' in item) {
-    const subject = (item as { subject: unknown }).subject
-    return typeof subject === 'string' ? subject : null
-  }
+function subjectValues(record: Record<string, unknown>) {
+  return stringValues(record.subject).concat(stringValues(record.asset))
+}
 
-  return null
+function accountValues(record: Record<string, unknown>) {
+  const postingAccounts = Array.isArray(record.postings)
+    ? record.postings.flatMap((posting) =>
+        posting && typeof posting === 'object'
+          ? stringValues((posting as Record<string, unknown>).account)
+          : [],
+      )
+    : []
+  return stringValues(record.account).concat(postingAccounts)
+}
+
+function statusValues(record: Record<string, unknown>) {
+  return stringValues(record.status).concat(
+    stringValues(record.category),
+    stringValues(record.severity),
+  )
 }

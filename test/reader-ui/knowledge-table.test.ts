@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest'
 
 const TABLE = 'packages/reader-ui/src/components/KnowledgeTable.tsx'
 const RESEARCH = 'packages/reader-ui/src/views/ResearchView.tsx'
-const THESIS = 'packages/reader-ui/src/views/ThesisView.tsx'
 const REVIEWS = 'packages/reader-ui/src/views/ReviewsView.tsx'
 const JOURNAL = 'packages/reader-ui/src/views/JournalView.tsx'
 
@@ -24,7 +23,7 @@ describe('KnowledgeTable quiet row layout', () => {
   })
 
   it('keeps research and sibling views free of raw subject paths in meta', () => {
-    for (const file of [RESEARCH, THESIS, REVIEWS, JOURNAL]) {
+    for (const file of [RESEARCH, REVIEWS, JOURNAL]) {
       const source = readFileSync(file, 'utf8')
       expect(source, file).toMatch(/joinKnowledgeMeta/)
       expect(source, file).not.toMatch(/meta: `\$\{item\.date\} · \$\{item\.subject\}/)
