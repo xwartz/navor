@@ -61,7 +61,11 @@ describe('buildNavorStaticSite', () => {
     expect(html).toContain('<title>Core - Navor</title>')
     expect(html).toContain('navor-data.json')
     expect(html).toContain('manifest.webmanifest')
+    expect(html).not.toContain('registerSW.js')
     expect(js.length).toBeGreaterThan(100)
+    expect(js).toContain('controllerchange')
+    expect(js).toContain('.update()')
+    expect(js).toContain('location.reload')
     expect(css.length).toBeGreaterThan(100)
     expect(manifest).toMatchObject({ name: 'Core - Navor', display: 'standalone' })
     expect(manifest.icons).toContainEqual({

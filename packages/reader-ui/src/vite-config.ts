@@ -77,6 +77,7 @@ export function createNavorReaderViteConfig(
       ...(options.appName
         ? [
             VitePWA({
+              injectRegister: false,
               registerType: 'autoUpdate',
               includeAssets: ['favicon.svg', 'pwa-192.png', 'pwa-512.png'],
               manifest: {

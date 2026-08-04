@@ -1,5 +1,11 @@
 # @navor/core
 
+## 0.6.2
+
+### Patch Changes
+
+- Automatically refresh the Reader when a new PWA version becomes available.
+
 ## 0.6.1
 
 ## 0.6.0

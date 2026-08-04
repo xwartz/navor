@@ -1,5 +1,15 @@
 # @navor/cli
 
+## 0.6.2
+
+### Patch Changes
+
+- Automatically refresh the Reader when a new PWA version becomes available.
+- Updated dependencies
+  - @navor/core@0.6.2
+  - @navor/renderer@0.6.2
+  - @navor/reader-ui@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes
