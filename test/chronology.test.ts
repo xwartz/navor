@@ -1,4 +1,4 @@
-import { orderChronologically } from '@navor/core'
+import { orderChronologically, orderReverseChronologically } from '@navor/core'
 import { describe, expect, it } from 'vitest'
 
 describe('orderChronologically', () => {
@@ -15,6 +15,20 @@ describe('orderChronologically', () => {
       'later-line',
       'later-file',
       'later-date',
+    ])
+  })
+})
+
+describe('orderReverseChronologically', () => {
+  it('orders newest entries first', () => {
+    const entries = [
+      { date: '2026-07-01', file: 'research.nav', line: 3, id: 'first' },
+      { date: '2026-07-02', file: 'plans.nav', line: 4, id: 'later-date' },
+    ]
+
+    expect(orderReverseChronologically(entries).map((entry) => entry.id)).toEqual([
+      'later-date',
+      'first',
     ])
   })
 })

@@ -2,7 +2,8 @@ import type { NavorRendererAppState, PlanEntry } from '@navor/contract'
 import { useState } from 'react'
 
 import { DiagnosticList } from '../components/DiagnosticList'
-import { formatPercent } from '../components/format'
+import { formatMoney, formatPercent } from '../components/format'
+import { MarkdownBody } from '../components/MarkdownBody'
 import { Panel } from '../components/Panel'
 import { EmptyState, EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
@@ -166,7 +167,7 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
 
         <div className="space-y-3 text-xs">
           {hasActions ? (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <PlanAction
                 direction="Below"
                 threshold={current.min}
@@ -185,6 +186,12 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
           </div>
         </div>
       </div>
+
+      {current.body ? (
+        <div className="mt-4 border-t border-border/60 pt-4">
+          <MarkdownBody body={current.body} />
+        </div>
+      ) : null}
 
       {history.length > 0 ? (
         <div className="mt-4 border-t border-border/60 pt-2">
@@ -222,9 +229,34 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
 }
 
 function PlanBounds({ entry }: { entry: PlanEntry }) {
+  const target = entry.target === null ? null : clamp(entry.target)
+
+  if (entry.maxAmount) {
+    return (
+      <dl className="grid grid-cols-2 divide-x divide-border/70 text-xs">
+        <div className="min-w-0 pr-3">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
+            {t('Target allocation')}
+          </dt>
+          <dd className="mt-1 text-lg font-semibold tracking-[-0.012em] tabular-nums text-ink">
+            {formatPercent(target)}
+          </dd>
+        </div>
+        <div className="min-w-0 pl-3">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
+            {t('Budget cap')}
+          </dt>
+          <dd className="mt-1 font-semibold tabular-nums text-ink">
+            {formatMoney(entry.maxAmount)}
+          </dd>
+        </div>
+      </dl>
+    )
+  }
+
   const min = clamp(entry.min ?? entry.target ?? 0)
   const max = clamp(entry.max ?? entry.target ?? 100)
-  const target = clamp(entry.target ?? (min + max) / 2)
+  const targetValue = clamp(entry.target ?? (min + max) / 2)
 
   return (
     <dl className="grid grid-cols-2 divide-x divide-border/70 text-xs">
@@ -233,7 +265,7 @@ function PlanBounds({ entry }: { entry: PlanEntry }) {
           {t('Target allocation')}
         </dt>
         <dd className="mt-1 text-lg font-semibold tracking-[-0.012em] tabular-nums text-ink">
-          {formatPercent(target)}
+          {formatPercent(targetValue)}
         </dd>
       </div>
       <div className="min-w-0 pl-3">
@@ -265,7 +297,9 @@ function PlanAction({
       <p className="text-[10px] font-semibold uppercase tracking-[0.07em] text-accent-ink/70">
         {t(direction)} {boundary}
       </p>
-      <p className="mt-1 truncate font-semibold text-accent-ink">{value ?? t('No rule')}</p>
+      <p className="mt-1 break-words font-semibold leading-5 text-accent-ink">
+        {value ?? t('No rule')}
+      </p>
     </div>
   )
 }
@@ -291,7 +325,11 @@ function groupPlanVersions(entries: PlanEntry[], currentEntries: PlanEntry[]): P
       return { subject, current, history }
     })
     .filter((group): group is PlanGroup => group !== null)
-    .sort((left, right) => left.current.subject.localeCompare(right.current.subject))
+    .sort(
+      (left, right) =>
+        right.current.date.localeCompare(left.current.date) ||
+        left.current.subject.localeCompare(right.current.subject),
+    )
 }
 
 function matchesPlanFilters(entry: PlanEntry, filters: ReaderFilters) {
@@ -308,7 +346,12 @@ function isSamePlanVersion(left: PlanEntry, right: PlanEntry) {
     left.max === right.max &&
     left.rebalance === right.rebalance &&
     left.actionWhenBelow === right.actionWhenBelow &&
-    left.actionWhenAbove === right.actionWhenAbove
+    left.actionWhenAbove === right.actionWhenAbove &&
+    left.body === right.body &&
+    left.minAmount?.amount === right.minAmount?.amount &&
+    left.minAmount?.currency === right.minAmount?.currency &&
+    left.maxAmount?.amount === right.maxAmount?.amount &&
+    left.maxAmount?.currency === right.maxAmount?.currency
   )
 }
 

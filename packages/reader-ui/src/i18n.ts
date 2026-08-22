@@ -49,6 +49,7 @@ const chinese = {
   'Asset-specific actions and their revision history.': '资产越界动作及修订历史。',
   'Target allocation': '目标配置',
   'Allowed range': '允许范围',
+  'Budget cap': '预算上限',
   Below: '低于',
   Above: '高于',
   to: '至',

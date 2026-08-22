@@ -1,5 +1,14 @@
 # @navor/cli
 
+## 0.6.3
+
+### Patch Changes
+
+- Show plan bodies and USDT budget caps in the Reader, render full action rules without truncation, and list knowledge, process, and plan records newest-first.
+  - @navor/core@0.6.3
+  - @navor/renderer@0.6.3
+  - @navor/reader-ui@0.6.3
+
 ## 0.6.2
 
 ### Patch Changes

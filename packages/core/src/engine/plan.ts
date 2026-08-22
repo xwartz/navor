@@ -1,16 +1,18 @@
-import { orderChronologically } from '../chronology'
-import { parsePercent } from '../core/values'
+import { orderReverseChronologically } from '../chronology'
+import { parseMoney, parsePercent } from '../core/values'
 import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from '../diagnostics'
 import type { NavorAst, NavorDiagnostic, PlanEntry, PlanResult } from '../types'
 
 export function generatePlanViews(ast: NavorAst): PlanResult {
   const diagnostics: NavorDiagnostic[] = []
-  const entries = orderChronologically(ast.directives)
+  const entries = orderReverseChronologically(ast.directives)
     .filter((directive) => directive.directive === 'plan')
     .map((directive) => {
       const target = parsePercent(directive.metadata.target ?? null)
       const min = parsePercent(directive.metadata.min ?? null)
       const max = parsePercent(directive.metadata.max ?? null)
+      const minAmount = parseMoney(directive.metadata.min ?? null)
+      const maxAmount = parseMoney(directive.metadata.max ?? null)
 
       if (min !== null && max !== null && min > max) {
         diagnostics.push({
@@ -27,9 +29,12 @@ export function generatePlanViews(ast: NavorAst): PlanResult {
         target,
         min,
         max,
+        minAmount,
+        maxAmount,
         rebalance: directive.metadata.rebalance ?? null,
         actionWhenBelow: directive.metadata.action_when_below ?? null,
         actionWhenAbove: directive.metadata.action_when_above ?? null,
+        body: directive.body,
       } satisfies PlanEntry
     })
   const currentBySubject = new Map<string, PlanEntry>()

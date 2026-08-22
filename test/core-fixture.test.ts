@@ -93,9 +93,9 @@ describe('core Navor fixture', () => {
 
     expect(options.baseCurrency).toBe('USD')
     expect(plan.entries.map((entry) => entry.subject)).toEqual([
-      'Account:US',
-      'Account:Crypto',
       'Asset:Crypto:BTC',
+      'Account:Crypto',
+      'Account:US',
     ])
     expect(drift.entries.find((entry) => entry.subject === 'Asset:Crypto:BTC')).toMatchObject({
       targetWeight: 25,

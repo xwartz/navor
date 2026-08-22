@@ -1,4 +1,4 @@
-import { orderChronologically } from '../chronology'
+import { orderReverseChronologically } from '../chronology'
 import { parseList } from '../core/values'
 import { NAVOR_DIAGNOSTIC_CODES, withDiagnosticCode } from '../diagnostics'
 import { resolveDateScopedReference } from '../relationships'
@@ -9,7 +9,7 @@ export function generateKnowledgeViews(
   options: { today?: string } = {},
 ): KnowledgeViews {
   const diagnostics: NavorDiagnostic[] = []
-  const directives = orderChronologically(ast.directives)
+  const directives = orderReverseChronologically(ast.directives)
   const research = directives
     .filter((directive) => directive.directive === 'research')
     .map((directive) => ({

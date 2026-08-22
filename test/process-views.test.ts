@@ -52,15 +52,6 @@ describe('generateProcessViews', () => {
     ])
     expect(views.journal).toEqual([
       {
-        date: '2026-07-08',
-        directive: 'journal',
-        subject: 'Portfolio:Core',
-        title: 'Felt FOMO after BTC breakout',
-        mood: 'FOMO',
-        related: 'Asset:Crypto:BTC',
-        body: 'Waiting for the planned review prevented an impulsive buy.',
-      },
-      {
         date: '2026-07-09',
         directive: 'note',
         subject: 'Asset:Crypto:BTC',
@@ -68,6 +59,15 @@ describe('generateProcessViews', () => {
         mood: null,
         related: null,
         body: 'Nothing changed fundamentally.',
+      },
+      {
+        date: '2026-07-08',
+        directive: 'journal',
+        subject: 'Portfolio:Core',
+        title: 'Felt FOMO after BTC breakout',
+        mood: 'FOMO',
+        related: 'Asset:Crypto:BTC',
+        body: 'Waiting for the planned review prevented an impulsive buy.',
       },
     ])
   })

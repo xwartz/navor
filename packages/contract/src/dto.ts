@@ -190,9 +190,12 @@ export interface PlanEntry {
   target: number | null
   min: number | null
   max: number | null
+  minAmount: MoneyAmount | null
+  maxAmount: MoneyAmount | null
   rebalance: string | null
   actionWhenBelow: string | null
   actionWhenAbove: string | null
+  body: string | null
 }
 
 export interface PlanResult {

@@ -16,3 +16,11 @@ export function compareChronology(left: ChronologicalEntry, right: Chronological
 export function orderChronologically<T extends ChronologicalEntry>(entries: T[]) {
   return entries.toSorted(compareChronology)
 }
+
+export function compareChronologyDesc(left: ChronologicalEntry, right: ChronologicalEntry) {
+  return compareChronology(right, left)
+}
+
+export function orderReverseChronologically<T extends ChronologicalEntry>(entries: T[]) {
+  return entries.toSorted(compareChronologyDesc)
+}

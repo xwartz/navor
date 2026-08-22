@@ -1,4 +1,10 @@
-export { type ChronologicalEntry, compareChronology, orderChronologically } from './chronology'
+export {
+  type ChronologicalEntry,
+  compareChronology,
+  compareChronologyDesc,
+  orderChronologically,
+  orderReverseChronologically,
+} from './chronology'
 export { mergeFxRates } from './core/fx'
 export {
   formatNavorDiagnosticCode,
