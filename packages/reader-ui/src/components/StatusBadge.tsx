@@ -12,7 +12,7 @@ const STATUS_STYLES: Record<DriftEntry['status'], string> = {
 export function StatusBadge({ status }: { status: DriftEntry['status'] }) {
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${STATUS_STYLES[status]}`}
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] ${STATUS_STYLES[status]}`}
     >
       {driftStatusLabel(status)}
     </span>

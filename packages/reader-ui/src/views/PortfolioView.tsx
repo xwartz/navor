@@ -16,6 +16,7 @@ import { MoneyDelta, RankedExposureList } from '../components/PortfolioVisuals'
 import { QuantityCommodity } from '../components/QuantityCommodity'
 import {
   EntityCell,
+  GroupedSection,
   PortfolioSectionNav,
   SummaryStrip,
   ViewHeader,
@@ -143,7 +144,7 @@ export function PortfolioView({
 
       <Panel
         actions={
-          <fieldset className="flex rounded-md bg-paper p-0.5 ring-1 ring-border">
+          <fieldset className="segmented-control">
             <legend className="sr-only">{t('Position grouping')}</legend>
             <PositionGroupButton active={groupMode === 'all'} onClick={() => setGroupMode('all')}>
               {t('All')}
@@ -170,20 +171,21 @@ export function PortfolioView({
         ) : (
           <div className="space-y-4">
             {[...holdingsByAccount.entries()].map(([account, accountHoldings]) => (
-              <section
-                className="overflow-hidden rounded-md border border-border bg-paper"
+              <GroupedSection
+                header={
+                  <>
+                    <h3 className="text-sm font-semibold text-ink">
+                      {account === 'Unassigned'
+                        ? t('Unassigned')
+                        : resolveEntityLabel(labelIndex, account).title}
+                    </h3>
+                    <p className="mt-1 text-xs text-ink-faint">
+                      {accountHoldings.length} {t('positions')}
+                    </p>
+                  </>
+                }
                 key={account}
               >
-                <div className="border-b border-border bg-paper-elevated px-4 py-3">
-                  <h3 className="text-sm font-semibold text-ink">
-                    {account === 'Unassigned'
-                      ? t('Unassigned')
-                      : resolveEntityLabel(labelIndex, account).title}
-                  </h3>
-                  <p className="mt-1 text-xs text-ink-faint">
-                    {accountHoldings.length} {t('positions')}
-                  </p>
-                </div>
                 <div className="p-3">
                   <HoldingsTable
                     holdings={accountHoldings}
@@ -193,7 +195,7 @@ export function PortfolioView({
                     weightBySubject={weightBySubject}
                   />
                 </div>
-              </section>
+              </GroupedSection>
             ))}
           </div>
         )}
@@ -326,9 +328,9 @@ function PositionGroupButton({
   return (
     <button
       aria-pressed={active}
-      className={`h-10 rounded-[3px] px-2.5 text-xs font-semibold transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${
+      className={`h-10 rounded-[5px] px-2.5 text-xs font-semibold transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${
         active
-          ? 'bg-paper-elevated text-ink shadow-[0_1px_2px_rgba(17,19,24,0.08)]'
+          ? 'bg-paper-elevated text-ink shadow-[var(--shadow-xs)]'
           : 'text-ink-muted [@media(hover:hover)]:hover:text-ink'
       }`}
       onClick={onClick}

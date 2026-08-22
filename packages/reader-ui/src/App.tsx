@@ -38,13 +38,13 @@ export function App({
 }: AppProps) {
   if (!state) {
     return (
-      <main className="min-h-screen bg-paper px-6 py-12 text-ink lg:px-10">
+      <main className="min-h-screen bg-paper px-6 py-16 text-ink lg:px-10">
         <section className="mx-auto max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-faint">Navor</p>
-          <h1 className="mt-4 text-4xl font-bold tracking-[-0.022em] text-ink">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">Navor</p>
+          <h1 className="mt-5 font-display text-4xl font-bold tracking-[-0.028em] text-ink">
             {t('A human-first language for long-term investing.')}
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-ink-muted">
+          <p className="mt-6 max-w-2xl text-base leading-[1.7] text-ink-muted">
             {t(
               'Describe capital, accounts, assets, research, thesis, decisions, transactions, and reviews in plain text, then read them here as a portfolio ledger.',
             )}
@@ -131,7 +131,7 @@ function ReaderAppShell({
         }`}
       >
         <a
-          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-md focus:bg-paper-elevated focus:px-3 focus:py-2 focus:text-sm focus:shadow-[0_8px_24px_rgba(17,19,24,0.14)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-md focus:bg-paper-elevated focus:px-3 focus:py-2 focus:text-sm focus:shadow-[var(--shadow-md)]"
           href="#main-content"
         >
           {t('Skip to content')}
@@ -156,7 +156,7 @@ function ReaderAppShell({
               <button
                 aria-expanded={navOpen}
                 aria-label={`${t('Open navigation')}, ${t('current view')} ${getViewLabels(readerLocale)[activeView]}`}
-                className="press-scale grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-paper text-lg leading-none text-ink shadow-[0_1px_2px_rgba(17,19,24,0.06)] transition-[background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft lg:hidden"
+                className="press-scale grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border/80 bg-paper-elevated text-lg leading-none text-ink shadow-[var(--shadow-xs)] transition-[background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft lg:hidden"
                 onClick={() => setNavOpen(true)}
                 ref={navButtonRef}
                 type="button"
@@ -169,7 +169,7 @@ function ReaderAppShell({
             resultCount={filterResultCount}
             searchScope={searchScope}
           />
-          <main className="flex-1 px-4 py-6 lg:px-7 lg:py-8" id="main-content">
+          <main className="flex-1 px-4 py-6 lg:px-8 lg:py-9" id="main-content">
             <div
               className="view-enter mx-auto w-full max-w-[96rem]"
               key={showSearch ? `search:${filters.query}` : activeView}

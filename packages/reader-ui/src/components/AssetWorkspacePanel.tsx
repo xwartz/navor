@@ -19,7 +19,7 @@ import {
   formatSignedPercent,
   formatTimestamp,
 } from './format'
-import { Chip, TimelineFeed } from './ViewScaffold'
+import { Chip, InsetList, TimelineFeed } from './ViewScaffold'
 
 export function AssetWorkspaceOverlay() {
   const { assetWorkspace, closeAsset, selectedAssetSubject } = useAssetWorkspace()
@@ -127,7 +127,7 @@ function AssetWorkspacePanel({
       {isModal ? (
         <button
           aria-label={t('Close asset workspace')}
-          className="fixed inset-0 z-[60] bg-ink/25 xl:hidden"
+          className="fixed inset-0 z-[60] bg-ink/25 backdrop-blur-[2px] xl:hidden"
           onClick={onClose}
           tabIndex={-1}
           type="button"
@@ -135,22 +135,20 @@ function AssetWorkspacePanel({
       ) : null}
       <aside
         aria-labelledby="asset-workspace-title"
-        className={`fixed inset-y-0 right-0 z-[70] flex w-full flex-col bg-paper-elevated sm:w-[30rem] xl:w-[22rem] 2xl:w-[30rem] ${
-          isModal
-            ? 'shadow-[-16px_0_48px_rgba(0,0,0,0.45)]'
-            : 'border-l border-border shadow-[-8px_0_24px_rgba(0,0,0,0.24)]'
+        className={`fixed inset-y-0 right-0 z-[70] flex w-full flex-col border-l border-border/60 bg-paper-elevated sm:w-[30rem] xl:w-[22rem] 2xl:w-[30rem] ${
+          isModal ? 'shadow-[var(--shadow-lg)]' : 'shadow-[var(--shadow-md)]'
         }`}
         ref={panelRef}
         role={isModal ? 'dialog' : 'complementary'}
         {...(isModal ? { 'aria-modal': true } : {})}
       >
-        <header className="flex items-start justify-between gap-4 border-b border-border bg-paper-elevated px-5 py-5">
+        <header className="flex items-start justify-between gap-4 border-b border-border/60 bg-paper-elevated px-5 py-5">
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
               {t('Asset workspace')}
             </p>
             <h2
-              className="mt-1 truncate text-xl font-bold tracking-[-0.018em] text-ink"
+              className="mt-1.5 truncate font-display text-xl font-bold tracking-[-0.02em] text-ink"
               id="asset-workspace-title"
             >
               {readableEntityTitle(label, subject)}
@@ -161,7 +159,7 @@ function AssetWorkspacePanel({
           </div>
           <button
             aria-label={t('Close asset workspace')}
-            className="press-scale grid h-10 w-10 shrink-0 place-items-center rounded-md border border-border bg-paper text-lg text-ink-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-ink"
+            className="control-btn press-scale grid h-10 w-10 shrink-0 p-0 text-lg text-ink-muted [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-ink"
             onClick={onClose}
             ref={closeButtonRef}
             type="button"
@@ -190,7 +188,7 @@ function AssetWorkspacePanel({
               </p>
             </section>
 
-            <section className="grid grid-cols-2 overflow-hidden rounded-md border border-border">
+            <section className="surface-card grid grid-cols-2">
               <WorkspaceMetric label="Market value" value={formatMoney(market?.marketValue)} />
               <WorkspaceMetric
                 label="PnL"
@@ -211,14 +209,13 @@ function AssetWorkspacePanel({
               />
             </section>
 
-            <section
-              className="overflow-hidden rounded-md border border-border bg-paper"
-              id="judgment"
-            >
-              <div className="border-b border-border px-3 py-2.5">
-                <h3 className="text-xs font-semibold text-ink">{t('Decision basis')}</h3>
+            <section className="surface-inset" id="judgment">
+              <div className="border-b border-border/60 px-4 py-3">
+                <h3 className="font-display text-xs font-semibold text-ink">
+                  {t('Decision basis')}
+                </h3>
               </div>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-3 py-3">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3">
                 <WorkspaceFact
                   label="Invested"
                   value={formatMoney(execution?.investedCost ?? holding?.cost)}
@@ -257,7 +254,7 @@ function AssetWorkspacePanel({
 
             {actions.length > 0 ? (
               <WorkspaceSection id="actions" title="Next actions">
-                <div className="divide-y divide-border overflow-hidden rounded-md border border-border">
+                <InsetList>
                   {actions.map((item) => (
                     <div className="px-3 py-3" key={item.id}>
                       <div className="flex items-start justify-between gap-3">
@@ -275,7 +272,7 @@ function AssetWorkspacePanel({
                       </div>
                     </div>
                   ))}
-                </div>
+                </InsetList>
               </WorkspaceSection>
             ) : null}
 
@@ -289,7 +286,7 @@ function AssetWorkspacePanel({
 
             <WorkspaceSection id="transactions" title="Recent transactions">
               {facts?.transactions.length ? (
-                <div className="divide-y divide-border overflow-hidden rounded-md border border-border">
+                <InsetList>
                   {facts.transactions.slice(0, 3).map((transaction) => (
                     <div className="px-3 py-3" key={`${transaction.date}:${transaction.line}`}>
                       <p className="text-xs font-semibold text-ink">
@@ -301,7 +298,7 @@ function AssetWorkspacePanel({
                       </p>
                     </div>
                   ))}
-                </div>
+                </InsetList>
               ) : (
                 <QuietMessage>{t('No transactions are recorded for this asset.')}</QuietMessage>
               )}
@@ -324,9 +321,7 @@ function WorkspaceMetric({
 }) {
   return (
     <div className="border-r border-b border-border px-3 py-3 even:border-r-0 nth-[n+3]:border-b-0">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-        {t(label)}
-      </p>
+      <p className="label-caps">{t(label)}</p>
       <p
         className={`mt-1 break-words text-sm font-semibold tabular-nums ${
           tone === 'danger' ? 'text-danger' : tone === 'positive' ? 'text-positive' : 'text-ink'
@@ -348,8 +343,8 @@ function WorkspaceSection({
   title: import('../i18n').MessageKey
 }) {
   return (
-    <section className="border-t border-border pt-4" id={id}>
-      <h3 className="font-ui text-sm font-semibold text-ink">{t(title)}</h3>
+    <section className="border-t border-border/60 pt-4" id={id}>
+      <h3 className="font-display text-sm font-semibold text-ink">{t(title)}</h3>
       <div className="mt-3">{children}</div>
     </section>
   )
@@ -358,9 +353,7 @@ function WorkspaceSection({
 function WorkspaceFact({ label, value }: { label: import('../i18n').MessageKey; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-        {t(label)}
-      </dt>
+      <dt className="label-caps">{t(label)}</dt>
       <dd className="mt-1 break-words text-sm font-medium tabular-nums text-ink">{value}</dd>
     </div>
   )
@@ -368,9 +361,10 @@ function WorkspaceFact({ label, value }: { label: import('../i18n').MessageKey; 
 
 function QuietMessage({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-md border border-dashed border-border-strong/70 bg-paper px-3 py-3 text-sm leading-6 text-ink-muted">
-      {children}
-    </p>
+    <div className="flex items-center gap-3 rounded-lg border border-dashed border-border-strong/60 bg-paper-subtle/50 px-4 py-3 text-sm leading-6 text-ink-muted">
+      <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-ink-faint" />
+      <span>{children}</span>
+    </div>
   )
 }
 

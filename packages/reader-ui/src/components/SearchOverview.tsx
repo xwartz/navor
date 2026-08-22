@@ -30,14 +30,14 @@ export function SearchOverview({ state, filters, onSelectView }: SearchOverviewP
 
   if (hits.length === 0) {
     return (
-      <section className="rounded-lg border border-border bg-paper-elevated p-5">
+      <section className="surface-card p-5">
         <h1
-          className="text-lg font-bold text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          className="font-display text-lg font-bold tracking-[-0.016em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
           tabIndex={-1}
         >
           {t('No matches')}
         </h1>
-        <p className="mt-2 text-sm text-ink-muted">
+        <p className="mt-2 text-sm leading-6 text-ink-muted">
           {t('Try a broader query or remove one of the subject, tag, or date filters.')}
         </p>
       </section>
@@ -48,9 +48,9 @@ export function SearchOverview({ state, filters, onSelectView }: SearchOverviewP
 
   return (
     <section className="space-y-4">
-      <div className="rounded-lg border border-border bg-paper-elevated p-5">
+      <div className="surface-card p-5">
         <h1
-          className="text-lg font-bold text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          className="font-display text-lg font-bold tracking-[-0.016em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
           tabIndex={-1}
         >
           {t('Search results')}
@@ -59,9 +59,11 @@ export function SearchOverview({ state, filters, onSelectView }: SearchOverviewP
       </div>
 
       {grouped.map(([view, viewHits]) => (
-        <section className="rounded-lg border border-border bg-paper-elevated" key={view}>
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <h4 className="font-semibold text-ink">{getViewLabels(readerLocale)[view]}</h4>
+        <section className="surface-card" key={view}>
+          <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
+            <h4 className="font-display text-sm font-semibold text-ink">
+              {getViewLabels(readerLocale)[view]}
+            </h4>
             <button
               className="text-sm font-medium text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:underline"
               onClick={() => onSelectView(view)}
@@ -70,12 +72,12 @@ export function SearchOverview({ state, filters, onSelectView }: SearchOverviewP
               {t('Open view')}
             </button>
           </div>
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-border/50">
             {viewHits.map((hit) => (
               <li key={hit.id}>
                 <button
                   aria-haspopup={canOpenAsset(hit.subject) ? 'dialog' : undefined}
-                  className="flex w-full flex-col gap-1 px-5 py-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper"
+                  className="flex w-full flex-col gap-1 px-5 py-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40"
                   onClick={() => {
                     onSelectView(hit.view)
                     if (canOpenAsset(hit.subject)) {

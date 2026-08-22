@@ -25,8 +25,11 @@ describe('meta-scroll overflow affordance', () => {
     expect(metaScroll).toContain('scrollWidth')
     expect(metaBar).toContain('<MetaScroll')
     expect(metaBar).toContain('fade="sidebar"')
-    expect(research).toContain('className="meta-scroll')
-    expect(diagnostics).toContain('className="meta-scroll')
+    expect(research).toContain('SectionTabs')
+    expect(diagnostics).toContain('SectionTabs')
+    expect(readFileSync('packages/reader-ui/src/components/ViewScaffold.tsx', 'utf8')).toContain(
+      'section-tabs meta-scroll',
+    )
   })
 })
 

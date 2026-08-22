@@ -4,10 +4,18 @@ import { DataTable, type DataTableRow } from '../components/DataTable'
 import { formatMoney } from '../components/format'
 import { Panel } from '../components/Panel'
 import { QuantityCommodity } from '../components/QuantityCommodity'
-import { Chip, EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import {
+  Chip,
+  EmptyState,
+  EntityCell,
+  LabelCaps,
+  SectionTabs,
+  SummaryStrip,
+  ViewHeader,
+} from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { type MessageKey, t } from '../i18n'
+import { t } from '../i18n'
 import { transactionTone, transactionType } from '../transaction-type'
 
 export function TransactionsView({
@@ -34,33 +42,16 @@ export function TransactionsView({
     <div className="space-y-5">
       <ViewHeader description="All portfolio activity." eyebrow="Portfolio" title="Ledger" />
 
-      <div
-        aria-label="Ledger views"
-        className="meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/80 px-1 pb-3"
-        role="tablist"
-      >
-        {(
-          [
-            { id: 'transactions' as const, label: 'Transactions' },
-            { id: 'realized' as const, label: 'Realized PnL' },
-            { id: 'flows' as const, label: 'Cash & flows' },
-          ] as Array<{ id: 'transactions' | 'realized' | 'flows'; label: MessageKey }>
-        ).map((tab) => {
-          const selected = activeTab === tab.id
-          return (
-            <button
-              aria-selected={selected}
-              className={`press-scale min-h-10 shrink-0 rounded-md px-3 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${selected ? 'bg-paper-elevated text-ink shadow-[inset_0_-1px_0_var(--color-accent)]' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink'}`}
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              type="button"
-            >
-              {t(tab.label)}
-            </button>
-          )
-        })}
-      </div>
+      <SectionTabs
+        active={activeTab}
+        ariaLabel="Ledger views"
+        onSelect={setActiveTab}
+        tabs={[
+          { id: 'transactions', label: 'Transactions' },
+          { id: 'realized', label: 'Realized PnL' },
+          { id: 'flows', label: 'Cash & flows' },
+        ]}
+      />
 
       <SummaryStrip
         items={[
@@ -180,11 +171,7 @@ function FlowTable({ flows }: { flows: NavorRendererAppState['portfolio']['incom
 
 function TransactionLedger({ transactions }: { transactions: PortfolioTransactionView[] }) {
   if (transactions.length === 0) {
-    return (
-      <div className="rounded-md border border-border bg-paper px-4 py-8 text-center text-sm text-ink-muted">
-        {t('No transactions match the current filters.')}
-      </div>
-    )
+    return <EmptyState>{t('No transactions match the current filters.')}</EmptyState>
   }
 
   const rows = transactions.map((transaction) => transactionRow(transaction))
@@ -258,9 +245,7 @@ function transactionRow(transaction: PortfolioTransactionView): DataTableRow {
 function TransactionDetails({ transaction }: { transaction: PortfolioTransactionView }) {
   return (
     <div className="max-w-3xl">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
-        {t('Double-entry postings')}
-      </p>
+      <LabelCaps className="mb-2">{t('Double-entry postings')}</LabelCaps>
       <PostingList transaction={transaction} />
     </div>
   )

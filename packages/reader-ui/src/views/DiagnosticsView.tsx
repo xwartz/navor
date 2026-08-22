@@ -4,7 +4,7 @@ import { DataTable } from '../components/DataTable'
 import { DiagnosticList } from '../components/DiagnosticList'
 import { formatMoney, formatTimestamp, formatWorkspacePath } from '../components/format'
 import { Panel } from '../components/Panel'
-import { Chip, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { Chip, SectionTabs, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
 import { t } from '../i18n'
@@ -80,27 +80,12 @@ export function DiagnosticsView({
         title="Data health"
       />
 
-      <div
-        aria-label="Health views"
-        className="meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/80 px-1 pb-3"
-        role="tablist"
-      >
-        {HEALTH_TABS.map((tab) => {
-          const selected = activeTab === tab.id
-          return (
-            <button
-              aria-selected={selected}
-              className={`press-scale min-h-10 shrink-0 rounded-md px-3 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${selected ? 'bg-paper-elevated text-ink shadow-[inset_0_-1px_0_var(--color-accent)]' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink'}`}
-              key={tab.id}
-              onClick={() => onActiveTabChange(tab.id)}
-              role="tab"
-              type="button"
-            >
-              {t(tab.label)}
-            </button>
-          )
-        })}
-      </div>
+      <SectionTabs
+        active={activeTab}
+        ariaLabel="Health views"
+        onSelect={onActiveTabChange}
+        tabs={HEALTH_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+      />
 
       <SummaryStrip
         items={

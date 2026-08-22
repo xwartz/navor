@@ -88,38 +88,38 @@ export function Sidebar({
     <>
       <button
         aria-label={t('Close navigation')}
-        className={`fixed inset-0 z-40 bg-ink/20 lg:hidden ${isOpen ? 'block' : 'hidden'}`}
+        className={`fixed inset-0 z-40 bg-ink/25 backdrop-blur-[2px] lg:hidden ${isOpen ? 'block' : 'hidden'}`}
         onClick={closeDrawer}
         tabIndex={-1}
         type="button"
       />
       <aside
         aria-hidden={drawerHidden}
-        className={`fixed inset-y-0 left-0 z-50 flex w-[15.5rem] shrink-0 flex-col bg-sidebar text-sidebar-ink shadow-[8px_0_32px_rgba(0,0,0,0.32)] transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:bottom-auto lg:h-screen lg:self-start lg:translate-x-0 lg:shadow-none ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[15.5rem] shrink-0 flex-col border-r border-white/6 bg-sidebar text-sidebar-ink shadow-[var(--shadow-lg)] transition-transform duration-200 ease-out lg:sticky lg:top-0 lg:bottom-auto lg:h-screen lg:self-start lg:translate-x-0 lg:shadow-none ${
           isRail ? 'lg:w-[4.5rem]' : 'lg:w-[15.5rem]'
         } ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
         inert={drawerHidden}
         ref={asideRef}
       >
-        <div className={`border-b border-white/8 px-4 py-5 ${isRail ? 'lg:px-2 lg:py-2.5' : ''}`}>
+        <div className={`border-b border-white/6 px-4 py-4 ${isRail ? 'lg:px-2 lg:py-2.5' : ''}`}>
           <div className={`flex items-center gap-3 ${isRail ? 'lg:flex-col lg:gap-1.5' : ''}`}>
             <BrandMark
               className={`h-8 w-8 shrink-0 rounded-md text-sidebar ${isRail ? 'lg:mx-auto' : ''}`}
               size={32}
             />
             <div className={`min-w-0 ${isRail ? 'lg:hidden' : ''}`}>
-              <h1 className="truncate font-ui text-sm font-semibold tracking-[-0.012em] text-sidebar-ink">
+              <h1 className="truncate font-display text-[15px] font-semibold tracking-[-0.018em] text-sidebar-ink">
                 Navor
               </h1>
               <span className="sr-only">{t('Navor Reader')}</span>
-              <p className="mt-0.5 truncate text-[11px] tracking-[0.02em] text-sidebar-muted">
+              <p className="mt-0.5 truncate text-[11px] tracking-[0.01em] text-sidebar-muted">
                 {t('Investment ledger')}
               </p>
             </div>
             <button
               aria-label={t(isCollapsed ? 'Expand navigation' : 'Collapse navigation')}
               aria-pressed={isCollapsed}
-              className={`press-scale ml-auto hidden h-8 w-8 place-items-center rounded-md border border-white/8 text-sm text-sidebar-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 [@media(hover:hover)]:hover:bg-white/8 [@media(hover:hover)]:hover:text-sidebar-ink lg:grid ${
+              className={`press-scale ml-auto hidden h-8 w-8 place-items-center rounded-md border border-white/6 text-sm text-sidebar-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 [@media(hover:hover)]:hover:bg-white/6 [@media(hover:hover)]:hover:text-sidebar-ink lg:grid ${
                 isRail ? 'lg:ml-0' : ''
               }`}
               onClick={onToggleCollapse}
@@ -144,7 +144,7 @@ export function Sidebar({
               key={group.label}
             >
               <p
-                className={`mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-muted/75 ${
+                className={`mb-2 px-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-sidebar-muted/70 ${
                   isRail ? 'lg:sr-only' : ''
                 }`}
               >
@@ -163,8 +163,8 @@ export function Sidebar({
                           isRail ? 'lg:justify-center lg:px-1.5' : ''
                         } ${
                           isActive
-                            ? 'bg-sidebar-strong font-semibold text-sidebar-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
-                            : 'font-medium text-sidebar-muted [@media(hover:hover)]:hover:bg-white/5 [@media(hover:hover)]:hover:text-sidebar-ink'
+                            ? 'bg-sidebar-strong font-semibold text-sidebar-ink before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-accent'
+                            : 'font-medium text-sidebar-muted [@media(hover:hover)]:hover:bg-white/4 [@media(hover:hover)]:hover:text-sidebar-ink'
                         }`}
                         onClick={() => {
                           onSelect(item.id)
@@ -174,9 +174,9 @@ export function Sidebar({
                       >
                         <span
                           aria-hidden
-                          className={`mr-2 h-1.5 w-1.5 rounded-full transition-[background-color,box-shadow] ${
+                          className={`mr-2.5 h-1 w-1 shrink-0 rounded-full transition-[background-color,box-shadow] ${
                             isRail ? 'lg:hidden' : ''
-                          } ${isActive ? 'bg-accent shadow-[0_0_0_3px_rgba(67,145,103,0.15)]' : 'bg-white/15'}`}
+                          } ${isActive ? 'bg-accent shadow-[0_0_0_2px_oklch(0.715_0.115_155/0.2)]' : 'bg-white/12'}`}
                         />
                         <span className={isRail ? 'inline lg:hidden' : 'inline'}>{item.label}</span>
                         <span
@@ -185,20 +185,20 @@ export function Sidebar({
                             isRail ? 'lg:grid' : ''
                           } ${
                             isActive
-                              ? 'bg-accent/25 text-sidebar-ink shadow-[inset_0_0_0_1px_rgba(136,210,162,0.46)]'
-                              : 'bg-transparent text-sidebar-muted [@media(hover:hover)]:group-hover:bg-white/8 [@media(hover:hover)]:group-hover:text-sidebar-ink'
+                              ? 'bg-accent/20 text-sidebar-ink shadow-[inset_0_0_0_1px_oklch(0.715_0.115_155/0.35)]'
+                              : 'bg-transparent text-sidebar-muted [@media(hover:hover)]:group-hover:bg-white/6 [@media(hover:hover)]:group-hover:text-sidebar-ink'
                           }`}
                         >
                           <CompactNavIcon view={item.id} />
                         </span>
                         {isRail ? (
-                          <span className="pointer-events-none absolute left-[calc(100%+0.65rem)] z-50 hidden whitespace-nowrap rounded-md bg-sidebar-strong px-2.5 py-1.5 text-xs font-semibold text-sidebar-ink shadow-[0_8px_20px_rgba(0,0,0,0.28)] group-hover:lg:block group-focus-visible:lg:block">
+                          <span className="pointer-events-none absolute left-[calc(100%+0.65rem)] z-50 hidden whitespace-nowrap rounded-md bg-sidebar-strong px-2.5 py-1.5 text-xs font-semibold text-sidebar-ink shadow-[var(--shadow-md)] group-hover:lg:block group-focus-visible:lg:block">
                             {item.label}
                           </span>
                         ) : null}
                         {item.id === 'diagnostics' && diagnosticCount > 0 ? (
                           <span
-                            className={`ml-auto rounded-full bg-warning-soft px-2 py-0.5 text-[11px] font-semibold tabular-nums text-warning ${
+                            className={`ml-auto rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-semibold tabular-nums text-warning ${
                               isRail ? 'lg:hidden' : ''
                             }`}
                           >
@@ -215,11 +215,11 @@ export function Sidebar({
         </nav>
 
         <div
-          className={`border-t border-white/8 px-4 py-3 text-[11px] leading-5 text-sidebar-muted ${
+          className={`border-t border-white/6 px-4 py-3 text-[11px] leading-5 text-sidebar-muted ${
             isRail ? 'lg:hidden' : ''
           }`}
         >
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.13em] text-sidebar-muted/65">
+          <span className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-sidebar-muted/60">
             {t('Facts first. Plans explicit.')}
           </span>
         </div>

@@ -163,14 +163,14 @@ export function DataTable({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-md border border-border bg-paper-elevated">
+    <div className="surface-card relative">
       {showTableOptions ? (
-        <div className="flex items-center justify-between border-b border-border bg-paper px-3 py-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+        <div className="flex items-center justify-between border-b border-border/60 bg-paper-subtle/40 px-4 py-2.5">
+          <span className="label-caps">
             {rows.length} {t('records')}
           </span>
           <details className="group relative">
-            <summary className="press-scale flex h-8 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-paper-elevated px-2 text-[11px] font-semibold text-ink-muted transition-[background-color,color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden">
+            <summary className="control-btn press-scale flex h-8 cursor-pointer list-none items-center gap-1.5 px-2 text-[11px] font-semibold text-ink-muted marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [&::-webkit-details-marker]:hidden">
               <span>{t('Columns')}</span>
               <span
                 aria-hidden
@@ -179,10 +179,8 @@ export function DataTable({
                 ▾
               </span>
             </summary>
-            <div className="absolute right-0 z-20 mt-2 w-52 rounded-md border border-border-strong bg-paper-elevated p-2 shadow-[0_16px_40px_rgba(17,19,24,0.18)]">
-              <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                {t('Table options')}
-              </p>
+            <div className="dropdown-panel absolute right-0 z-20 mt-2 w-52 p-2">
+              <p className="label-caps px-2 py-1">{t('Table options')}</p>
               <button
                 aria-pressed={density === 'compact'}
                 className={`mt-1 w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'compact' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
@@ -228,7 +226,7 @@ export function DataTable({
       ) : null}
       <div className="overflow-x-auto" ref={scrollRef}>
         <table className="w-full min-w-max border-collapse text-sm">
-          <thead className="bg-paper">
+          <thead>
             <tr>
               {visibleColumns.map((column) => (
                 <th
@@ -241,10 +239,8 @@ export function DataTable({
                         : 'none'
                       : undefined
                   }
-                  className={`border-b border-border px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint ${
-                    column.sticky
-                      ? 'sticky left-0 z-10 bg-paper shadow-[4px_0_8px_rgba(47,43,36,0.06)]'
-                      : ''
+                  className={`border-b border-border/60 bg-paper-subtle/50 px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint ${
+                    column.sticky ? 'sticky left-0 z-10 shadow-[4px_0_8px_oklch(0_0_0/0.06)]' : ''
                   } ${column.align === 'right' ? 'text-right' : 'text-left'}`}
                   key={column.key}
                 >
@@ -281,7 +277,7 @@ export function DataTable({
                 <Fragment key={row.id}>
                   <tr
                     aria-expanded={renderExpandedRow ? expanded : undefined}
-                    className={`group border-b border-border ${interactive ? 'cursor-pointer' : ''}`}
+                    className={`group border-b border-border/50 transition-colors ${interactive ? 'cursor-pointer' : ''}`}
                     onClick={
                       interactive
                         ? (event) => {
@@ -326,9 +322,9 @@ export function DataTable({
                   >
                     {visibleColumns.map((column) => (
                       <td
-                        className={`px-3 ${density === 'compact' ? 'py-2' : 'py-3'} align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper ${
+                        className={`px-4 ${density === 'compact' ? 'py-2' : 'py-3.5'} align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper-subtle/60 ${
                           column.sticky
-                            ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_rgba(47,43,36,0.06)]'
+                            ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_oklch(0_0_0/0.06)]'
                             : ''
                         } ${
                           column.align === 'right'

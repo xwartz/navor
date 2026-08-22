@@ -40,18 +40,18 @@ export function ViewHeader({
   meta?: ReactNode
 }) {
   return (
-    <header className="flex flex-col gap-3 border-b border-border-strong/65 pb-5 lg:flex-row lg:items-end lg:justify-between">
+    <header className="flex flex-col gap-4 border-b border-border/60 pb-6 lg:flex-row lg:items-end lg:justify-between">
       <div className="max-w-3xl">
-        <p className="font-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
+        <p className="font-ui text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
           {t(eyebrow)}
         </p>
         <h1
-          className="mt-1 text-[1.875rem] leading-[1.08] font-bold tracking-[-0.022em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          className="mt-1.5 font-display text-[1.875rem] leading-[1.06] font-bold tracking-[-0.024em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
           tabIndex={-1}
         >
           {t(title)}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-ink-muted">{t(description)}</p>
+        <p className="mt-2.5 max-w-2xl text-sm leading-[1.65] text-ink-muted">{t(description)}</p>
       </div>
       {meta ? <div className="shrink-0 text-sm text-ink-muted">{meta}</div> : null}
     </header>
@@ -60,24 +60,22 @@ export function ViewHeader({
 
 export function SummaryStrip({ items }: { items: SummaryItem[] }) {
   return (
-    <section className="summary-strip overflow-hidden rounded-lg bg-paper-elevated shadow-[0_1px_2px_rgba(62,47,30,0.055)] ring-1 ring-border/85">
+    <section className="summary-strip surface-card">
       {items.map((item) => (
         <div
-          className="summary-item min-h-[6.5rem] px-3.5 py-3.5 sm:min-h-[7.25rem] sm:px-4"
+          className="summary-item min-h-[6.5rem] px-4 py-4 sm:min-h-[7.25rem] sm:px-5"
           key={item.label}
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-            {translateText(item.label)}
-          </p>
+          <p className="label-caps">{translateText(item.label)}</p>
           <p
-            className={`mt-2 text-xl font-semibold tracking-[-0.012em] tabular-nums ${
+            className={`mt-2 font-display text-[1.375rem] font-semibold tracking-[-0.016em] tabular-nums ${
               SUMMARY_VALUE_CLASSES[item.tone ?? 'neutral']
             }`}
           >
             {item.value}
           </p>
           {item.detail ? (
-            <p className="mt-1 text-xs leading-5 text-ink-muted">{translateText(item.detail)}</p>
+            <p className="mt-1.5 text-xs leading-5 text-ink-muted">{translateText(item.detail)}</p>
           ) : null}
         </div>
       ))}
@@ -93,28 +91,128 @@ const PORTFOLIO_TABS = [
 
 export function PortfolioSectionNav({ active }: { active: (typeof PORTFOLIO_TABS)[number]['id'] }) {
   return (
+    <SectionTabs
+      active={active}
+      ariaLabel="Portfolio workspace"
+      tabs={PORTFOLIO_TABS.map((item) => ({
+        id: item.id,
+        href: `#${item.route}`,
+        label: item.label,
+      }))}
+    />
+  )
+}
+
+type SectionTabItem<T extends string> = {
+  id: T
+  label: MessageKey
+  href?: string
+}
+
+const SECTION_TAB_CLASS =
+  'press-scale inline-flex min-h-10 shrink-0 items-center rounded-t-md px-3.5 pb-2.5 pt-2 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35'
+const SECTION_TAB_ACTIVE = 'border-b-2 border-accent text-ink'
+const SECTION_TAB_IDLE =
+  'border-b-2 border-transparent text-ink-muted [@media(hover:hover)]:hover:text-ink'
+
+export function SectionTabs<T extends string>({
+  active,
+  ariaLabel,
+  onSelect,
+  tabs,
+}: {
+  active: T
+  ariaLabel: MessageKey
+  onSelect?: (tab: T) => void
+  tabs: SectionTabItem<T>[]
+}) {
+  return (
     <nav
-      aria-label={t('Portfolio workspace')}
-      className="meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/80 px-1 pb-3"
+      aria-label={t(ariaLabel)}
+      className="section-tabs meta-scroll -mx-1 flex gap-0.5 overflow-x-auto border-b border-border/60 px-1 pb-0"
+      role={onSelect ? 'tablist' : undefined}
     >
-      {PORTFOLIO_TABS.map((item) => {
-        const isActive = item.id === active
+      {tabs.map((tab) => {
+        const isActive = tab.id === active
+        const className = `${SECTION_TAB_CLASS} ${isActive ? SECTION_TAB_ACTIVE : SECTION_TAB_IDLE}`
+
+        if (tab.href) {
+          return (
+            <a
+              aria-current={isActive ? 'page' : undefined}
+              className={className}
+              href={tab.href}
+              key={tab.id}
+            >
+              {t(tab.label)}
+            </a>
+          )
+        }
+
         return (
-          <a
-            aria-current={isActive ? 'page' : undefined}
-            className={`press-scale inline-flex min-h-10 shrink-0 items-center rounded-md px-3 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${
-              isActive
-                ? 'bg-paper-elevated text-ink shadow-[inset_0_-1px_0_var(--color-accent)]'
-                : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink'
-            }`}
-            href={`#${item.route}`}
-            key={item.id}
+          <button
+            aria-selected={isActive}
+            className={className}
+            key={tab.id}
+            onClick={() => onSelect?.(tab.id)}
+            role="tab"
+            type="button"
           >
-            {t(item.label)}
-          </a>
+            {t(tab.label)}
+          </button>
         )
       })}
     </nav>
+  )
+}
+
+export function LabelCaps({
+  children,
+  className = '',
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <p className={`label-caps ${className}`}>
+      {typeof children === 'string' ? translateText(children) : children}
+    </p>
+  )
+}
+
+export function GroupedSection({
+  children,
+  className = '',
+  header,
+}: {
+  children: ReactNode
+  className?: string
+  header: ReactNode
+}) {
+  return (
+    <section className={`surface-card ${className}`}>
+      <div className="border-b border-border/60 bg-paper-subtle/40 px-5 py-3.5">{header}</div>
+      <div className="divide-y divide-border/50">{children}</div>
+    </section>
+  )
+}
+
+export function InsetList({
+  children,
+  className = '',
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return <div className={`surface-inset divide-y divide-border/50 ${className}`}>{children}</div>
+}
+
+export function SuccessCallout({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg bg-positive-soft px-4 py-3 text-sm text-accent-ink">
+      <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-positive" />
+      <span>{typeof children === 'string' ? translateText(children) : children}</span>
+    </div>
   )
 }
 
@@ -181,7 +279,7 @@ export function Chip({
 }) {
   return (
     <span
-      className={`inline-flex rounded-md px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] ${TONE_CLASSES[tone]}`}
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${TONE_CLASSES[tone]}`}
     >
       {typeof children === 'string' ? translateText(children) : children}
     </span>
@@ -190,8 +288,8 @@ export function Chip({
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-3 rounded-md border border-dashed border-border-strong/75 bg-paper/60 px-4 py-5 text-left text-sm text-ink-muted">
-      <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-border-strong" />
+    <div className="flex items-center gap-3 rounded-lg border border-dashed border-border-strong/60 bg-paper-subtle/50 px-5 py-6 text-left text-sm text-ink-muted">
+      <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-ink-faint" />
       <span>{typeof children === 'string' ? translateText(children) : children}</span>
     </div>
   )
@@ -221,17 +319,19 @@ export function TimelineFeed({
   return (
     <div className="space-y-0">
       {items.map((item) => (
-        <article className="border-l border-border px-4 pb-4 last:pb-0" key={item.id}>
-          <div className="-ml-[1.35rem] flex gap-3">
+        <article className="relative border-l border-border/70 px-5 pb-5 last:pb-0" key={item.id}>
+          <div className="-ml-[0.3125rem] flex gap-3.5">
             <span
               aria-hidden
-              className="mt-1 h-2.5 w-2.5 rounded-full border-2 border-paper-elevated bg-accent"
+              className="mt-1.5 h-2 w-2 shrink-0 rounded-full border-2 border-paper bg-accent shadow-[0_0_0_2px_var(--color-paper-elevated)]"
             />
             <div className="min-w-0">
-              <p className="text-xs tabular-nums text-ink-faint">
+              <p className="text-[11px] tabular-nums tracking-[0.01em] text-ink-faint">
                 {item.date} · {translateText(item.label)}
               </p>
-              <h3 className="mt-1 text-sm font-semibold text-ink">{item.title}</h3>
+              <h3 className="mt-1 text-sm font-semibold tracking-[-0.006em] text-ink">
+                {item.title}
+              </h3>
               {item.subjectDisplay ? (
                 <div className="mt-1">{item.subjectDisplay}</div>
               ) : item.subject ? (

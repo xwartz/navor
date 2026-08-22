@@ -45,11 +45,11 @@ export function PriceStatusBar({
   }
 
   return (
-    <div className="flex min-h-11 flex-wrap items-center justify-between gap-3 border-b border-border bg-warning-soft/35 px-4 py-2.5 lg:px-7">
+    <div className="flex min-h-11 flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-warning-soft/30 px-4 py-2.5 lg:px-8">
       <p className={`min-w-0 text-sm ${error ? 'text-warning' : 'text-ink-muted'}`}>{message}</p>
       {trackedCount > 0 ? (
         <button
-          className="inline-flex h-9 shrink-0 items-center rounded-md border border-border bg-paper-elevated px-3 text-sm font-medium text-ink transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 disabled:opacity-60 [@media(hover:hover)]:hover:bg-accent-soft"
+          className="control-btn inline-flex h-9 shrink-0 px-3 text-sm font-medium text-ink disabled:opacity-60 [@media(hover:hover)]:hover:bg-accent-soft"
           disabled={loading}
           onClick={() => void onRefresh()}
           type="button"

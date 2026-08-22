@@ -7,6 +7,8 @@ import { Panel } from '../components/Panel'
 import { DonutChart } from '../components/PortfolioVisuals'
 import {
   EntityCell,
+  GroupedSection,
+  LabelCaps,
   PortfolioSectionNav,
   SummaryStrip,
   ViewHeader,
@@ -75,12 +77,12 @@ export function AllocationView({
             }))}
           />
           <div>
-            <div className="grid grid-cols-[minmax(0,1fr)_4.5rem_7rem] gap-x-4 border-b border-border/70 pb-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
-              <span>{t('Account')}</span>
-              <span className="text-right">{t('Target')}</span>
-              <span className="text-right">{t('Capital')}</span>
+            <div className="grid grid-cols-[minmax(0,1fr)_4.5rem_7rem] gap-x-4 border-b border-border/60 pb-2">
+              <LabelCaps>{t('Account')}</LabelCaps>
+              <LabelCaps className="text-right">{t('Target')}</LabelCaps>
+              <LabelCaps className="text-right">{t('Capital')}</LabelCaps>
             </div>
-            <ul className="divide-y divide-border/60">
+            <ul className="divide-y divide-border/50">
               {accounts.map((account) => (
                 <li
                   className="grid grid-cols-[minmax(0,1fr)_4.5rem_7rem] items-center gap-x-4 py-2.5"
@@ -136,35 +138,38 @@ function AccountAssetGroup({ group }: { group: AssetGroup }) {
   const assetCountLabel = `${group.assets.length} ${group.assets.length === 1 ? 'asset' : 'assets'}`
 
   return (
-    <section className="overflow-hidden rounded-md border border-border bg-paper">
-      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-border bg-paper-elevated px-4 py-3">
-        <div className="min-w-0">
-          {group.account ? (
-            <EntityCell subject={group.account.subject} title={group.label} />
-          ) : (
-            <h3 className="text-sm font-semibold text-ink">{group.label}</h3>
-          )}
-          <p className="mt-1 text-xs text-ink-faint">{assetCountLabel}</p>
-        </div>
-        <div className="shrink-0 text-right text-xs tabular-nums text-ink-muted">
-          <p>
-            {sleeveTarget !== null ? (
-              <>
-                <span className="text-ink-faint">{t('Sleeve')} </span>
-                <span className="font-medium text-ink">{formatPercent(sleeveTarget)}</span>
-              </>
+    <GroupedSection
+      header={
+        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+          <div className="min-w-0">
+            {group.account ? (
+              <EntityCell subject={group.account.subject} title={group.label} />
             ) : (
-              'No sleeve target'
+              <h3 className="text-sm font-semibold text-ink">{group.label}</h3>
             )}
-          </p>
-          {group.account?.baseAmount ? (
-            <p className="mt-0.5">
-              <span className="text-ink-faint">{t('Capital')} </span>
-              {formatOverviewMoney(group.account.baseAmount)}
+            <p className="mt-1 text-xs text-ink-faint">{assetCountLabel}</p>
+          </div>
+          <div className="shrink-0 text-right text-xs tabular-nums text-ink-muted">
+            <p>
+              {sleeveTarget !== null ? (
+                <>
+                  <span className="text-ink-faint">{t('Sleeve')} </span>
+                  <span className="font-medium text-ink">{formatPercent(sleeveTarget)}</span>
+                </>
+              ) : (
+                'No sleeve target'
+              )}
             </p>
-          ) : null}
+            {group.account?.baseAmount ? (
+              <p className="mt-0.5">
+                <span className="text-ink-faint">{t('Capital')} </span>
+                {formatOverviewMoney(group.account.baseAmount)}
+              </p>
+            ) : null}
+          </div>
         </div>
-      </div>
+      }
+    >
       <div className="p-3">
         <DataTable
           columns={[
@@ -199,7 +204,7 @@ function AccountAssetGroup({ group }: { group: AssetGroup }) {
           }))}
         />
       </div>
-    </section>
+    </GroupedSection>
   )
 }
 

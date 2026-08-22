@@ -31,6 +31,8 @@ const chinese = {
   'Latest decision': '最新决策',
   'Current plan': '当前计划',
   'Investment case views': '投资案例视图',
+  'Health views': '数据健康视图',
+  'Ledger views': '账本视图',
   Thesis: '投资论点',
   Decisions: '决策',
   Decision: '决策',

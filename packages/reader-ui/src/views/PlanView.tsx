@@ -5,7 +5,13 @@ import { DiagnosticList } from '../components/DiagnosticList'
 import { formatMoney, formatPercent } from '../components/format'
 import { MarkdownBody } from '../components/MarkdownBody'
 import { Panel } from '../components/Panel'
-import { EmptyState, EntityCell, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import {
+  EmptyState,
+  EntityCell,
+  InsetList,
+  SummaryStrip,
+  ViewHeader,
+} from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters, matchesFilters } from '../filters'
 import { t } from '../i18n'
@@ -126,7 +132,7 @@ function AccountPlanCard({ group }: { group: PlanGroup }) {
   const { current } = group
 
   return (
-    <article className="rounded-md bg-paper px-4 py-3.5 shadow-[0_1px_0_rgba(47,43,36,0.05)] ring-1 ring-border/80">
+    <article className="surface-card px-5 py-4">
       <EntityCell subject={current.subject} title={current.title ?? current.subject} />
       <div className="mt-4 border-t border-border/65 pt-3">
         <PlanBounds entry={current} />
@@ -150,7 +156,7 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
   const hasActions = current.actionWhenBelow || current.actionWhenAbove
 
   return (
-    <article className="rounded-md bg-paper px-4 py-4 shadow-[0_1px_0_rgba(47,43,36,0.05)] ring-1 ring-border/80">
+    <article className="surface-card px-5 py-4">
       <div className="grid gap-5 xl:grid-cols-[minmax(13rem,0.8fr)_minmax(18rem,1.15fr)_minmax(15rem,0.8fr)] xl:items-center">
         <div className="min-w-0">
           <EntityCell
@@ -206,10 +212,10 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
               : `${t('Show history')} · ${history.length} ${t('revision')}`}
           </button>
           {historyOpen ? (
-            <ol className="mt-2 divide-y divide-border/60 rounded-md border border-border/80 bg-paper-elevated">
+            <InsetList className="mt-2">
               {history.map((entry) => (
                 <li
-                  className="grid gap-2 px-3 py-2.5 text-xs sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-4"
+                  className="grid list-none gap-2 px-4 py-2.5 text-xs sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-4"
                   key={`${entry.date}:${entry.subject}`}
                 >
                   <span className="font-medium text-ink">{entry.title ?? entry.subject}</span>
@@ -220,7 +226,7 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
                   </span>
                 </li>
               ))}
-            </ol>
+            </InsetList>
           ) : null}
         </div>
       ) : null}

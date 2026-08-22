@@ -61,7 +61,7 @@ export function ReaderToolbar({
 
   return (
     <section
-      className="sticky top-0 z-30 border-b border-border bg-paper/95 px-4 py-3 lg:px-7"
+      className="toolbar-glass sticky top-0 z-30 border-b border-border/80 px-4 py-3 lg:px-7"
       ref={toolbarRef}
     >
       <div className="mx-auto flex w-full max-w-[96rem] min-w-0 flex-wrap items-center gap-2">
@@ -77,7 +77,7 @@ export function ReaderToolbar({
             ⌕
           </span>
           <input
-            className="h-10 w-full rounded-md border border-border bg-paper-elevated/80 pl-8 pr-10 text-sm text-ink outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/70 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/20"
+            className="h-10 w-full rounded-md border border-border/80 bg-paper-elevated/90 pl-8 pr-10 text-sm text-ink shadow-[var(--shadow-xs)] outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/15"
             onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
             placeholder={t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
             ref={searchRef}
@@ -92,7 +92,7 @@ export function ReaderToolbar({
         {context.mode !== 'brief' ? (
           <button
             aria-label={t(searchScope === 'workspace' ? 'Entire workspace' : 'This view')}
-            className="press-scale h-10 shrink-0 rounded-md border border-border bg-paper-elevated px-2.5 text-xs font-semibold text-ink-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink"
+            className="control-btn press-scale h-10 shrink-0 px-2.5 text-xs font-semibold text-ink-muted"
             onClick={() => onSearchScopeChange(searchScope === 'workspace' ? 'view' : 'workspace')}
             type="button"
           >
@@ -159,7 +159,7 @@ function FacetControl({
       <button
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className={`press-scale flex h-10 cursor-pointer list-none items-center justify-center rounded-md border px-2.5 text-xs font-semibold leading-none transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden ${value ? 'border-accent/45 bg-accent-soft text-accent-ink' : 'border-border bg-paper-elevated text-ink-muted [@media(hover:hover)]:hover:bg-paper'}`}
+        className={`control-btn press-scale flex h-10 cursor-pointer list-none items-center justify-center px-2.5 text-xs font-semibold leading-none transition-[background-color,color,border-color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden ${value ? 'border-accent/45 bg-accent-soft text-accent-ink' : 'text-ink-muted'}`}
         onClick={() => onOpenChange(!isOpen)}
         type="button"
       >
@@ -167,7 +167,7 @@ function FacetControl({
       </button>
       {isOpen ? (
         <div
-          className="absolute left-0 z-40 mt-2 max-h-72 w-56 overflow-y-auto rounded-md border border-border-strong bg-paper-elevated p-1.5 shadow-[0_18px_48px_rgba(17,19,24,0.16)]"
+          className="dropdown-panel absolute left-0 z-40 mt-2 max-h-72 w-56 overflow-y-auto p-1.5"
           role="listbox"
         >
           <button

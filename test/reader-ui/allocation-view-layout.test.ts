@@ -19,8 +19,8 @@ describe('AllocationView information design', () => {
   it('groups assets in bordered account sections with shared DataTable chrome', () => {
     const source = readFileSync(VIEW, 'utf8')
 
-    expect(source).toMatch(/overflow-hidden rounded-md border border-border bg-paper/)
-    expect(source).toMatch(/border-b border-border bg-paper-elevated/)
+    expect(source).toMatch(/<GroupedSection/)
+    expect(source).not.toContain('surface-card')
     expect(source).toMatch(/<DataTable/)
     expect(source).toMatch(/Account target/)
     expect(source).toMatch(/Portfolio weight/)

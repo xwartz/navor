@@ -46,7 +46,7 @@ function KnowledgeRow({ row }: { row: KnowledgeTableRow }) {
   const tags = row.tags?.filter(Boolean) ?? []
 
   return (
-    <article className="rounded-md bg-paper px-4 py-3">
+    <article className="surface-card px-5 py-4">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold text-ink">{row.title}</h3>
@@ -71,7 +71,7 @@ function KnowledgeRow({ row }: { row: KnowledgeTableRow }) {
         ) : null}
       </div>
       {row.body ? (
-        <div className="mt-3 border-t border-border pt-3">
+        <div className="mt-3 border-t border-border/60 pt-3">
           <MarkdownBody body={row.body} />
         </div>
       ) : null}

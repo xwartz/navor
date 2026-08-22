@@ -14,7 +14,7 @@ import {
 } from '../i18n'
 import { formatMoney, formatMoneyList, formatPercent, formatQuantityCommodity } from './format'
 import { ProgressMeter } from './PortfolioVisuals'
-import { Chip, EntityCell } from './ViewScaffold'
+import { Chip, EntityCell, GroupedSection, LabelCaps } from './ViewScaffold'
 
 interface AccountTreeProps {
   accounts: DashboardAccountExecution[]
@@ -44,95 +44,92 @@ export function AccountTree({ accounts, assets, actions, onSelectAsset }: Accoun
         const accountAssets = assetsByAccount.get(account.subject) ?? []
 
         return (
-          <section
-            className="overflow-hidden rounded-md border border-border bg-paper-elevated"
+          <GroupedSection
+            header={
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_12rem_12rem] lg:items-center">
+                <EntityCell subject={account.subject} title={account.title ?? account.subject} />
+                <div className="tabular-nums">
+                  <LabelCaps>{t('Invested')}</LabelCaps>
+                  <p className="mt-1 font-medium text-ink">{accountInvestedLabel(account)}</p>
+                  <p className="text-xs text-ink-faint">{accountFundingLabel(account)}</p>
+                </div>
+                <ProgressMeter
+                  label={
+                    <span className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                      <span className="shrink-0">
+                        {t('Target')} {formatPercent(account.target)}
+                      </span>
+                      <span className="min-w-0 text-right tabular-nums">
+                        {formatMoney(accountRemainingBudget(account))} {t('left')}
+                      </span>
+                    </span>
+                  }
+                  value={account.investedPercent}
+                />
+              </div>
+            }
             key={account.subject}
           >
-            <div className="grid gap-3 border-b border-border bg-paper px-4 py-3 lg:grid-cols-[minmax(0,1fr)_12rem_12rem] lg:items-center">
-              <EntityCell subject={account.subject} title={account.title ?? account.subject} />
-              <div className="tabular-nums">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                  {t('Invested')}
-                </p>
-                <p className="mt-1 font-medium text-ink">{accountInvestedLabel(account)}</p>
-                <p className="text-xs text-ink-faint">{accountFundingLabel(account)}</p>
-              </div>
-              <ProgressMeter
-                label={
-                  <span className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
-                    <span className="shrink-0">
-                      {t('Target')} {formatPercent(account.target)}
-                    </span>
-                    <span className="min-w-0 text-right tabular-nums">
-                      {formatMoney(accountRemainingBudget(account))} {t('left')}
-                    </span>
-                  </span>
-                }
-                value={account.investedPercent}
-              />
-            </div>
-            <div className="hidden gap-3 border-b border-border bg-paper px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint lg:flex lg:items-center">
+            <div className="hidden gap-3 border-b border-border/50 bg-paper-subtle/30 px-5 py-2 lg:flex lg:items-center">
               <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_11rem_11rem_10rem] gap-3">
-                <span>{t('Asset')}</span>
-                <span className="text-right">{t('Funding')}</span>
-                <span className="text-right">{t('Position')}</span>
-                <span className="text-right">{t('To deploy')}</span>
+                <LabelCaps className="mb-0">{t('Asset')}</LabelCaps>
+                <LabelCaps className="mb-0 text-right">{t('Funding')}</LabelCaps>
+                <LabelCaps className="mb-0 text-right">{t('Position')}</LabelCaps>
+                <LabelCaps className="mb-0 text-right">{t('To deploy')}</LabelCaps>
               </div>
-              <span className="min-w-[9.5rem] text-right">{t('Next step')}</span>
+              <LabelCaps className="mb-0 min-w-[9.5rem] text-right">{t('Next step')}</LabelCaps>
             </div>
-            <div className="divide-y divide-border">
-              {accountAssets.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-ink-muted">{t('No assets assigned.')}</p>
-              ) : (
-                accountAssets.map((asset) => {
-                  const actionType = actionsBySubject.get(asset.subject)
-                  const nextStep = actionType
-                    ? formatDashboardActionLabel(actionType)
-                    : statusAction(asset.status)
+            {accountAssets.length === 0 ? (
+              <p className="px-5 py-3 text-sm text-ink-muted">{t('No assets assigned.')}</p>
+            ) : (
+              accountAssets.map((asset) => {
+                const actionType = actionsBySubject.get(asset.subject)
+                const nextStep = actionType
+                  ? formatDashboardActionLabel(actionType)
+                  : statusAction(asset.status)
 
-                  return (
-                    <div className="[@media(hover:hover)]:hover:bg-paper" key={asset.subject}>
-                      <button
-                        className="grid w-full grid-cols-2 gap-3 px-4 py-3.5 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper lg:grid-cols-[minmax(0,1fr)_11rem_11rem_10rem_9.5rem]"
-                        onClick={() => onSelectAsset(asset.subject)}
-                        type="button"
-                      >
-                        <div className="col-span-2 min-w-0 lg:col-span-1">
-                          <EntityCell
-                            subject={asset.subject}
-                            title={asset.title ?? asset.subject}
-                          />
-                        </div>
-                        <MetricCell
-                          label="Funding"
-                          primary={fundingLabel(asset)}
-                          secondary={formatTargetAmount(formatMoney(asset.targetAmount))}
-                        />
-                        <MetricCell
-                          label="Position"
-                          primary={positionLabel(asset)}
-                          secondary={
-                            asset.marketValue
-                              ? formatMarketAmount(formatMoney(asset.marketValue))
-                              : ''
-                          }
-                        />
-                        <MetricCell
-                          className="col-span-2 min-w-0 lg:col-span-1"
-                          label="To deploy"
-                          primary={formatMoney(remainingAmount(asset))}
-                          secondary={statusReason(asset)}
-                        />
-                        <div className="flex shrink-0 items-center justify-end lg:min-w-[9.5rem]">
-                          <Chip tone={chipTone(asset.status)}>{nextStep}</Chip>
-                        </div>
-                      </button>
-                    </div>
-                  )
-                })
-              )}
-            </div>
-          </section>
+                return (
+                  <div
+                    className="[@media(hover:hover)]:hover:bg-paper-subtle/40"
+                    key={asset.subject}
+                  >
+                    <button
+                      className="grid w-full grid-cols-2 gap-3 px-5 py-3.5 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40 lg:grid-cols-[minmax(0,1fr)_11rem_11rem_10rem_9.5rem]"
+                      onClick={() => onSelectAsset(asset.subject)}
+                      type="button"
+                    >
+                      <div className="col-span-2 min-w-0 lg:col-span-1">
+                        <EntityCell subject={asset.subject} title={asset.title ?? asset.subject} />
+                      </div>
+                      <MetricCell
+                        label="Funding"
+                        primary={fundingLabel(asset)}
+                        secondary={formatTargetAmount(formatMoney(asset.targetAmount))}
+                      />
+                      <MetricCell
+                        label="Position"
+                        primary={positionLabel(asset)}
+                        secondary={
+                          asset.marketValue
+                            ? formatMarketAmount(formatMoney(asset.marketValue))
+                            : ''
+                        }
+                      />
+                      <MetricCell
+                        className="col-span-2 min-w-0 lg:col-span-1"
+                        label="To deploy"
+                        primary={formatMoney(remainingAmount(asset))}
+                        secondary={statusReason(asset)}
+                      />
+                      <div className="flex shrink-0 items-center justify-end lg:min-w-[9.5rem]">
+                        <Chip tone={chipTone(asset.status)}>{nextStep}</Chip>
+                      </div>
+                    </button>
+                  </div>
+                )
+              })
+            )}
+          </GroupedSection>
         )
       })}
     </div>
@@ -172,9 +169,7 @@ function MetricCell({
 }) {
   return (
     <div className={`min-w-0 tabular-nums lg:text-right ${className}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint lg:hidden">
-        {t(label)}
-      </p>
+      <LabelCaps className="mb-1 lg:hidden lg:mb-0">{t(label)}</LabelCaps>
       <p className="truncate font-medium text-ink">{primary}</p>
       {secondary ? <p className="truncate text-xs text-ink-faint">{secondary}</p> : null}
     </div>

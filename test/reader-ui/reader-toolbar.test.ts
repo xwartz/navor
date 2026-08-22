@@ -15,7 +15,7 @@ test('facet menus use controlled state outside a clipping scroll container', asy
   expect(source).toContain('isOpen={openFacet === facet.key}')
   expect(source).toContain('onOpenChange={(open) => setOpenFacet(open ? facet.key : null)}')
   expect(source).toContain('aria-expanded={isOpen}')
-  expect(source).toContain('items-center justify-center rounded-md')
+  expect(source).toContain('control-btn')
   expect(source).toContain('font-semibold leading-none')
   expect(source).not.toContain(
     'inline-flex h-3 w-3 items-center justify-center text-xs leading-none',

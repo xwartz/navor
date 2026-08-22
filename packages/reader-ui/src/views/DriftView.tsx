@@ -1,7 +1,7 @@
 import type { NavorRendererAppState } from '@navor/contract'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { Panel } from '../components/Panel'
-import { Chip, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { Chip, InsetList, LabelCaps, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
 import { t } from '../i18n'
@@ -73,19 +73,19 @@ export function DriftView({
         {actions.length === 0 ? (
           <p className="text-sm text-ink-muted">{t('No actions match the current filters.')}</p>
         ) : (
-          <div className="divide-y divide-border overflow-hidden rounded-md border border-border bg-paper">
+          <InsetList>
             {actions.map((item, index) => (
               <button
                 aria-haspopup="dialog"
-                className="grid min-h-16 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-4 px-3 py-3 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-elevated"
+                className="grid min-h-16 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-4 px-4 py-3.5 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40"
                 key={item.id}
                 onClick={() => openAsset(item.subject)}
                 type="button"
               >
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+                  <LabelCaps>
                     {t('Priority')} {index + 1} · {actionCategoryLabel(item.category)}
-                  </p>
+                  </LabelCaps>
                   <p className="mt-1 truncate text-sm font-semibold text-ink">
                     {item.title ?? item.subject}
                   </p>
@@ -105,7 +105,7 @@ export function DriftView({
                 </Chip>
               </button>
             ))}
-          </div>
+          </InsetList>
         )}
       </Panel>
     </div>

@@ -15,7 +15,14 @@ import {
 } from '../components/format'
 import { Panel } from '../components/Panel'
 import { DonutChart, ProgressMeter } from '../components/PortfolioVisuals'
-import { EmptyState, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import {
+  EmptyState,
+  InsetList,
+  LabelCaps,
+  SuccessCallout,
+  SummaryStrip,
+  ViewHeader,
+} from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel } from '../entity-labels'
 import { formatDashboardActionReason, formatOpenActionDetail, t, translateText } from '../i18n'
@@ -216,9 +223,7 @@ export function DashboardView({
 
               <div className="space-y-4 border-t border-border pt-4 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-5">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                    {t('Funding progress')}
-                  </p>
+                  <LabelCaps>{t('Funding progress')}</LabelCaps>
                   <span className="text-xs text-ink-faint">
                     {state.dashboard.accountExecutions.length} {t('sleeves')}
                   </span>
@@ -249,9 +254,7 @@ export function DashboardView({
           <Panel description="Cash and PnL that affect deployable capital." title="Liquidity">
             <div className="space-y-5">
               <div>
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                  {t('Cash by currency')}
-                </p>
+                <LabelCaps className="mb-2">{t('Cash by currency')}</LabelCaps>
                 <CurrencyBreakdown
                   emptyMessage="No cash balances."
                   items={state.dashboard.cash}
@@ -264,9 +267,7 @@ export function DashboardView({
               </div>
               {otherPnlCount > 0 ? (
                 <div className="border-t border-border pt-4">
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                    {t('PnL by currency')}
-                  </p>
+                  <LabelCaps className="mb-2">{t('PnL by currency')}</LabelCaps>
                   <CurrencyBreakdown
                     items={pnlByCurrency}
                     note={
@@ -305,11 +306,11 @@ function LargestPositions({
       {positions.length === 0 ? (
         <EmptyState>{t('No exposure data.')}</EmptyState>
       ) : (
-        <div className="divide-y divide-border/80">
+        <div className="divide-y divide-border/50">
           {positions.map(({ drift, subject, title, value }) => (
             <button
               aria-haspopup="dialog"
-              className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-2.5 text-left transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper"
+              className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-2.5 text-left transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40"
               key={subject}
               onClick={() => onOpenAsset(subject)}
               type="button"
@@ -369,13 +370,10 @@ function DecisionQueue({
       title="Decision queue"
     >
       {actions.length === 0 ? (
-        <div className="flex items-center gap-3 rounded-md bg-positive-soft px-3 py-3 text-sm text-accent-ink">
-          <span aria-hidden className="h-2 w-2 rounded-full bg-positive" />
-          {t('Nothing requires action')}
-        </div>
+        <SuccessCallout>{t('Nothing requires action')}</SuccessCallout>
       ) : (
         <div className="space-y-3">
-          <div className="divide-y divide-border overflow-hidden rounded-md border border-border bg-paper-elevated">
+          <InsetList>
             {actions.slice(0, 5).map((item, index) => {
               const isSelected = selectedAssetSubject === item.subject
 
@@ -383,8 +381,8 @@ function DecisionQueue({
                 <div
                   className={
                     isSelected
-                      ? 'bg-paper shadow-[inset_3px_0_0_0_var(--color-accent)]'
-                      : '[@media(hover:hover)]:hover:bg-paper'
+                      ? 'bg-paper-subtle/60 shadow-[inset_3px_0_0_0_var(--color-accent)]'
+                      : '[@media(hover:hover)]:hover:bg-paper-subtle/40'
                   }
                   key={item.id}
                   title={item.subject}
@@ -392,18 +390,18 @@ function DecisionQueue({
                   <button
                     aria-current={isSelected ? 'true' : undefined}
                     aria-haspopup="dialog"
-                    className="flex w-full items-start gap-3 px-3 py-3 text-left transition-[background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink"
+                    className="flex w-full items-start gap-3 px-4 py-3.5 text-left transition-[background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink"
                     onClick={() => onOpenAsset(item.subject)}
                     type="button"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
+                      <LabelCaps>
                         {t('Priority')} {index + 1} · {actionCategoryLabel(item.category)}
-                      </p>
+                      </LabelCaps>
                       <h3 className="mt-1 text-sm font-semibold text-ink">
                         {item.title ?? item.subject}
                       </h3>
-                      <p className="mt-1 text-[11px] leading-5 text-ink-faint">
+                      <p className="mt-1 text-xs leading-5 text-ink-faint">
                         {formatDashboardActionReason(item.reason)}
                       </p>
                     </div>
@@ -414,7 +412,7 @@ function DecisionQueue({
                 </div>
               )
             })}
-          </div>
+          </InsetList>
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-faint">
             <span>
               {openActionCount > 5 ? `${openActionCount - 5} ${t('more actions')}` : null}
@@ -460,10 +458,10 @@ function CurrencyBreakdown({
 
   return (
     <div className="space-y-3">
-      <div className="divide-y divide-border overflow-hidden rounded-md border border-border bg-paper">
+      <InsetList>
         {items.map((item) => (
           <div
-            className="grid grid-cols-[minmax(0,1fr)_minmax(8rem,auto)] gap-3 px-3 py-2.5"
+            className="grid grid-cols-[minmax(0,1fr)_minmax(8rem,auto)] gap-3 px-4 py-2.5"
             key={item.currency}
           >
             <span className="text-sm font-medium text-ink">{item.currency}</span>
@@ -480,7 +478,7 @@ function CurrencyBreakdown({
             </span>
           </div>
         ))}
-      </div>
+      </InsetList>
       {note ? <p className="text-xs leading-5 text-ink-faint">{note}</p> : null}
     </div>
   )
@@ -497,7 +495,7 @@ function SeverityChip({ severity }: { severity: 'high' | 'medium' | 'low' }) {
 
   return (
     <span
-      className={`inline-flex shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.04em] ${tone}`}
+      className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${tone}`}
     >
       {label}
     </span>

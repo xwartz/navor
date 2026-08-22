@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { DataTable } from '../components/DataTable'
 import { joinKnowledgeMeta, KnowledgeTable } from '../components/KnowledgeTable'
 import { Panel } from '../components/Panel'
-import { Chip, EntityCell, ViewHeader } from '../components/ViewScaffold'
+import { Chip, EntityCell, SectionTabs, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { formatReviewDeadline, t } from '../i18n'
+import { formatReviewDeadline } from '../i18n'
 
 export type CaseTab = 'cases' | 'market' | 'evidence' | 'theses' | 'decisions'
 
@@ -119,31 +119,12 @@ export function ResearchView({
         title="Investment cases"
       />
 
-      <div
-        aria-label="Investment case views"
-        className="meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/80 px-1 pb-3"
-        role="tablist"
-      >
-        {CASE_TABS.map((tab) => {
-          const selected = activeTab === tab.id
-          return (
-            <button
-              aria-selected={selected}
-              className={`press-scale min-h-10 shrink-0 rounded-md px-3 text-xs font-semibold transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${
-                selected
-                  ? 'bg-paper-elevated text-ink shadow-[inset_0_-1px_0_var(--color-accent)]'
-                  : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink'
-              }`}
-              key={tab.id}
-              onClick={() => selectTab(tab.id)}
-              role="tab"
-              type="button"
-            >
-              {t(tab.label)}
-            </button>
-          )
-        })}
-      </div>
+      <SectionTabs
+        active={activeTab}
+        ariaLabel="Investment case views"
+        onSelect={selectTab}
+        tabs={CASE_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+      />
 
       {activeTab === 'cases' && (
         <Panel

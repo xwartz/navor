@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.4
+
+### Patch Changes
+
+- Refine Reader UI with shared surfaces, section tabs, and typography for consistency across views, and fix sticky table header background mismatch.
+  - @navor/contract@0.6.4
+  - @navor/core@0.6.4
+  - @navor/adapters@0.6.4
+  - @navor/renderer@0.6.4
+
 ## 0.6.3
 
 ### Patch Changes

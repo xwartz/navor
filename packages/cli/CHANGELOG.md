@@ -1,5 +1,14 @@
 # @navor/cli
 
+## 0.6.4
+
+### Patch Changes
+
+- Polish Reader UI consistency across views and fix table header styling.
+  - @navor/core@0.6.4
+  - @navor/renderer@0.6.4
+  - @navor/reader-ui@0.6.4
+
 ## 0.6.3
 
 ### Patch Changes

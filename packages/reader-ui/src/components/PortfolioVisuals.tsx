@@ -292,7 +292,7 @@ export function RankedExposureList({
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-[minmax(0,1fr)_4.5rem] gap-4 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
+      <div className="label-caps grid grid-cols-[minmax(0,1fr)_4.5rem] gap-4">
         <span>{t('Exposure')}</span>
         <span className="text-right">{translateText(valueLabel)}</span>
       </div>
@@ -335,7 +335,7 @@ export function TargetActualList({ items }: { items: TargetActualItem[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-[minmax(0,1fr)_4rem_4rem_4rem] gap-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-faint">
+      <div className="label-caps grid grid-cols-[minmax(0,1fr)_4rem_4rem_4rem] gap-3">
         <span>{t('Asset')}</span>
         <span className="text-right">{t('Target')}</span>
         <span className="text-right">{t('Actual')}</span>
