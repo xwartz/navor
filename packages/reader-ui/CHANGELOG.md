@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.5
+
+### Patch Changes
+
+- Show realized and unrealized PnL as separate Reader summary metrics.
+  - @navor/adapters@0.6.5
+  - @navor/contract@0.6.5
+  - @navor/core@0.6.5
+  - @navor/renderer@0.6.5
+
 ## 0.6.4
 
 ### Patch Changes

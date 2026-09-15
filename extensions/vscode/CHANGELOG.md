@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.5
+
+- Align the extension with the Navor 0.6.5 Reader release.
+
 ## 0.6.4
 
 - Align the extension with the Navor 0.6.4 Reader release.
