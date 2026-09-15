@@ -3,6 +3,9 @@ packages:
   - "packages/*"
   - "apps/*"
 
+# Match pnpm 11's default so local lockfile updates cannot land versions CI will reject.
+minimumReleaseAge: 1440
+
 allowBuilds:
   esbuild: true
   sharp: true

@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",
-    "@changesets/cli": "^3.0.3",
+    "@changesets/cli": "^3.0.2",
     "@navor/adapters": "workspace:*",
     "@navor/cli": "workspace:*",
     "@navor/contract": "workspace:*",

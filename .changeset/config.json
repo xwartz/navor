@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": ["@changesets/cli/changelog", { "repo": "xwartz/navor" }],
   "commit": false,
   "fixed": [["@navor/contract", "@navor/core", "@navor/adapters", "@navor/renderer", "@navor/reader-ui", "@navor/cli"]],
