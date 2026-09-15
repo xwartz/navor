@@ -1,4 +1,4 @@
-import { formatNumber, readerLocale, t } from '../i18n'
+import { formatNumber, type MessageKey, readerLocale, t } from '../i18n'
 
 export function formatMoney(value: { amount: number; currency: string } | null | undefined) {
   if (!value) {
@@ -76,32 +76,87 @@ export function countOtherCurrencies(
   return primary ? values.filter((value) => value.currency !== primary.currency).length : 0
 }
 
+export function summarizeMoneyValues(
+  values: Array<{ amount: number; currency: string } | null | undefined>,
+  baseCurrency: string | null | undefined,
+  fxRates: Record<string, number> | null | undefined,
+) {
+  const grouped = groupMoneyValues(values)
+  const primary = pickMoneyCurrency(grouped, baseCurrency)
+  const converted = sumMoneyInBase(values, baseCurrency, fxRates)
+
+  return {
+    displayed: converted.total ?? primary,
+    grouped,
+    hasBaseTotal: converted.total !== null,
+    unconvertedCurrencies: converted.unconvertedCurrencies,
+    otherCurrencyCount: countOtherCurrencies(grouped, primary),
+  }
+}
+
+export function moneyDeltaTone(
+  value: { amount: number } | null | undefined,
+): 'neutral' | 'positive' | 'danger' {
+  if (!value || value.amount === 0) {
+    return 'neutral'
+  }
+
+  return value.amount > 0 ? 'positive' : 'danger'
+}
+
 export function formatPnlCoverageDetail({
   hasBaseTotal,
   unconvertedCurrencies,
   otherCurrencyCount,
+  label,
 }: {
   hasBaseTotal: boolean
   unconvertedCurrencies: string[]
   otherCurrencyCount: number
+  label: MessageKey
 }) {
-  if (hasBaseTotal) {
-    if (unconvertedCurrencies.length > 0) {
-      return `${unconvertedCurrencies.length} ${t(
-        unconvertedCurrencies.length === 1 ? 'unconverted currency' : 'unconverted currencies',
-      )}`
-    }
+  const unconvertedCount = hasBaseTotal ? unconvertedCurrencies.length : otherCurrencyCount
 
-    return t('Realized + unrealized, base converted')
-  }
-
-  if (otherCurrencyCount > 0) {
-    return `${otherCurrencyCount} ${t(
-      otherCurrencyCount === 1 ? 'unconverted currency' : 'unconverted currencies',
+  if (unconvertedCount > 0) {
+    return `${t(label)} · ${unconvertedCount} ${t(
+      unconvertedCount === 1 ? 'unconverted currency' : 'unconverted currencies',
     )}`
   }
 
-  return t('Realized + unrealized')
+  return t(label)
+}
+
+export function buildPnlSummaryItem({
+  label,
+  values,
+  baseCurrency,
+  fxRates,
+  detailLabel,
+  emptyAsZero = false,
+}: {
+  label: MessageKey
+  values: Array<{ amount: number; currency: string } | null | undefined>
+  baseCurrency: string | null | undefined
+  fxRates: Record<string, number> | null | undefined
+  detailLabel: MessageKey
+  emptyAsZero?: boolean
+}) {
+  const summary = summarizeMoneyValues(values, baseCurrency, fxRates)
+  const displayed =
+    summary.displayed ??
+    (emptyAsZero && baseCurrency ? { amount: 0, currency: baseCurrency } : null)
+
+  return {
+    label: t(label),
+    value: formatMoney(displayed),
+    detail: formatPnlCoverageDetail({
+      hasBaseTotal: summary.hasBaseTotal,
+      unconvertedCurrencies: summary.unconvertedCurrencies,
+      otherCurrencyCount: summary.otherCurrencyCount,
+      label: detailLabel,
+    }),
+    tone: moneyDeltaTone(displayed),
+  }
 }
 
 export function formatWorkspacePath(root: string, file: string) {

@@ -2,12 +2,12 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { useAssetWorkspace } from '../asset-workspace-context'
 import {
+  buildPnlSummaryItem,
   convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
   formatMoneyList,
   formatPercent,
-  formatPnlCoverageDetail,
   formatSignedPercent,
   groupMoneyValues,
   pickMoneyCurrency,
@@ -44,10 +44,28 @@ export function DashboardView({
       asset.status === 'currency_mismatch',
   )
   const unrealizedPnl = state.market.portfolioValues.map((value) => value.pnl)
-  const totalPnl = [...unrealizedPnl, ...state.portfolio.realizedPnl.map((entry) => entry.amount)]
+  const realizedPnl = (state.portfolio.realizedPnl ?? []).map((entry) => entry.amount)
+  const totalPnl = [...unrealizedPnl, ...realizedPnl]
   const pnlByCurrency = groupMoneyValues(totalPnl)
-  const primaryPnl = pickMoneyCurrency(pnlByCurrency, state.drift.baseCurrency)
-  const otherPnlCount = countOtherCurrencies(pnlByCurrency, primaryPnl)
+  const otherPnlCount = countOtherCurrencies(
+    pnlByCurrency,
+    pickMoneyCurrency(pnlByCurrency, state.drift.baseCurrency),
+  )
+  const unrealizedPnlItem = buildPnlSummaryItem({
+    label: 'Unrealized PnL',
+    values: unrealizedPnl,
+    baseCurrency: state.drift.baseCurrency,
+    fxRates: state.drift.fxRates,
+    detailLabel: 'Open positions',
+  })
+  const realizedPnlItem = buildPnlSummaryItem({
+    label: 'Realized PnL',
+    values: realizedPnl,
+    baseCurrency: state.drift.baseCurrency,
+    fxRates: state.drift.fxRates,
+    detailLabel: 'Closed positions',
+    emptyAsZero: true,
+  })
 
   const hasLiveValuation = state.drift.totalMarketValue !== null
   const investedCapital = groupMoneyValues(
@@ -58,10 +76,7 @@ export function DashboardView({
     state.drift.baseCurrency,
     state.drift.fxRates,
   )
-  const pnlInBase = sumMoneyInBase(totalPnl, state.drift.baseCurrency, state.drift.fxRates)
   const hasConvertedCapital = investedInBase.total !== null
-  const hasConvertedPnl = pnlInBase.total !== null
-  const displayedPnl = hasConvertedPnl ? pnlInBase.total : primaryPnl
   const hasFxRates = Object.keys(state.drift.fxRates ?? {}).length > 0
   const portfolioValueInBase = hasLiveValuation
     ? sumMoneyInBase(
@@ -150,21 +165,8 @@ export function DashboardView({
                     ? t('Awaiting live prices')
                     : t('Cost basis until live prices load'),
           },
-          {
-            label: t('Total PnL'),
-            value: formatMoney(displayedPnl),
-            detail: formatPnlCoverageDetail({
-              hasBaseTotal: hasConvertedPnl,
-              unconvertedCurrencies: pnlInBase.unconvertedCurrencies,
-              otherCurrencyCount: otherPnlCount,
-            }),
-            tone:
-              !displayedPnl || displayedPnl.amount === 0
-                ? 'neutral'
-                : displayedPnl.amount > 0
-                  ? 'positive'
-                  : 'danger',
-          },
+          unrealizedPnlItem,
+          realizedPnlItem,
           {
             label: t('Target-range breaches'),
             value: String(offTrackAssets.length),

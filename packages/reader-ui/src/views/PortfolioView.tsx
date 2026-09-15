@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { DataTable } from '../components/DataTable'
 import {
+  buildPnlSummaryItem,
   convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
@@ -82,6 +83,13 @@ export function PortfolioView({
   const otherCostCount = costInBase.total
     ? costInBase.unconvertedCurrencies.length
     : countOtherCurrencies(costByCurrency, primaryCost)
+  const unrealizedPnlItem = buildPnlSummaryItem({
+    label: 'Unrealized PnL',
+    values: portfolioValues.map((value) => value.pnl),
+    baseCurrency: state.drift.baseCurrency,
+    fxRates: state.drift.fxRates,
+    detailLabel: 'Open positions',
+  })
 
   return (
     <div className="space-y-5">
@@ -119,6 +127,7 @@ export function PortfolioView({
               ? `${t('Converted to')} ${state.drift.baseCurrency}`
               : undefined,
           },
+          unrealizedPnlItem,
         ]}
       />
 

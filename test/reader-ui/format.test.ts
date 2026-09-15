@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  buildPnlSummaryItem,
   formatFxCoverage,
   formatMoney,
   formatPnlCoverageDetail,
@@ -18,14 +19,15 @@ describe('reader formatting', () => {
     expect(formatFxCoverage({ CNY: 6.8 }, ['HKD'])).toBe('FX: CNY 6.80 · missing HKD')
   })
 
-  it('does not call converted source currencies unconverted', () => {
+  it('keeps converted source currencies from looking unconverted', () => {
     expect(
       formatPnlCoverageDetail({
         hasBaseTotal: true,
         unconvertedCurrencies: [],
         otherCurrencyCount: 2,
+        label: 'Open positions',
       }),
-    ).toBe('Realized + unrealized, base converted')
+    ).toBe('Open positions')
   })
 
   it('reports only currencies that actually failed conversion', () => {
@@ -34,8 +36,41 @@ describe('reader formatting', () => {
         hasBaseTotal: true,
         unconvertedCurrencies: ['JPY'],
         otherCurrencyCount: 3,
+        label: 'Open positions',
       }),
-    ).toBe('1 unconverted currency')
+    ).toBe('Open positions · 1 unconverted currency')
+  })
+
+  it('separates realized and unrealized PnL summaries', () => {
+    expect(
+      buildPnlSummaryItem({
+        label: 'Unrealized PnL',
+        values: [{ amount: 120, currency: 'USD' }],
+        baseCurrency: 'USD',
+        fxRates: {},
+        detailLabel: 'Open positions',
+      }),
+    ).toMatchObject({
+      label: 'Unrealized PnL',
+      value: '120 USD',
+      detail: 'Open positions',
+      tone: 'positive',
+    })
+    expect(
+      buildPnlSummaryItem({
+        label: 'Realized PnL',
+        values: [],
+        baseCurrency: 'USD',
+        fxRates: {},
+        detailLabel: 'Closed positions',
+        emptyAsZero: true,
+      }),
+    ).toMatchObject({
+      label: 'Realized PnL',
+      value: '0 USD',
+      detail: 'Closed positions',
+      tone: 'neutral',
+    })
   })
 
   it('shows workspace source files relative to the workspace root', () => {
