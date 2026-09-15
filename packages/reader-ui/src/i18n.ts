@@ -153,7 +153,6 @@ const chinese = {
   target: '目标',
   'Awaiting live prices': '等待实时价格',
   'Cost basis until live prices load': '实时价格加载前使用成本价',
-  'Total PnL': '总盈亏',
   'Unrealized PnL': '未实现盈亏',
   'Open positions': '未平仓持仓',
   'Closed positions': '已平仓',

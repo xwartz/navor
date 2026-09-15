@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
   "changelog": ["@changesets/cli/changelog", { "repo": "xwartz/navor" }],
   "commit": false,
   "fixed": [["@navor/contract", "@navor/core", "@navor/adapters", "@navor/renderer", "@navor/reader-ui", "@navor/cli"]],
@@ -7,7 +7,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": ["@navor/workspace", "@navor/demo"],
-  "__experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
-    "useCalculatedVersionForSnapshots": true
+  "snapshot": {
+    "useCalculatedVersion": true
   }
 }

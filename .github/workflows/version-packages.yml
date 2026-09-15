@@ -25,6 +25,5 @@ jobs:
       - run: node scripts/release-plan.mjs --check
       - uses: changesets/action@v2
         with:
-          version: pnpm changeset version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-script: pnpm changeset version
