@@ -4,6 +4,9 @@ import { describe, expect, it } from 'vitest'
 const WORKSPACE = 'packages/reader-ui/src/AssetWorkspaceProvider.tsx'
 const PANEL = 'packages/reader-ui/src/components/AssetWorkspacePanel.tsx'
 const SCAFFOLD = 'packages/reader-ui/src/components/ViewScaffold.tsx'
+const PALETTE = 'packages/reader-ui/src/components/CommandPalette.tsx'
+const TOOLBAR = 'packages/reader-ui/src/components/ReaderToolbar.tsx'
+const APP = 'packages/reader-ui/src/App.tsx'
 
 describe('shared asset workspace', () => {
   it('uses the location protocol and restores focus on close', () => {
@@ -30,6 +33,30 @@ describe('shared asset workspace', () => {
     expect(source).toMatch(/role=\{isModal \? 'dialog' : 'complementary'\}/)
     expect(source).toMatch(/isModal \? \(/)
     expect(source).toMatch(/xl:w-\[22rem\] 2xl:w-\[30rem\]/)
+  })
+
+  it('uses market-currency PnL and cost for the asset return', () => {
+    const source = readFileSync(PANEL, 'utf8')
+
+    expect(source).toContain('const localPnl = market?.pnlInMarketCurrency ?? null')
+    expect(source).toContain('market.marketValue.amount - localPnl.amount')
+    expect(source).toContain('(localPnl.amount / localCost) * 100')
+    expect(source).toContain('formatSignedMoney(localPnl)')
+    expect(source).not.toContain('market.pnl.amount / market.cost.amount')
+  })
+
+  it('closes the palette from any focused element and keeps jump discreetly accessible', () => {
+    const palette = readFileSync(PALETTE, 'utf8')
+    const toolbar = readFileSync(TOOLBAR, 'utf8')
+    const app = readFileSync(APP, 'utf8')
+
+    expect(palette).toContain("window.addEventListener('keydown', closeOnEscape, true)")
+    expect(palette).toContain("window.removeEventListener('keydown', closeOnEscape, true)")
+    expect(palette).toContain('event.stopPropagation()')
+    expect(palette).toContain('bg-transparent text-base text-ink')
+    expect(toolbar).toContain('aria-keyshortcuts="Meta+/ Control+/"')
+    expect(app).toMatch(/title=\{`.*Jump to.*paletteShortcut.*`\}/)
+    expect(app).not.toContain('{paletteShortcut}</kbd>')
   })
 
   it('keeps asset cells opt-in so nested interactive rows remain valid', () => {

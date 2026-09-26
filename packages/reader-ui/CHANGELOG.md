@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.7
+
+### Patch Changes
+
+- Improve search and quick-jump shortcuts, close quick jump with Escape, and show asset gains and losses in the market currency with a matching percentage basis.
+- @navor/adapters@0.6.7
+  - @navor/contract@0.6.7
+  - @navor/core@0.6.7
+  - @navor/renderer@0.6.7
+
 ## 0.6.6
 
 ### Patch Changes

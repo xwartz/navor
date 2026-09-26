@@ -32,6 +32,8 @@ function CommandPaletteDialog({ onClose, state }: Omit<CommandPaletteProps, 'isO
   const listboxId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const items = useMemo(() => buildCommandItems(state, canOpenAsset), [state, canOpenAsset])
@@ -44,8 +46,16 @@ function CommandPaletteDialog({ onClose, state }: Omit<CommandPaletteProps, 'isO
     inputRef.current?.focus()
     const { overflow } = document.body.style
     document.body.style.overflow = 'hidden'
+    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      onCloseRef.current()
+    }
+    window.addEventListener('keydown', closeOnEscape, true)
 
     return () => {
+      window.removeEventListener('keydown', closeOnEscape, true)
       document.body.style.overflow = overflow
       returnFocusRef.current?.focus({ preventScroll: true })
     }
@@ -69,12 +79,6 @@ function CommandPaletteDialog({ onClose, state }: Omit<CommandPaletteProps, 'isO
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      onClose()
-      return
-    }
-
     if (event.key === 'Tab') {
       event.preventDefault()
       return
@@ -119,7 +123,7 @@ function CommandPaletteDialog({ onClose, state }: Omit<CommandPaletteProps, 'isO
             aria-autocomplete="list"
             aria-controls={listboxId}
             aria-expanded
-            className="h-14 min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-ink-faint"
+            className="h-14 min-w-0 flex-1 bg-transparent text-base text-ink outline-none placeholder:text-ink-faint"
             onChange={(event) => {
               setQuery(event.target.value)
               setActiveIndex(0)

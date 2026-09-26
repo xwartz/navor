@@ -37,13 +37,21 @@ test('uses entity names instead of raw subject symbols in subject filters', asyn
   expect(source).toContain('compactValue(option)')
 })
 
-test('turns the Briefing search field into a command-palette jump', async () => {
+test('keeps a real search field on Briefing and focuses it with the search shortcut', async () => {
   const source = await readFile(readerToolbarPath, 'utf8')
 
-  expect(source).toContain("const jumpOnly = context.mode === 'brief' && Boolean(onJump)")
-  expect(source).toContain("t('Jump to a view, asset, or record')")
-  expect(source).toContain('if (jumpOnly)')
-  expect(source).toContain('onJump?.()')
+  expect(source).toContain('isSearchShortcut(event, isEditing)')
+  expect(source).toContain('searchRef.current?.focus()')
+  expect(source).toContain('aria-keyshortcuts="Meta+/ Control+/"')
+  expect(source).not.toContain('jumpOnly')
+})
+
+test('keeps mobile search text at iOS-safe size and hides the shortcut while editing', async () => {
+  const source = await readFile(readerToolbarPath, 'utf8')
+
+  expect(source).toContain('pl-8 pr-10 text-base text-ink')
+  expect(source).toContain('!filters.query && searchShortcut')
+  expect(source).toContain('pointer-events-none absolute inset-y-0 right-3 hidden')
 })
 
 test('aligns page-scoped controls with the Reader content column', async () => {

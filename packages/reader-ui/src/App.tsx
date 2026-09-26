@@ -19,6 +19,7 @@ import { EntityLabelProvider } from './EntityLabelContext'
 import type { ReaderFilters } from './filters'
 import { hasActiveFilters, matchesFilters } from './filters'
 import { readerLocale, t } from './i18n'
+import { isPaletteShortcut } from './keyboard-shortcuts'
 import { getNavGroups, getViewLabels, type ReaderView } from './navigation'
 import { useReaderNavigationSession } from './navigation-session'
 import { buildSearchHits } from './search'
@@ -182,39 +183,36 @@ function ReaderAppShell({
               </button>
             }
             onChange={setFilters}
-            onJump={() => setPaletteOpen(true)}
+            searchShortcut={paletteShortcut.replace(/K$/, '/')}
             onSearchScopeChange={setSearchScope}
             resultCount={filterResultCount}
             searchScope={searchScope}
             trailing={
-              toolbarContext.mode === 'brief' ? undefined : (
-                <button
-                  aria-haspopup="dialog"
-                  aria-keyshortcuts="Meta+K Control+K"
-                  aria-label={t('Jump to')}
-                  className="control-btn press-scale inline-flex h-10 w-10 items-center gap-2 px-0 text-xs font-semibold text-ink-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 sm:w-auto sm:px-2.5 [@media(hover:hover)]:hover:text-ink"
-                  onClick={() => setPaletteOpen(true)}
-                  type="button"
+              <button
+                aria-haspopup="dialog"
+                aria-keyshortcuts="Meta+K Control+K"
+                aria-label={t('Jump to')}
+                title={`${t('Jump to')} (${paletteShortcut})`}
+                className="press-scale inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-ink-faint transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-elevated [@media(hover:hover)]:hover:text-ink"
+                onClick={() => setPaletteOpen(true)}
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    aria-hidden="true"
-                    className="h-4 w-4 sm:hidden"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.8"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="10.75" cy="10.75" r="6.25" />
-                    <path d="m16 16 4 4" />
-                  </svg>
-                  <span className="hidden sm:inline">{t('Jump to')}</span>
-                  <kbd className="hidden h-5 items-center rounded border border-border px-1.5 font-ui text-[10px] font-medium text-ink-faint sm:inline-flex">
-                    {paletteShortcut}
-                  </kbd>
-                </button>
-              )
+                  <rect x="3.5" y="3.5" width="6" height="6" rx="1" />
+                  <rect x="14.5" y="3.5" width="6" height="6" rx="1" />
+                  <rect x="3.5" y="14.5" width="6" height="6" rx="1" />
+                  <rect x="14.5" y="14.5" width="6" height="6" rx="1" />
+                </svg>
+              </button>
             }
           />
           <main className="@container flex-1 px-4 py-4 lg:px-8 lg:py-6" id="main-content">
@@ -258,7 +256,7 @@ function usePaletteShortcut(setOpen: Dispatch<SetStateAction<boolean>>) {
     if (!/Mac|iPhone|iPad/.test(navigator.userAgent)) setLabel('Ctrl K')
 
     const toggle = (event: globalThis.KeyboardEvent) => {
-      if (event.key.toLowerCase() !== 'k' || !(event.metaKey || event.ctrlKey)) return
+      if (!isPaletteShortcut(event)) return
       event.preventDefault()
       setOpen((current) => !current)
     }

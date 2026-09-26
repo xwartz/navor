@@ -71,8 +71,11 @@ function AssetWorkspacePanel({
   const invested = execution?.investedCost ?? holding?.cost ?? null
   const average = holding ? averagePrice(holding.cost, holding.quantity) : null
   const heroValue = market?.marketValue ?? invested
+  const localPnl = market?.pnlInMarketCurrency ?? null
+  const localCost =
+    localPnl && market?.marketValue ? market.marketValue.amount - localPnl.amount : null
   const pnlPercent =
-    market?.pnl && market.cost?.amount ? (market.pnl.amount / market.cost.amount) * 100 : null
+    localPnl && localCost !== null && localCost > 0 ? (localPnl.amount / localCost) * 100 : null
   const bandMin = plan?.min ?? drift?.planMin ?? null
   const bandMax = plan?.max ?? drift?.planMax ?? null
   const targetWeight = drift?.targetWeight ?? plan?.target ?? null
@@ -238,13 +241,13 @@ function AssetWorkspacePanel({
             <p className="mt-1.5 font-display text-[1.75rem] font-semibold leading-9 tracking-[-0.02em] tabular-nums text-ink">
               {heroValue ? formatMoney(heroValue) : t('Not available')}
             </p>
-            {market?.pnl ? (
+            {localPnl ? (
               <p
                 className={`mt-0.5 text-sm font-medium tabular-nums ${
-                  market.pnl.amount < 0 ? 'text-danger' : 'text-positive'
+                  localPnl.amount < 0 ? 'text-danger' : 'text-positive'
                 }`}
               >
-                {formatSignedMoney(market.pnl)}
+                {formatSignedMoney(localPnl)}
                 {pnlPercent !== null ? (
                   <span className="ml-2 text-xs opacity-80">{formatSignedPercent(pnlPercent)}</span>
                 ) : null}

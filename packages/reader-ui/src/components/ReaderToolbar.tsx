@@ -4,6 +4,7 @@ import { useEntityLabel } from '../EntityLabelContext'
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters } from '../filters'
 import { formatFacetOption, t } from '../i18n'
+import { isSearchShortcut } from '../keyboard-shortcuts'
 import type { ToolbarContext, ToolbarFacet } from '../toolbar-context'
 
 interface ReaderToolbarProps {
@@ -14,7 +15,7 @@ interface ReaderToolbarProps {
   resultCount: number | null
   searchScope: 'view' | 'workspace'
   onChange: (filters: ReaderFilters) => void
-  onJump?: () => void
+  searchShortcut?: string
   onSearchScopeChange: (scope: 'view' | 'workspace') => void
 }
 
@@ -26,11 +27,14 @@ export function ReaderToolbar({
   resultCount,
   searchScope,
   onChange,
-  onJump,
+  searchShortcut,
   onSearchScopeChange,
 }: ReaderToolbarProps) {
   const active = hasActiveFilters(filters)
-  const jumpOnly = context.mode === 'brief' && Boolean(onJump)
+  const searchLabel =
+    context.mode === 'brief' || searchScope === 'workspace'
+      ? 'Search workspace'
+      : 'Search this view'
   const searchRef = useRef<HTMLInputElement>(null)
   const toolbarRef = useRef<HTMLElement>(null)
   const [openFacet, setOpenFacet] = useState<keyof ReaderFilters | null>(null)
@@ -38,18 +42,15 @@ export function ReaderToolbar({
   useEffect(() => {
     const focusSearch = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null
-      if (event.key !== '/' || target?.matches('input, textarea, select, [contenteditable]')) return
+      const isEditing = Boolean(target?.matches('input, textarea, select, [contenteditable]'))
+      if (!isSearchShortcut(event, isEditing)) return
       event.preventDefault()
-      if (jumpOnly) {
-        onJump?.()
-        return
-      }
       searchRef.current?.focus()
     }
 
     window.addEventListener('keydown', focusSearch)
     return () => window.removeEventListener('keydown', focusSearch)
-  }, [jumpOnly, onJump])
+  }, [])
 
   useEffect(() => {
     const closeFacetOnOutsidePointerDown = (event: PointerEvent) => {
@@ -75,43 +76,32 @@ export function ReaderToolbar({
     >
       <div className="mx-auto flex w-full max-w-[96rem] min-w-0 flex-wrap items-center gap-2">
         {leading}
-        {jumpOnly ? (
-          <button
-            className="relative min-w-[11rem] flex-1 rounded-md border border-border/80 bg-paper-elevated/90 px-3 text-left shadow-[var(--shadow-xs)] transition-[border-color,box-shadow,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/15 lg:max-w-[22rem] [@media(hover:hover)]:hover:border-accent/40"
-            onClick={onJump}
-            type="button"
+        <label className="relative min-w-[11rem] flex-1 lg:max-w-[19rem]">
+          <span className="sr-only">{t(searchLabel)}</span>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-faint"
           >
-            <span className="flex h-10 items-center gap-2 text-sm text-ink-faint">
-              <span aria-hidden>⌕</span>
-              <span className="min-w-0 flex-1 truncate">
-                {t('Jump to a view, asset, or record')}
-              </span>
-              <kbd className="hidden h-5 items-center rounded border border-border px-1.5 font-ui text-[10px] text-ink-faint sm:inline-flex">
-                /
-              </kbd>
-            </span>
-          </button>
-        ) : (
-          <label className="relative min-w-[11rem] flex-1 lg:max-w-[19rem]">
-            <span className="sr-only">
-              {t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
-            </span>
+            ⌕
+          </span>
+          <input
+            aria-keyshortcuts="Meta+/ Control+/"
+            className="h-10 w-full rounded-md border border-border/80 bg-paper-elevated/90 pl-8 pr-10 text-base text-ink shadow-[var(--shadow-xs)] outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/15"
+            onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
+            placeholder={t(searchLabel)}
+            ref={searchRef}
+            type="search"
+            value={filters.query ?? ''}
+          />
+          {!filters.query && searchShortcut ? (
             <span
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-faint"
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-3 hidden items-center font-ui text-xs text-ink-faint sm:flex"
             >
-              ⌕
+              {searchShortcut}
             </span>
-            <input
-              className="h-10 w-full rounded-md border border-border/80 bg-paper-elevated/90 pl-8 pr-10 text-sm text-ink shadow-[var(--shadow-xs)] outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/15"
-              onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
-              placeholder={t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
-              ref={searchRef}
-              type="search"
-              value={filters.query ?? ''}
-            />
-          </label>
-        )}
+          ) : null}
+        </label>
 
         {context.mode !== 'brief' ? (
           <fieldset className="segmented-control shrink-0">
