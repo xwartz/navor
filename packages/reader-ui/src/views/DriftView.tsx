@@ -4,7 +4,7 @@ import { Panel } from '../components/Panel'
 import { Chip, DestinationTabs, EmptyState, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { t, translateText } from '../i18n'
+import { formatDashboardActionInstruction, formatDashboardActionReason, t } from '../i18n'
 
 type ActionCategory = NavorRendererAppState['dashboard']['actionInbox'][number]['category']
 
@@ -31,10 +31,11 @@ export function DriftView({
     <div className="space-y-5">
       <ViewHeader
         description="Ranked work that can change risk, process quality, or data confidence."
+        tabs={
+          <DestinationTabs active="drift" counts={{ drift: state.dashboard.actionInbox.length }} />
+        }
         title="Briefing"
       />
-
-      <DestinationTabs active="drift" counts={{ drift: state.dashboard.actionInbox.length }} />
 
       <Panel
         actions={
@@ -74,9 +75,11 @@ export function DriftView({
                       <p className="text-sm font-semibold text-ink">{item.title ?? item.subject}</p>
                       <span className="label-caps">{actionCategoryLabel(item.category)}</span>
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-ink-muted">{item.message}</p>
+                    <p className="mt-1 text-xs leading-5 text-ink-muted">
+                      {formatDashboardActionReason(item.reason)}
+                    </p>
                     <p className="mt-1 text-xs font-medium text-accent-ink">
-                      {translateText(item.action)}
+                      {formatDashboardActionInstruction(item.type)}
                     </p>
                   </div>
                   <Chip
@@ -88,7 +91,13 @@ export function DriftView({
                           : 'neutral'
                     }
                   >
-                    {item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}
+                    {t(
+                      item.severity === 'high'
+                        ? 'High'
+                        : item.severity === 'medium'
+                          ? 'Medium'
+                          : 'Low',
+                    )}
                   </Chip>
                 </button>
               </li>

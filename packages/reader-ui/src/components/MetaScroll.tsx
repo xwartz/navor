@@ -7,10 +7,10 @@ import {
   useState,
 } from 'react'
 
-type MetaScrollFade = 'sidebar' | 'paper-elevated'
+type MetaScrollFade = 'paper' | 'paper-elevated'
 
 const FADE_CLASS: Record<MetaScrollFade, string> = {
-  sidebar: 'from-sidebar via-sidebar/85 to-transparent',
+  paper: 'from-paper via-paper/85 to-transparent',
   'paper-elevated': 'from-paper-elevated via-paper-elevated/85 to-transparent',
 }
 

@@ -46,7 +46,7 @@ export function AccountTree({ accounts, assets, actions, onSelectAsset }: Accoun
         return (
           <GroupedSection
             header={
-              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_12rem_12rem] lg:items-center">
+              <div className="grid gap-3 @4xl:grid-cols-[minmax(0,1fr)_12rem_12rem] @4xl:items-center">
                 <EntityCell subject={account.subject} title={account.title ?? account.subject} />
                 <div className="tabular-nums">
                   <LabelCaps>{t('Invested')}</LabelCaps>
@@ -70,7 +70,7 @@ export function AccountTree({ accounts, assets, actions, onSelectAsset }: Accoun
             }
             key={account.subject}
           >
-            <div className="hidden gap-3 border-b border-border/50 bg-paper-subtle/30 px-5 py-2 lg:flex lg:items-center">
+            <div className="hidden gap-3 border-b border-border/50 bg-paper-subtle/30 px-5 py-2 @4xl:flex @4xl:items-center">
               <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_11rem_11rem_10rem] gap-3">
                 <LabelCaps className="mb-0">{t('Asset')}</LabelCaps>
                 <LabelCaps className="mb-0 text-right">{t('Funding')}</LabelCaps>
@@ -94,11 +94,11 @@ export function AccountTree({ accounts, assets, actions, onSelectAsset }: Accoun
                     key={asset.subject}
                   >
                     <button
-                      className="grid w-full grid-cols-2 gap-3 px-5 py-3.5 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40 lg:grid-cols-[minmax(0,1fr)_11rem_11rem_10rem_9.5rem]"
+                      className="grid w-full grid-cols-2 gap-3 px-5 py-3.5 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40 @4xl:grid-cols-[minmax(0,1fr)_11rem_11rem_10rem_9.5rem]"
                       onClick={() => onSelectAsset(asset.subject)}
                       type="button"
                     >
-                      <div className="col-span-2 min-w-0 lg:col-span-1">
+                      <div className="col-span-2 min-w-0 @4xl:col-span-1">
                         <EntityCell subject={asset.subject} title={asset.title ?? asset.subject} />
                       </div>
                       <MetricCell
@@ -116,12 +116,12 @@ export function AccountTree({ accounts, assets, actions, onSelectAsset }: Accoun
                         }
                       />
                       <MetricCell
-                        className="col-span-2 min-w-0 lg:col-span-1"
+                        className="col-span-2 min-w-0 @4xl:col-span-1"
                         label="To deploy"
                         primary={formatMoney(remainingAmount(asset))}
                         secondary={statusReason(asset)}
                       />
-                      <div className="flex shrink-0 items-center justify-end lg:min-w-[9.5rem]">
+                      <div className="flex shrink-0 items-center justify-end @4xl:min-w-[9.5rem]">
                         <Chip tone={chipTone(asset.status)}>{nextStep}</Chip>
                       </div>
                     </button>
@@ -168,8 +168,8 @@ function MetricCell({
   className?: string
 }) {
   return (
-    <div className={`min-w-0 tabular-nums lg:text-right ${className}`}>
-      <LabelCaps className="mb-1 lg:hidden lg:mb-0">{t(label)}</LabelCaps>
+    <div className={`min-w-0 tabular-nums @4xl:text-right ${className}`}>
+      <LabelCaps className="mb-1 @4xl:hidden @4xl:mb-0">{t(label)}</LabelCaps>
       <p className="truncate font-medium text-ink">{primary}</p>
       {secondary ? <p className="truncate text-xs text-ink-faint">{secondary}</p> : null}
     </div>

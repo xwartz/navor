@@ -3,16 +3,18 @@ import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { useEntityLabel } from '../EntityLabelContext'
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters } from '../filters'
-import { t } from '../i18n'
+import { formatFacetOption, t } from '../i18n'
 import type { ToolbarContext, ToolbarFacet } from '../toolbar-context'
 
 interface ReaderToolbarProps {
   filters: ReaderFilters
   context: ToolbarContext
   leading?: ReactNode
+  trailing?: ReactNode
   resultCount: number | null
   searchScope: 'view' | 'workspace'
   onChange: (filters: ReaderFilters) => void
+  onJump?: () => void
   onSearchScopeChange: (scope: 'view' | 'workspace') => void
 }
 
@@ -20,12 +22,15 @@ export function ReaderToolbar({
   filters,
   context,
   leading,
+  trailing,
   resultCount,
   searchScope,
   onChange,
+  onJump,
   onSearchScopeChange,
 }: ReaderToolbarProps) {
   const active = hasActiveFilters(filters)
+  const jumpOnly = context.mode === 'brief' && Boolean(onJump)
   const searchRef = useRef<HTMLInputElement>(null)
   const toolbarRef = useRef<HTMLElement>(null)
   const [openFacet, setOpenFacet] = useState<keyof ReaderFilters | null>(null)
@@ -35,12 +40,16 @@ export function ReaderToolbar({
       const target = event.target as HTMLElement | null
       if (event.key !== '/' || target?.matches('input, textarea, select, [contenteditable]')) return
       event.preventDefault()
+      if (jumpOnly) {
+        onJump?.()
+        return
+      }
       searchRef.current?.focus()
     }
 
     window.addEventListener('keydown', focusSearch)
     return () => window.removeEventListener('keydown', focusSearch)
-  }, [])
+  }, [jumpOnly, onJump])
 
   useEffect(() => {
     const closeFacetOnOutsidePointerDown = (event: PointerEvent) => {
@@ -66,28 +75,43 @@ export function ReaderToolbar({
     >
       <div className="mx-auto flex w-full max-w-[96rem] min-w-0 flex-wrap items-center gap-2">
         {leading}
-        <label className="relative min-w-[11rem] flex-1 lg:max-w-[19rem]">
-          <span className="sr-only">
-            {t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
-          </span>
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-faint"
+        {jumpOnly ? (
+          <button
+            className="relative min-w-[11rem] flex-1 rounded-md border border-border/80 bg-paper-elevated/90 px-3 text-left shadow-[var(--shadow-xs)] transition-[border-color,box-shadow,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/15 lg:max-w-[22rem] [@media(hover:hover)]:hover:border-accent/40"
+            onClick={onJump}
+            type="button"
           >
-            ⌕
-          </span>
-          <input
-            className="h-10 w-full rounded-md border border-border/80 bg-paper-elevated/90 pl-8 pr-10 text-sm text-ink shadow-[var(--shadow-xs)] outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/15"
-            onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
-            placeholder={t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
-            ref={searchRef}
-            type="search"
-            value={filters.query ?? ''}
-          />
-          <kbd className="pointer-events-none absolute inset-y-0 right-3 hidden items-center font-ui text-[11px] text-ink-faint sm:flex">
-            /
-          </kbd>
-        </label>
+            <span className="flex h-10 items-center gap-2 text-sm text-ink-faint">
+              <span aria-hidden>⌕</span>
+              <span className="min-w-0 flex-1 truncate">
+                {t('Jump to a view, asset, or record')}
+              </span>
+              <kbd className="hidden h-5 items-center rounded border border-border px-1.5 font-ui text-[10px] text-ink-faint sm:inline-flex">
+                /
+              </kbd>
+            </span>
+          </button>
+        ) : (
+          <label className="relative min-w-[11rem] flex-1 lg:max-w-[19rem]">
+            <span className="sr-only">
+              {t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
+            </span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-ink-faint"
+            >
+              ⌕
+            </span>
+            <input
+              className="h-10 w-full rounded-md border border-border/80 bg-paper-elevated/90 pl-8 pr-10 text-sm text-ink shadow-[var(--shadow-xs)] outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-faint focus:border-accent/60 focus:bg-paper-elevated focus-visible:ring-2 focus-visible:ring-accent/15"
+              onChange={(event) => onChange({ ...filters, query: event.target.value || undefined })}
+              placeholder={t(searchScope === 'workspace' ? 'Search workspace' : 'Search this view')}
+              ref={searchRef}
+              type="search"
+              value={filters.query ?? ''}
+            />
+          </label>
+        )}
 
         {context.mode !== 'brief' ? (
           <fieldset className="segmented-control shrink-0">
@@ -137,11 +161,14 @@ export function ReaderToolbar({
           </button>
         ) : null}
 
-        {resultCount !== null ? (
-          <p className="ml-auto shrink-0 text-xs tabular-nums text-ink-faint">
-            {resultCount} {t('matching')}
-          </p>
-        ) : null}
+        <div className="ml-auto flex shrink-0 items-center gap-3">
+          {resultCount !== null ? (
+            <p className="text-xs tabular-nums text-ink-faint">
+              {resultCount} {t('matching')}
+            </p>
+          ) : null}
+          {trailing}
+        </div>
       </div>
     </section>
   )
@@ -224,7 +251,11 @@ function FacetOption({
   onChoose: () => void
 }) {
   const entity = useEntityLabel(facet.key === 'subject' ? option : null)
-  const label = entity?.title ?? compactValue(option)
+  const label =
+    entity?.title ??
+    (facet.key === 'type' || facet.key === 'status'
+      ? formatFacetOption(option)
+      : compactValue(option))
 
   return (
     <button

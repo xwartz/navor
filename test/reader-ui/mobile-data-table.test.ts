@@ -50,7 +50,7 @@ test('holdings retain asset, market, and PnL while opening the asset workspace f
   )
   expect(source).toContain("key: 'quantity', label: 'Quantity', align: 'right', mobileHidden: true")
   expect(source).toContain("key: 'price', label: 'Price', align: 'right', mobileHidden: true")
-  expect(source).toContain("key: 'average',\n          label: 'Average cost'")
+  expect(source).toContain("key: 'average',\n          label: 'Average price'")
   expect(source).toContain("{ key: 'market', label: 'Market', align: 'right', sortable: true }")
   expect(source).toContain("{ key: 'pnl', label: 'PnL', align: 'right', sortable: true }")
   expect(source).toContain('storageKey="holdings"')

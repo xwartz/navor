@@ -1,7 +1,7 @@
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel } from '../EntityLabelContext'
 import { readableEntityTitle } from '../entity-labels'
-import { formatOpenWorkspaceLabel } from '../i18n'
+import { formatOpenWorkspaceLabel, type MessageKey, t } from '../i18n'
 import { MarkdownBody } from './MarkdownBody'
 import { Chip, EmptyState } from './ViewScaffold'
 
@@ -17,7 +17,7 @@ export interface KnowledgeTableRow {
 
 interface KnowledgeTableProps {
   rows: KnowledgeTableRow[]
-  emptyMessage?: string
+  emptyMessage?: MessageKey
 }
 
 export function KnowledgeTable({
@@ -25,7 +25,7 @@ export function KnowledgeTable({
   emptyMessage = 'No records match the current filters.',
 }: KnowledgeTableProps) {
   if (rows.length === 0) {
-    return <EmptyState>{emptyMessage}</EmptyState>
+    return <EmptyState>{t(emptyMessage)}</EmptyState>
   }
 
   return (

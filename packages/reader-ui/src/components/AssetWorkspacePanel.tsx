@@ -6,12 +6,15 @@ import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel } from '../EntityLabelContext'
 import { readableEntityTitle, shortSubjectLabel } from '../entity-labels'
 import {
+  formatDashboardActionInstruction,
   formatDashboardActionLabel,
   formatDashboardActionReason,
   formatReviewDeadline,
+  type MessageKey,
   t,
 } from '../i18n'
 import {
+  averagePrice,
   formatMoney,
   formatPercent,
   formatQuantityCommodity,
@@ -19,7 +22,8 @@ import {
   formatSignedPercent,
   formatTimestamp,
 } from './format'
-import { Chip, InsetList, TimelineFeed } from './ViewScaffold'
+import { ProgressMeter, WeightGap } from './PortfolioVisuals'
+import { Chip, TimelineFeed } from './ViewScaffold'
 
 export function AssetWorkspaceOverlay() {
   const { assetWorkspace, closeAsset, selectedAssetSubject } = useAssetWorkspace()
@@ -64,6 +68,30 @@ function AssetWorkspacePanel({
   const evidenceTimeline = [...researchTimeline, ...decisionsTimeline].toSorted((left, right) =>
     right.date.localeCompare(left.date),
   )
+  const invested = execution?.investedCost ?? holding?.cost ?? null
+  const average = holding ? averagePrice(holding.cost, holding.quantity) : null
+  const heroValue = market?.marketValue ?? invested
+  const pnlPercent =
+    market?.pnl && market.cost?.amount ? (market.pnl.amount / market.cost.amount) * 100 : null
+  const bandMin = plan?.min ?? drift?.planMin ?? null
+  const bandMax = plan?.max ?? drift?.planMax ?? null
+  const targetWeight = drift?.targetWeight ?? plan?.target ?? null
+  const actualWeight = drift?.actualWeight ?? null
+  const bandAction =
+    actualWeight !== null && bandMax !== null && actualWeight > bandMax
+      ? plan?.actionWhenAbove
+      : actualWeight !== null && bandMin !== null && actualWeight < bandMin
+        ? plan?.actionWhenBelow
+        : null
+  const hasWeight = actualWeight !== null || targetWeight !== null
+  const hasFunding = Boolean(execution?.targetAmount)
+  const positionFacts: Array<[MessageKey, string | null, string?]> = [
+    ['Quantity', holding ? formatQuantityCommodity(holding.quantity, holding.commodity) : null],
+    ['Price', price ? formatMoney(price.price) : null],
+    ['Average price', average ? formatMoney(average) : null],
+    ['Cost', invested ? formatMoney(invested) : null],
+    ['Price updated', price?.asOf ? formatTimestamp(price.asOf) : null, price?.asOf],
+  ]
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1279px)')
@@ -135,31 +163,34 @@ function AssetWorkspacePanel({
       ) : null}
       <aside
         aria-labelledby="asset-workspace-title"
-        className={`fixed inset-y-0 right-0 z-[70] flex w-full flex-col border-l border-border/60 bg-paper-elevated sm:w-[30rem] xl:w-[22rem] 2xl:w-[30rem] ${
+        className={`workspace-enter fixed inset-y-0 right-0 z-[70] flex w-full flex-col border-l border-border/60 bg-paper-elevated sm:w-[30rem] xl:w-[22rem] 2xl:w-[30rem] ${
           isModal ? 'shadow-[var(--shadow-lg)]' : 'shadow-[var(--shadow-md)]'
         }`}
         ref={panelRef}
         role={isModal ? 'dialog' : 'complementary'}
         {...(isModal ? { 'aria-modal': true } : {})}
       >
-        <header className="flex items-start justify-between gap-4 border-b border-border/60 bg-paper-elevated px-5 py-5">
-          <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
-              {t('Asset workspace')}
-            </p>
+        <header className="flex items-start gap-3 border-b border-border/60 px-5 pt-5 pb-4">
+          <div className="min-w-0 flex-1">
             <h2
-              className="mt-1.5 truncate font-display text-xl font-bold tracking-[-0.02em] text-ink"
+              className="truncate font-display text-xl font-bold leading-7 tracking-[-0.02em] text-ink"
               id="asset-workspace-title"
             >
               {readableEntityTitle(label, subject)}
             </h2>
-            <p className="mt-1 truncate font-mono text-[11px] text-ink-faint">
-              {label?.symbol ?? shortSubjectLabel(subject)}
+            <p className="mt-1 flex min-w-0 items-center gap-2 text-xs text-ink-muted">
+              <span className="shrink-0 font-mono text-[11px] text-ink-faint">
+                {label?.symbol ?? shortSubjectLabel(subject)}
+              </span>
+              <span aria-hidden className="text-ink-faint/60">
+                ·
+              </span>
+              <span className="truncate">{accountTitle?.title ?? t('No account assigned')}</span>
             </p>
           </div>
           <button
             aria-label={t('Close asset workspace')}
-            className="control-btn press-scale grid h-10 w-10 shrink-0 p-0 text-lg text-ink-muted [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-ink"
+            className="control-btn press-scale -mt-1 -mr-1 grid h-10 w-10 shrink-0 p-0 text-lg text-ink-muted [@media(hover:hover)]:hover:bg-accent-soft [@media(hover:hover)]:hover:text-ink"
             onClick={onClose}
             ref={closeButtonRef}
             type="button"
@@ -168,204 +199,237 @@ function AssetWorkspacePanel({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4">
-          <div className="space-y-5">
-            <section id="snapshot">
-              <div className="flex flex-wrap items-center gap-2">
-                {execution ? (
-                  <Chip tone={statusTone(execution.status)}>{statusLabel(execution.status)}</Chip>
-                ) : (
-                  <Chip>{t('Tracked')}</Chip>
-                )}
-                <span className="text-xs text-ink-muted">
-                  {accountTitle?.title ?? t('No account assigned')}
-                </span>
-              </div>
-              <p className="mt-2 text-sm leading-6 text-ink-muted">
-                {execution
-                  ? statusDescription(execution.status)
-                  : (watchlist?.watchReason ?? t('No funded position or execution target yet.'))}
-              </p>
-            </section>
+        <div className="flex-1 overflow-y-auto overscroll-contain">
+          {actions.length > 0 ? (
+            <div className="border-b border-border/60 bg-warning-soft/35 px-5 py-3.5" id="actions">
+              <p className="label-caps">{t('Next actions')}</p>
+              <ul className="mt-2 space-y-2.5">
+                {actions.map((item) => (
+                  <li key={item.id}>
+                    <p className="text-sm font-semibold text-ink">
+                      {formatDashboardActionLabel(item.type)}
+                      <span className="ml-2 text-[11px] font-medium text-ink-faint">
+                        {severityLabel(item.severity)}
+                      </span>
+                    </p>
+                    <p className="mt-0.5 text-xs leading-5 text-ink-muted">
+                      {formatDashboardActionReason(item.reason)}
+                    </p>
+                    {item.action ? (
+                      <p className="mt-1 text-xs font-medium text-accent-ink">
+                        {formatDashboardActionInstruction(item.type)}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
-            <section className="surface-card grid grid-cols-2">
-              <WorkspaceMetric label="Market value" value={formatMoney(market?.marketValue)} />
-              <WorkspaceMetric
-                label="PnL"
-                tone={(market?.pnl?.amount ?? 0) < 0 ? 'danger' : 'positive'}
-                value={formatSignedMoney(market?.pnl)}
-              />
-              <WorkspaceMetric label="Actual weight" value={formatPercent(drift?.actualWeight)} />
-              <WorkspaceMetric
-                label="Drift"
-                tone={
-                  (drift?.drift ?? 0) > 0
-                    ? 'danger'
-                    : (drift?.drift ?? 0) < 0
-                      ? 'positive'
-                      : 'neutral'
-                }
-                value={formatSignedPercent(drift?.drift)}
-              />
-            </section>
-
-            <section className="surface-inset" id="judgment">
-              <div className="border-b border-border/60 px-4 py-3">
-                <h3 className="font-display text-xs font-semibold text-ink">
-                  {t('Decision basis')}
-                </h3>
-              </div>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3">
-                <WorkspaceFact
-                  label="Invested"
-                  value={formatMoney(execution?.investedCost ?? holding?.cost)}
-                />
-                <WorkspaceFact label="Target" value={formatMoney(execution?.targetAmount)} />
-                <WorkspaceFact label="Plan target" value={formatPercent(plan?.target)} />
-                <WorkspaceFact
-                  label="Plan band"
-                  value={
-                    plan
-                      ? `${formatPercent(plan.min)} / ${formatPercent(plan.max)}`
-                      : t('Not available')
-                  }
-                />
-              </dl>
-            </section>
-
-            <WorkspaceSection id="position" title="Position details">
-              <dl className="grid grid-cols-2 gap-4">
-                <WorkspaceFact label="Price" value={formatMoney(price?.price)} />
-                <WorkspaceFact
-                  label="Quantity"
-                  value={
-                    holding
-                      ? formatQuantityCommodity(holding.quantity, holding.commodity)
-                      : t('Not available')
-                  }
-                />
-                <WorkspaceFact
-                  label="Cost"
-                  value={formatMoney(execution?.investedCost ?? holding?.cost)}
-                />
-                <WorkspaceFact label="Price updated" value={formatTimestamp(price?.asOf)} />
-              </dl>
-            </WorkspaceSection>
-
-            {actions.length > 0 ? (
-              <WorkspaceSection id="actions" title="Next actions">
-                <InsetList>
-                  {actions.map((item) => (
-                    <div className="px-3 py-3" key={item.id}>
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-ink">
-                            {formatDashboardActionLabel(item.type)}
-                          </p>
-                          <p className="mt-1 text-xs leading-5 text-ink-muted">
-                            {formatDashboardActionReason(item.reason)}
-                          </p>
-                        </div>
-                        <Chip tone={item.severity === 'high' ? 'danger' : 'warning'}>
-                          {severityLabel(item.severity)}
-                        </Chip>
-                      </div>
-                    </div>
-                  ))}
-                </InsetList>
-              </WorkspaceSection>
-            ) : null}
-
-            <WorkspaceSection id="evidence" title="Evidence and decisions">
-              {evidenceTimeline.length > 0 ? (
-                <TimelineFeed items={evidenceTimeline} />
+          <section className="px-5 pt-5 pb-5" id="snapshot">
+            <div className="flex items-center justify-between gap-3">
+              <p className="label-caps">{t(market ? 'Market value' : 'Cost basis')}</p>
+              {execution ? (
+                <Chip tone={statusTone(execution.status)}>{statusLabel(execution.status)}</Chip>
               ) : (
-                <QuietMessage>{t('No research, thesis, or decision is linked yet.')}</QuietMessage>
+                <Chip>{t('Tracked')}</Chip>
               )}
-            </WorkspaceSection>
+            </div>
+            <p className="mt-1.5 font-display text-[1.75rem] font-semibold leading-9 tracking-[-0.02em] tabular-nums text-ink">
+              {heroValue ? formatMoney(heroValue) : t('Not available')}
+            </p>
+            {market?.pnl ? (
+              <p
+                className={`mt-0.5 text-sm font-medium tabular-nums ${
+                  market.pnl.amount < 0 ? 'text-danger' : 'text-positive'
+                }`}
+              >
+                {formatSignedMoney(market.pnl)}
+                {pnlPercent !== null ? (
+                  <span className="ml-2 text-xs opacity-80">{formatSignedPercent(pnlPercent)}</span>
+                ) : null}
+                <span className="ml-2 text-xs font-normal text-ink-faint">
+                  {t('Unrealized PnL')}
+                </span>
+              </p>
+            ) : null}
+            <p className="mt-3 text-sm leading-6 text-ink-muted">
+              {execution
+                ? statusDescription(execution.status)
+                : (watchlist?.watchReason ?? t('No funded position or execution target yet.'))}
+            </p>
+          </section>
 
-            <WorkspaceSection id="transactions" title="Recent transactions">
-              {facts?.transactions.length ? (
-                <InsetList>
-                  {facts.transactions.slice(0, 3).map((transaction) => (
-                    <div className="px-3 py-3" key={`${transaction.date}:${transaction.line}`}>
-                      <p className="text-xs font-semibold text-ink">
+          {hasWeight || hasFunding ? (
+            <WorkspaceSection id="judgment" title="Decision basis">
+              {hasWeight ? (
+                <div>
+                  <div className="flex items-baseline justify-between gap-3 text-xs">
+                    <span className="text-ink-muted">{t('Portfolio weight')}</span>
+                    <span className="tabular-nums text-ink-faint">
+                      <span className="text-sm font-semibold text-ink">
+                        {formatPercent(actualWeight)}
+                      </span>
+                      {targetWeight !== null ? (
+                        <>
+                          {' '}
+                          / {formatPercent(targetWeight)} {t('target')}
+                        </>
+                      ) : null}
+                    </span>
+                  </div>
+                  <div className="mt-2.5">
+                    <WeightGap
+                      actual={actualWeight}
+                      bandMax={bandMax}
+                      bandMin={bandMin}
+                      target={targetWeight}
+                    />
+                  </div>
+                  <div className="mt-2 flex items-center justify-between gap-3 text-[11px] tabular-nums text-ink-faint">
+                    <span>
+                      {bandMin !== null && bandMax !== null
+                        ? `${t('Plan band')} ${formatPercent(bandMin)} – ${formatPercent(bandMax)}`
+                        : t('No plan band')}
+                    </span>
+                    {drift?.drift !== null && drift?.drift !== undefined ? (
+                      <span
+                        className={`font-semibold ${
+                          drift.drift > 0
+                            ? 'text-danger'
+                            : drift.drift < 0
+                              ? 'text-warning'
+                              : 'text-ink-faint'
+                        }`}
+                      >
+                        {formatSignedPercent(drift.drift)}
+                      </span>
+                    ) : null}
+                  </div>
+                  {bandAction ? (
+                    <p className="mt-3 border-l-2 border-accent/50 pl-3 text-xs leading-5 text-ink-muted">
+                      <span className="font-semibold text-ink">{t('Plan says')}</span> {bandAction}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+              {hasFunding && execution ? (
+                <div className={hasWeight ? 'mt-5' : ''}>
+                  <div className="flex items-baseline justify-between gap-3 text-xs">
+                    <span className="text-ink-muted">{t('Funding progress')}</span>
+                    <span className="tabular-nums text-ink-faint">
+                      <span className="text-sm font-semibold text-ink">
+                        {formatPercent(execution.investedPercent)}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="mt-2.5">
+                    <ProgressMeter
+                      tone={statusTone(execution.status) === 'danger' ? 'danger' : 'accent'}
+                      value={execution.investedPercent}
+                    />
+                  </div>
+                  <p className="mt-2 text-[11px] tabular-nums text-ink-faint">
+                    {formatMoney(execution.investedCost)} / {formatMoney(execution.targetAmount)}
+                  </p>
+                </div>
+              ) : null}
+            </WorkspaceSection>
+          ) : null}
+
+          {positionFacts.some(([, value]) => value) ? (
+            <WorkspaceSection id="position" title="Position details">
+              <dl className="divide-y divide-border/50">
+                {positionFacts.map(([factLabel, value, title]) =>
+                  value ? (
+                    <FactRow key={factLabel} label={factLabel} title={title} value={value} />
+                  ) : null,
+                )}
+              </dl>
+            </WorkspaceSection>
+          ) : null}
+
+          <WorkspaceSection id="evidence" title="Evidence and decisions">
+            {evidenceTimeline.length > 0 ? (
+              <TimelineFeed items={evidenceTimeline} />
+            ) : (
+              <QuietMessage>{t('No research, thesis, or decision is linked yet.')}</QuietMessage>
+            )}
+          </WorkspaceSection>
+
+          <WorkspaceSection id="transactions" title="Recent transactions">
+            {facts?.transactions.length ? (
+              <ul className="divide-y divide-border/50">
+                {facts.transactions.slice(0, RECENT_TRANSACTION_LIMIT).map((transaction) => (
+                  <li
+                    className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 py-2.5 first:pt-0 last:pb-0"
+                    key={`${transaction.date}:${transaction.line}`}
+                  >
+                    <span className="pt-px text-xs tabular-nums text-ink-faint">
+                      {transaction.date}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-ink">
                         {readableEntityTitle(label, transaction.subject, transaction.title)}
                       </p>
-                      <p className="mt-1 text-xs tabular-nums text-ink-muted">{transaction.date}</p>
-                      <p className="mt-1 text-xs text-ink-muted">
+                      <p className="mt-0.5 text-xs leading-5 text-ink-muted">
                         {formatTransactionDecision(transaction)}
                       </p>
                     </div>
-                  ))}
-                </InsetList>
-              ) : (
-                <QuietMessage>{t('No transactions are recorded for this asset.')}</QuietMessage>
-              )}
-            </WorkspaceSection>
-          </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <QuietMessage>{t('No transactions are recorded for this asset.')}</QuietMessage>
+            )}
+          </WorkspaceSection>
         </div>
       </aside>
     </>
   )
 }
 
-function WorkspaceMetric({
-  label,
-  tone = 'neutral',
-  value,
-}: {
-  label: import('../i18n').MessageKey
-  tone?: 'neutral' | 'positive' | 'danger'
-  value: string
-}) {
-  return (
-    <div className="border-r border-b border-border px-3 py-3 even:border-r-0 nth-[n+3]:border-b-0">
-      <p className="label-caps">{t(label)}</p>
-      <p
-        className={`mt-1 break-words text-sm font-semibold tabular-nums ${
-          tone === 'danger' ? 'text-danger' : tone === 'positive' ? 'text-positive' : 'text-ink'
-        }`}
-      >
-        {value}
-      </p>
-    </div>
-  )
-}
+const RECENT_TRANSACTION_LIMIT = 5
 
 function WorkspaceSection({
   children,
+  count,
   id,
   title,
 }: {
   children: ReactNode
+  count?: number
   id?: string
-  title: import('../i18n').MessageKey
+  title: MessageKey
 }) {
   return (
-    <section className="border-t border-border/60 pt-4" id={id}>
-      <h3 className="font-display text-sm font-semibold text-ink">{t(title)}</h3>
-      <div className="mt-3">{children}</div>
+    <section className="border-t border-border/60 px-5 py-5" id={id}>
+      <h3 className="mb-3.5 flex items-center gap-2 font-display text-sm font-semibold text-ink">
+        {t(title)}
+        {count ? (
+          <span className="rounded-full bg-warning-soft px-1.5 py-px text-[10px] font-semibold tabular-nums text-warning">
+            {count}
+          </span>
+        ) : null}
+      </h3>
+      {children}
     </section>
   )
 }
 
-function WorkspaceFact({ label, value }: { label: import('../i18n').MessageKey; value: string }) {
+function FactRow({ label, value, title }: { label: MessageKey; value: string; title?: string }) {
   return (
-    <div className="min-w-0">
-      <dt className="label-caps">{t(label)}</dt>
-      <dd className="mt-1 break-words text-sm font-medium tabular-nums text-ink">{value}</dd>
+    <div className="flex items-baseline justify-between gap-4 py-2 first:pt-0 last:pb-0">
+      <dt className="shrink-0 text-xs text-ink-muted">{t(label)}</dt>
+      <dd className="min-w-0 text-right text-sm font-medium tabular-nums text-ink" title={title}>
+        {value}
+      </dd>
     </div>
   )
 }
 
 function QuietMessage({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 rounded-lg border border-dashed border-border-strong/60 bg-paper-subtle/50 px-4 py-3 text-sm leading-6 text-ink-muted">
-      <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-ink-faint" />
-      <span>{children}</span>
-    </div>
-  )
+  return <p className="text-sm leading-6 text-ink-faint">{children}</p>
 }
 
 function buildResearchTimeline(facts: ReturnType<AssetNarrativeIndex['get']>) {

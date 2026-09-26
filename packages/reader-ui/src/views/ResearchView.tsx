@@ -13,7 +13,7 @@ import {
 } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { formatReviewDeadline } from '../i18n'
+import { formatInvalidIf, formatReviewDeadline, t } from '../i18n'
 
 export type CaseTab = 'cases' | 'market' | 'evidence' | 'theses' | 'decisions'
 type CaseSection = CaseTab | 'watchlist'
@@ -117,10 +117,10 @@ export function ResearchView({
         subject,
         title,
         evidence: caseResearch.length,
-        thesis: latestThesis?.title ?? latestThesis?.status ?? 'n/a',
-        decision: latestDecision?.action ?? latestDecision?.title ?? 'n/a',
-        plan: planBySubject.get(subject)?.title ?? 'n/a',
-        reviewBy: reviewBy ? formatReviewDeadline(reviewBy) : 'n/a',
+        thesis: latestThesis?.title ?? latestThesis?.status ?? t('Not available'),
+        decision: latestDecision?.action ?? latestDecision?.title ?? t('Not available'),
+        plan: planBySubject.get(subject)?.title ?? t('Not available'),
+        reviewBy: reviewBy ? formatReviewDeadline(reviewBy) : t('Not available'),
         reviewSort: reviewBy ?? '9999-12-31',
         actions: actionsBySubject.get(subject) ?? 0,
         matches: [caseResearch, caseTheses, caseDecisions, planBySubject.get(subject)].some(
@@ -142,16 +142,17 @@ export function ResearchView({
     <div className="space-y-5">
       <ViewHeader
         description="One evidence trail from research to a recorded decision."
+        tabs={
+          <SectionTabs<CaseSection>
+            active={activeTab}
+            ariaLabel="Investment case views"
+            onSelect={(tab) => {
+              if (tab !== 'watchlist') selectTab(tab)
+            }}
+            tabs={caseSectionTabs(true)}
+          />
+        }
         title="Investment cases"
-      />
-
-      <SectionTabs<CaseSection>
-        active={activeTab}
-        ariaLabel="Investment case views"
-        onSelect={(tab) => {
-          if (tab !== 'watchlist') selectTab(tab)
-        }}
-        tabs={caseSectionTabs(true)}
       />
 
       {activeTab === 'cases' && (
@@ -255,7 +256,7 @@ export function ResearchView({
                     item.confidence,
                     item.reviewBy ? formatReviewDeadline(item.reviewBy) : null,
                   ),
-                  tags: item.invalidIf ? [`Invalid if ${item.invalidIf}`] : undefined,
+                  tags: item.invalidIf ? [formatInvalidIf(item.invalidIf)] : undefined,
                   body: item.body,
                 }))}
               />
@@ -284,9 +285,13 @@ export function ResearchView({
                       />
                     ),
                     date: item.date,
-                    action: item.action ? <Chip tone="accent">{item.action}</Chip> : 'n/a',
-                    target: item.targetWeight ?? 'n/a',
-                    confidence: item.confidence ?? 'n/a',
+                    action: item.action ? (
+                      <Chip tone="accent">{item.action}</Chip>
+                    ) : (
+                      t('Not available')
+                    ),
+                    target: item.targetWeight ?? t('Not available'),
+                    confidence: item.confidence ?? t('Not available'),
                   },
                   sortValues: {
                     decision: item.title ?? item.subject,

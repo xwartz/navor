@@ -1,6 +1,7 @@
 import type { NavorRendererAppState } from '@navor/contract'
 
 import type { ReaderFilters } from './filters'
+import type { MessageKey } from './i18n'
 import type { ReaderView } from './navigation'
 import { transactionType } from './transaction-type'
 
@@ -224,7 +225,7 @@ function filterDates(view: ReaderView, state: NavorRendererAppState) {
   return state.plan.entries.map((entry) => entry.date.slice(0, 7))
 }
 
-function watchlistStage(subject: string, state: NavorRendererAppState) {
+export function watchlistStage(subject: string, state: NavorRendererAppState): MessageKey {
   if (!state.knowledge.research.some((item) => item.subject === subject)) return 'Capture evidence'
   if (!state.knowledge.theses.some((item) => item.subject === subject)) return 'Form thesis'
   if (!state.knowledge.decisions.some((item) => item.subject === subject)) return 'Decide'

@@ -17,7 +17,7 @@ import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { t } from '../i18n'
+import { formatAssetCount, t } from '../i18n'
 
 export function AllocationView({
   state,
@@ -36,10 +36,9 @@ export function AllocationView({
     <div className="space-y-5">
       <ViewHeader
         description="Target structure: account sleeves and how asset targets resolve into portfolio weight."
+        tabs={<DestinationTabs active="allocation" />}
         title="Portfolio"
       />
-
-      <DestinationTabs active="allocation" />
 
       <SummaryStrip
         items={[
@@ -64,7 +63,7 @@ export function AllocationView({
         description="Strategic mix across accounts. Asset-level distance from target follows below."
         title="Account targets"
       >
-        <div className="grid gap-6 xl:grid-cols-[minmax(16rem,0.75fr)_minmax(0,1.25fr)] xl:items-center">
+        <div className="grid gap-6 @4xl:grid-cols-[minmax(16rem,0.75fr)_minmax(0,1.25fr)] @4xl:items-center">
           <DonutChart
             centerLabel="Target"
             centerValue="100%"
@@ -134,7 +133,7 @@ interface AssetGroup {
 
 function AccountAssetGroup({ group }: { group: AssetGroup }) {
   const sleeveTarget = group.account?.target ?? null
-  const assetCountLabel = `${group.assets.length} ${group.assets.length === 1 ? 'asset' : 'assets'}`
+  const assetCountLabel = formatAssetCount(group.assets.length)
 
   return (
     <GroupedSection
@@ -156,7 +155,7 @@ function AccountAssetGroup({ group }: { group: AssetGroup }) {
                   <span className="font-medium text-ink">{formatPercent(sleeveTarget)}</span>
                 </>
               ) : (
-                'No sleeve target'
+                t('No sleeve target')
               )}
             </p>
             {group.account?.baseAmount ? (
@@ -263,7 +262,7 @@ function groupAssetsByAccount({
     groups.push({
       key: '__unassigned__',
       account: null,
-      label: 'Unassigned',
+      label: t('Unassigned'),
       assets: unassigned.sort(sortByPortfolioWeight),
     })
   }
@@ -273,7 +272,7 @@ function groupAssetsByAccount({
 
 function formatOverviewMoney(value: { amount: number; currency: string } | null | undefined) {
   if (!value) {
-    return 'n/a'
+    return t('Not available')
   }
 
   const magnitude = Math.abs(value.amount)

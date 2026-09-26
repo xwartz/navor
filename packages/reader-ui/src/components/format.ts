@@ -1,4 +1,4 @@
-import { formatNumber, type MessageKey, readerLocale, t } from '../i18n'
+import { formatBaseCurrency, formatNumber, type MessageKey, readerLocale, t } from '../i18n'
 
 export function formatMoney(value: { amount: number; currency: string } | null | undefined) {
   if (!value) {
@@ -6,6 +6,12 @@ export function formatMoney(value: { amount: number; currency: string } | null |
   }
 
   return `${formatMoneyAmount(value.amount)} ${value.currency}`
+}
+
+export function averagePrice(cost: { amount: number; currency: string } | null, quantity: number) {
+  return cost && Number.isFinite(quantity) && quantity !== 0
+    ? { amount: cost.amount / Math.abs(quantity), currency: cost.currency }
+    : null
 }
 
 /**
@@ -236,7 +242,7 @@ export function formatBaseMoney(
 ) {
   return {
     value: formatMoney(primary),
-    detail: detail ?? (primary?.currency ? `Base ${primary.currency}` : undefined),
+    detail: detail ?? (primary?.currency ? formatBaseCurrency(primary.currency) : undefined),
   }
 }
 
@@ -336,25 +342,27 @@ export function sumMoneyInBase(
 export function formatFxCoverage(
   fxRates: Record<string, number> | null | undefined,
   unconvertedCurrencies: string[] | null | undefined,
+  locale = readerLocale,
 ) {
   const rates = fxRates ?? {}
   const unconverted = unconvertedCurrencies ?? []
   const configured = Object.keys(rates)
 
   if (configured.length === 0) {
-    return unconverted.length > 0 ? 'No FX rates configured' : null
+    return unconverted.length > 0 ? t('No FX rates configured', locale) : null
   }
 
   const configuredRates = configured
     .sort()
     .map((currency) => `${currency} ${formatFxRate(rates[currency] ?? 0)}`)
     .join(' · ')
+  const prefix = locale === 'zh-CN' ? '汇率' : 'FX:'
 
   if (unconverted.length === 0) {
-    return `FX: ${configuredRates}`
+    return `${prefix} ${configuredRates}`
   }
 
-  return `FX: ${configuredRates} · missing ${unconverted.join(', ')}`
+  return `${prefix} ${configuredRates} · ${t('missing', locale)} ${unconverted.join(', ')}`
 }
 
 function formatFxRate(rate: number) {

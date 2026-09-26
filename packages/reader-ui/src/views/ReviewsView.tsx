@@ -5,6 +5,7 @@ import { Panel } from '../components/Panel'
 import { DestinationTabs, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
+import { formatDriftTag } from '../i18n'
 
 export function ReviewsView({
   state,
@@ -18,10 +19,9 @@ export function ReviewsView({
     <div className="space-y-5">
       <ViewHeader
         description="Resolve the next scheduled check and record its follow-up."
+        tabs={<DestinationTabs active="reviews" />}
         title="Reviews & journal"
       />
-
-      <DestinationTabs active="reviews" />
 
       <Panel
         description="Status and follow-up stay beside the recorded review."
@@ -34,7 +34,7 @@ export function ReviewsView({
             title: item.title ?? item.subject,
             subject: item.subject,
             meta: joinKnowledgeMeta(item.date, item.status, item.action),
-            tags: item.drift ? [`Drift ${item.drift}`] : undefined,
+            tags: item.drift ? [formatDriftTag(item.drift)] : undefined,
             body: item.body,
           }))}
         />

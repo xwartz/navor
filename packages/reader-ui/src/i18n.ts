@@ -12,6 +12,7 @@ const chinese = {
   Actions: '行动中心',
   Watchlist: '观察列表',
   Portfolio: '投资组合',
+  'Investment overview': '投资总览',
   Holdings: '持仓',
   Allocation: '配置',
   Accounts: '账户',
@@ -91,7 +92,6 @@ const chinese = {
   'Next actions': '下一步行动',
   'Evidence and decisions': '证据与决策',
   'One evidence trail from research to a recorded decision.': '从研究到已记录决策的一条证据链。',
-  'Facts first. Plans explicit.': '事实优先，计划明确。',
   'A human-first language for long-term investing.': '为长期投资而设计的、以人为本的语言。',
   'Describe capital, accounts, assets, research, thesis, decisions, transactions, and reviews in plain text, then read them here as a portfolio ledger.':
     '用纯文本描述资金、账户、资产、研究、投资论点、决策、交易和复盘，再在这里将它们读作投资组合账本。',
@@ -125,8 +125,6 @@ const chinese = {
   'Refreshing…': '正在刷新…',
   'Refresh prices': '刷新价格',
   'Workspace valuation status': '工作区估值状态',
-  Valuation: '估值',
-  Coverage: '覆盖率',
   Base: '本位币',
   'Prices as of': '报价时间',
   'Refreshing prices': '正在刷新价格',
@@ -144,8 +142,6 @@ const chinese = {
   'Portfolio posture, target-range exceptions, and the next decisions to make.':
     '投资组合状态、目标区间例外以及下一步需要作出的决策。',
   'Largest positions': '最大头寸',
-  'Largest marked positions, with the current allocation distance kept visible.':
-    '按已标记市值排序的最大头寸，并同时显示当前配置偏离。',
   'Portfolio value': '投资组合价值',
   'Holdings market value': '持仓市值',
   'Invested capital': '已投入资金',
@@ -164,7 +160,6 @@ const chinese = {
   'Decision basis': '判断依据',
   'Position details': '持仓明细',
   'Price updated': '价格更新于',
-  'Plan target': '计划目标',
   'Plan band': '计划区间',
   'Review queue': '待复核队列',
   'Nothing requires action': '暂无需处理事项',
@@ -174,6 +169,12 @@ const chinese = {
   sleeves: '个资金分组',
   Transaction: '交易',
   'Decision queue': '决策队列',
+  'Review thesis': '复核投资论点',
+  'Consider trim': '考虑减仓',
+  'Consider accumulate': '考虑加仓',
+  'Check currency conversion': '检查货币换算',
+  'Review target amount': '复核目标金额',
+  'Check price source': '检查价格来源',
   'Ranked by risk severity, portfolio exposure, and urgency.':
     '按风险严重程度、投资组合敞口和紧急程度排序。',
   Liquidity: '流动性',
@@ -291,7 +292,6 @@ const chinese = {
   Unassigned: '未分配',
   All: '全部',
   'By account': '按账户',
-  positions: '个持仓',
   'No transaction has been recorded against this target.': '该目标尚未记录交易。',
   'The position is funded but remains below its target amount.':
     '该持仓已投入资金，但仍低于目标金额。',
@@ -325,7 +325,14 @@ const chinese = {
   Assets: '资产',
   Transactions: '交易记录',
   Buys: '买入',
+  Buy: '买入',
   Sells: '卖出',
+  Sell: '卖出',
+  Fee: '费用',
+  'Digital assets': '数字资产',
+  'US equities': '美股',
+  'A shares': 'A 股',
+  'Hong Kong equities': '港股',
   'No assets in this account.': '此账户没有资产。',
   'No plans match the current filters.': '没有符合当前筛选条件的计划。',
   'No price records match the current filters.': '没有符合当前筛选条件的价格记录。',
@@ -337,8 +344,6 @@ const chinese = {
   'Review case': '复核案例',
   'No provider': '无数据源',
   'No FX rates configured': '未配置汇率',
-  'Actual weight': '实际权重',
-  'Asset workspace': '资产工作区',
   'Close asset workspace': '关闭资产工作区',
   stale: '已过期',
   missing: '缺失',
@@ -357,7 +362,7 @@ const chinese = {
   Tracked: '已跟踪',
   Rebalance: '再平衡',
   Price: '价格',
-  'Average cost': '平均成本',
+  'Average price': '均价',
   Cost: '成本',
   line: '行',
   Sleeve: '资金分组',
@@ -370,6 +375,19 @@ const chinese = {
   'Open view': '打开视图',
   'No transactions match the current filters.': '没有符合当前筛选条件的交易。',
   'Double-entry postings': '复式记账条目',
+  'Jump to': '快速跳转',
+  'Command palette': '命令面板',
+  'Close command palette': '关闭命令面板',
+  'Jump to a view, asset, or record': '跳转到视图、资产或记录',
+  'No matches. Try an asset name, ticker, or view.': '没有匹配项，试试资产名称、代码或视图。',
+  'Go to': '前往',
+  Records: '记录',
+  Navigate: '选择',
+  Open: '打开',
+  Close: '关闭',
+  'Dot is the actual weight; tick is the target.': '圆点为实际权重，刻度为目标。',
+  'No plan band': '未设计划区间',
+  'Plan says': '计划要求',
 } as const
 
 export type MessageKey = keyof typeof chinese
@@ -504,6 +522,24 @@ export function formatDashboardActionLabel(
   }
 }
 
+const DASHBOARD_ACTION_INSTRUCTIONS = {
+  review_due: 'Review thesis',
+  above_max: 'Consider trim',
+  below_min: 'Consider accumulate',
+  currency_mismatch: 'Check currency conversion',
+  over_invested: 'Review target amount',
+  missing_price: 'Check price source',
+  stale_price: 'Check price source',
+  failed_price: 'Check price source',
+} satisfies Record<import('@navor/contract').DashboardActionItem['type'], MessageKey>
+
+export function formatDashboardActionInstruction(
+  type: import('@navor/contract').DashboardActionItem['type'],
+  locale = readerLocale,
+) {
+  return t(DASHBOARD_ACTION_INSTRUCTIONS[type], locale)
+}
+
 export function formatSearchResultCount(count: number, locale = readerLocale) {
   return locale === 'zh-CN'
     ? `工作区内共 ${count} 条记录`
@@ -591,6 +627,43 @@ export function formatAllocationChartLabel(label: string, locale = readerLocale)
 
 export function formatTransactionCount(count: number, locale = readerLocale) {
   return locale === 'zh-CN' ? `${count} 笔交易` : `${count} transactions`
+}
+
+export function formatAssetCount(count: number, locale = readerLocale) {
+  return locale === 'zh-CN' ? `${count} 项资产` : `${count} ${count === 1 ? 'asset' : 'assets'}`
+}
+
+export function formatFilterMatchCount(count: number, locale = readerLocale) {
+  return locale === 'zh-CN' ? `${count} 条符合当前筛选` : `${count} match current filters`
+}
+
+export function formatInvalidIf(condition: string, locale = readerLocale) {
+  return locale === 'zh-CN' ? `失效条件 ${condition}` : `Invalid if ${condition}`
+}
+
+export function formatDriftTag(value: string, locale = readerLocale) {
+  return locale === 'zh-CN' ? `偏离 ${value}` : `Drift ${value}`
+}
+
+export function formatRelatedEntity(name: string, locale = readerLocale) {
+  return locale === 'zh-CN' ? `关联 ${name}` : `Related ${name}`
+}
+
+export function formatBaseCurrency(currency: string, locale = readerLocale) {
+  return locale === 'zh-CN' ? `${t('Base', locale)} ${currency}` : `Base ${currency}`
+}
+
+const FACET_OPTION_ALIASES: Record<string, MessageKey> = {
+  investment_risk: 'Allocation risk',
+  process_due: 'Process due',
+  data_integrity: 'Data integrity',
+  high: 'High',
+  medium: 'Medium',
+  low: 'Low',
+}
+
+export function formatFacetOption(option: string, locale = readerLocale) {
+  return translateText(FACET_OPTION_ALIASES[option] ?? option, locale)
 }
 
 export function formatNumber(value: number, options?: Intl.NumberFormatOptions) {

@@ -299,12 +299,12 @@ export function RankedExposureList({
 
   return (
     <div>
-      <div className="mb-1 lg:grid lg:grid-cols-2 lg:gap-x-10">
+      <div className="mb-1 @3xl:grid @3xl:grid-cols-2 @3xl:gap-x-10">
         {header}
-        <div className="hidden lg:block">{header}</div>
+        <div className="hidden @3xl:block">{header}</div>
       </div>
       <div
-        className="grid gap-x-10 lg:grid-flow-col lg:grid-cols-2 lg:[grid-template-rows:repeat(var(--ranked-rows),auto)]"
+        className="grid gap-x-10 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:[grid-template-rows:repeat(var(--ranked-rows),auto)]"
         style={{ '--ranked-rows': Math.ceil(data.length / 2) } as CSSProperties}
       >
         {data.map((item) => (
@@ -388,6 +388,96 @@ export function TargetActualList({ items }: { items: TargetActualItem[] }) {
       })}
     </div>
   )
+}
+
+/**
+ * Target-versus-actual weight as two markers joined by their gap, over an optional plan band.
+ * Pass a shared `scaleMax` when rows are stacked so their geometry stays comparable.
+ */
+export function WeightGap({
+  actual,
+  target,
+  bandMin = null,
+  bandMax = null,
+  scaleMax,
+}: {
+  actual: number | null
+  target: number | null
+  bandMin?: number | null
+  bandMax?: number | null
+  scaleMax?: number
+}) {
+  if (actual === null && target === null) {
+    return null
+  }
+
+  const ceiling =
+    scaleMax ?? Math.max(actual ?? 0, target ?? 0, bandMax ?? 0, 1) * WEIGHT_GAP_HEADROOM
+  const position = (value: number) => `${clamp((value / ceiling) * 100, 0, 100)}%`
+  const tone = weightGapTone(actual, target, bandMin, bandMax)
+  const low = Math.min(actual ?? target ?? 0, target ?? actual ?? 0)
+  const high = Math.max(actual ?? target ?? 0, target ?? actual ?? 0)
+
+  return (
+    <div aria-hidden className="relative h-3">
+      <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border" />
+      {bandMin !== null && bandMax !== null ? (
+        <div
+          className="absolute inset-y-0.5 rounded-sm bg-positive-soft"
+          style={{
+            left: position(bandMin),
+            width: `calc(${position(bandMax)} - ${position(bandMin)})`,
+          }}
+        />
+      ) : null}
+      {actual !== null && target !== null ? (
+        <div
+          className="absolute top-1/2 h-0.5 -translate-y-1/2 rounded-full"
+          style={{
+            left: position(low),
+            width: `calc(${position(high)} - ${position(low)})`,
+            backgroundColor: TONE_COLORS[tone],
+            opacity: 0.55,
+          }}
+        />
+      ) : null}
+      {target !== null ? (
+        <div
+          className="absolute inset-y-0 w-0.5 -translate-x-1/2 rounded-full bg-ink-muted"
+          style={{ left: position(target) }}
+        />
+      ) : null}
+      {actual !== null ? (
+        <div
+          className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-paper-elevated"
+          style={{ left: position(actual), backgroundColor: TONE_COLORS[tone] }}
+        />
+      ) : null}
+    </div>
+  )
+}
+
+const WEIGHT_GAP_HEADROOM = 1.15
+
+export function weightGapScale(values: Array<number | null | undefined>) {
+  return Math.max(...values.map((value) => value ?? 0), 1) * WEIGHT_GAP_HEADROOM
+}
+
+function weightGapTone(
+  actual: number | null,
+  target: number | null,
+  bandMin: number | null,
+  bandMax: number | null,
+): ChartTone {
+  if (actual === null || target === null) return 'accent'
+  if (bandMin !== null && bandMax !== null) {
+    if (actual > bandMax) return 'danger'
+    if (actual < bandMin) return 'warning'
+    return 'positive'
+  }
+  const gap = actual - target
+  if (Math.abs(gap) <= 1) return 'positive'
+  return gap > 0 ? 'danger' : 'warning'
 }
 
 export function ProgressMeter({

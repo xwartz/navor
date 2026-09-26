@@ -7,6 +7,7 @@ import { useEntityLabelIndex } from '../EntityLabelContext'
 import { resolveEntityLabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
+import { formatRelatedEntity } from '../i18n'
 
 export function JournalView({
   state,
@@ -23,10 +24,9 @@ export function JournalView({
     <div className="space-y-5">
       <ViewHeader
         description="Record the reasoning and behaviour behind a decision."
+        tabs={<DestinationTabs active="journal" />}
         title="Reviews & journal"
       />
-
-      <DestinationTabs active="journal" />
 
       <Panel
         description="Read chronologically, then filter by asset, directive, or mood."
@@ -40,7 +40,7 @@ export function JournalView({
             subject: item.subject,
             meta: joinKnowledgeMeta(item.date, item.directive, item.mood),
             tags: item.related
-              ? [`Related ${resolveEntityLabel(labelIndex, item.related).title}`]
+              ? [formatRelatedEntity(resolveEntityLabel(labelIndex, item.related).title)]
               : undefined,
             body: item.body,
           }))}

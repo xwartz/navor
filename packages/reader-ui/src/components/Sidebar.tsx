@@ -16,6 +16,7 @@ interface SidebarProps {
   onClose: () => void
   triggerRef: RefObject<HTMLButtonElement | null>
   onToggleCollapse: () => void
+  renderStatus?: (isRail: boolean) => ReactNode
 }
 
 export function Sidebar({
@@ -29,6 +30,7 @@ export function Sidebar({
   onClose,
   triggerRef,
   onToggleCollapse,
+  renderStatus,
 }: SidebarProps) {
   const asideRef = useRef<HTMLElement>(null)
   const badgeCounts: Partial<Record<ReaderView, number>> = {
@@ -227,15 +229,11 @@ export function Sidebar({
           ))}
         </nav>
 
-        <div
-          className={`border-t border-white/6 px-4 py-3 text-[11px] leading-5 text-sidebar-muted ${
-            isRail ? 'lg:hidden' : ''
-          }`}
-        >
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-sidebar-muted/60">
-            {t('Facts first. Plans explicit.')}
-          </span>
-        </div>
+        {renderStatus ? (
+          <div className={`border-t border-white/6 px-4 py-3.5 ${isRail ? 'lg:px-2 lg:py-2' : ''}`}>
+            {renderStatus(isRail)}
+          </div>
+        ) : null}
       </aside>
     </>
   )
@@ -245,7 +243,7 @@ function isNavItemActive(activeView: ReaderView, itemView: ReaderView) {
   return getDestinationView(activeView) === itemView
 }
 
-function CompactNavIcon({ view }: { view: ReaderView }) {
+export function CompactNavIcon({ view }: { view: ReaderView }) {
   let paths: ReactNode
 
   switch (view) {

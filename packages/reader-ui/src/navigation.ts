@@ -1,4 +1,4 @@
-import { type ReaderLocale, translateText } from './i18n'
+import { type MessageKey, type ReaderLocale, translateText } from './i18n'
 import {
   getReaderView,
   matchReaderRoute,
@@ -14,11 +14,15 @@ export interface NavGroup {
   items: Array<{ id: ReaderView; label: string }>
 }
 
-const NAV_GROUP_ORDER: ReaderViewGroup[] = ['Portfolio', 'Investment process', 'Operations']
+const NAV_GROUP_ORDER: Array<{ id: ReaderViewGroup; label: MessageKey }> = [
+  { id: 'Portfolio', label: 'Investment overview' },
+  { id: 'Investment process', label: 'Investment process' },
+  { id: 'Operations', label: 'Operations' },
+]
 
-export const NAV_GROUPS: NavGroup[] = NAV_GROUP_ORDER.map((label) => ({
+export const NAV_GROUPS: NavGroup[] = NAV_GROUP_ORDER.map(({ id: group, label }) => ({
   label,
-  items: READER_VIEW_CATALOG.filter((view) => view.group === label && !view.parent).map(
+  items: READER_VIEW_CATALOG.filter((view) => view.group === group && !view.parent).map(
     ({ id, label }) => ({
       id,
       label,

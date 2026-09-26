@@ -48,9 +48,9 @@ The sidebar holds six task destinations rather than source-file taxonomy. Second
 5. Reviews & journal: scheduled reviews and the behavioral journal.
 6. Data health: source issues, market coverage, and source files.
 
-Every view header carries the destination name as its title, and the section tabs below it name the current view. Moved views keep their former routes (`#actions`, `#plans`, `#watchlist`, `#journal`) as aliases.
+Every view header is a compact destination title with section tabs directly under it. The destination description is available to assistive technology, not shown as a second headline. Moved views keep their former routes (`#actions`, `#plans`, `#watchlist`, `#journal`) as aliases.
 
-The Briefing orders information by decision urgency: four summary metrics (portfolio value, unrealized PnL, realized PnL, open actions with target-range breaches folded into the detail), then the decision queue leading the primary column, allocation posture beneath it, and largest positions with liquidity in the secondary column. Healthy empty states collapse into a quiet confirmation instead of occupying a full diagnostic panel.
+The Briefing opens onto the work. `/` and the toolbar jump field open the command palette instead of replacing the desk with a search page. Four summary metrics sit in a compact ticker (portfolio value, unrealized PnL, realized PnL, open actions with target-range breaches folded into the detail). The decision queue leads the primary column, allocation posture sits beneath it, and largest positions with liquidity occupy the secondary column. Healthy empty states collapse into a quiet confirmation instead of occupying a full diagnostic panel.
 
 Money shows at most two decimals; sub-cent prices keep six significant digits. Summary-band values of one million or more compact to `1.05M USD` and expose the exact value as a tooltip. Tables and detail rows always show the full value.
 
@@ -58,7 +58,7 @@ Allocation follows a plan-to-execution hierarchy: account sleeves and capital fi
 
 Investment cases are asset-only by default. Market-level evidence belongs to a separate market-context tab, preventing a generic market subject from receiving empty thesis, decision, or plan columns. Watchlist candidates expose the next missing process step, from evidence through decision.
 
-Asset selection is a persistent desktop-side workspace and a focus-trapped mobile drawer. It keeps market facts, target and drift, open actions, research, decisions, and recent transactions in one contextual read without making the investor lose their place in the source view. Accounts open this same workspace instead of expanding a second compact detail surface inline. Asset rows use the same elevated surface as other data tables, with a quiet pine selection tint only for the active row.
+Asset selection is a persistent desktop-side workspace and a focus-trapped mobile drawer. Open actions lead the panel so the reason for opening it is visible before market value. Market facts, target and drift, research, decisions, and recent transactions follow in one contextual read without making the investor lose their place in the source view. Accounts open this same workspace instead of expanding a second compact detail surface inline. Asset rows use the same elevated surface as other data tables, with a quiet pine selection tint only for the active row.
 
 The Positions tab leads with the working table; the ranked market mix follows it in two columns, reading down the first column before the second. The Portfolio workspace is limited to live positions and allocation. Realized PnL, cash, income, and expenses live under Ledger tabs alongside transaction history, so current exposure and historical economic activity are not mixed in one scroll.
 
@@ -96,5 +96,6 @@ At widths below 1024px the rail becomes an off-canvas drawer and the current vie
 - Create a portfolio metric band on the canvas, with 12px uppercase labels, 24px weight 650 tabular values, internal one-pixel dividers, 10px outer radius, and one restrained graphite elevation shadow.
 - Create a detail panel with a 13px weight 650 heading, 16px horizontal header padding, 12px vertical header padding, a graphite surface, 10px radius, and a one-pixel structural keyline.
 - Create a sidebar item on graphite with a 40px minimum height, 6px radius, 13px weight 560 type, pine lozenge active indicator, and a 150ms background and color transition.
-- Create a view title in SF Pro Display at 28px weight 700, line-height 1.1, letter-spacing `-0.022em`, with a 14px muted description and no eyebrow; the destination's section tabs sit directly below it.
-- Create toolbar filters as `control-btn` facets with a trailing `▾`, separated from the "This view / Entire workspace" segmented scope control by a one-pixel rule.
+- Create a view title in SF Pro Display at 22px weight 700, line-height 32px, letter-spacing `-0.02em`, with section tabs directly below it and no visible description.
+- Create a summary ticker with 12px uppercase labels, 20px weight 650 tabular values, and 12px vertical padding. Do not give ticker cells a fixed minimum height.
+- On Briefing, the toolbar search field is a jump control. `/` opens the command palette. Collection views keep an in-view filter field.

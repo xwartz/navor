@@ -43,8 +43,9 @@ describe('shared asset workspace', () => {
   it('keeps the asset detail decision-ready and localizes system status labels', () => {
     const source = readFileSync(PANEL, 'utf8')
 
-    expect(source).toMatch(/t\('Decision basis'\)/)
-    expect(source).toMatch(/label="Price updated"/)
+    expect(source).toMatch(/id="judgment" title="Decision basis"/)
+    expect(source).toMatch(/<WeightGap/)
+    expect(source).toMatch(/\['Price updated', price\?\.asOf/)
     expect(source).toMatch(/title="Evidence and decisions"/)
     expect(source).toMatch(/title="Recent transactions"/)
     expect(source).toMatch(/severityLabel\(item\.severity\)/)
@@ -60,7 +61,8 @@ describe('shared asset workspace', () => {
     const source = readFileSync(PANEL, 'utf8')
 
     expect(source).toContain('const evidenceTimeline = [...researchTimeline, ...decisionsTimeline]')
-    expect(source).toContain('WorkspaceSection id="actions" title="Next actions"')
+    expect(source).toContain('id="actions"')
+    expect(source).toContain("t('Next actions')")
     expect(source).not.toContain("actions.length} {t('Open actions').toLowerCase()")
     expect(source).toContain('WorkspaceSection id="evidence" title="Evidence and decisions"')
     expect(source).not.toContain('WorkspaceSection id="drift"')

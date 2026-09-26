@@ -5,6 +5,7 @@ import { useEntityLabel, useEntityMeta } from '../EntityLabelContext'
 import { readableEntityTitle } from '../entity-labels'
 import { type MessageKey, t, translateText } from '../i18n'
 import { getDestinationTabs, type ReaderView } from '../view-catalog'
+import { MetaScroll } from './MetaScroll'
 
 export interface SummaryItem {
   label: string
@@ -35,23 +36,26 @@ export function ViewHeader({
   title,
   description,
   meta,
+  tabs,
 }: {
   title: MessageKey
   description: MessageKey
   meta?: ReactNode
+  tabs?: ReactNode
 }) {
   return (
-    <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0 max-w-3xl">
+    <header className="space-y-3">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <h1
-          className="font-display text-[1.75rem] leading-[1.1] font-bold tracking-[-0.022em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          className="font-display text-[1.375rem] leading-8 font-bold tracking-[-0.02em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
           tabIndex={-1}
         >
           {t(title)}
         </h1>
-        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-ink-muted">{t(description)}</p>
+        {meta ? <div className="shrink-0 text-sm text-ink-muted">{meta}</div> : null}
       </div>
-      {meta ? <div className="shrink-0 text-sm text-ink-muted">{meta}</div> : null}
+      <p className="sr-only">{t(description)}</p>
+      {tabs}
     </header>
   )
 }
@@ -60,13 +64,10 @@ export function SummaryStrip({ items }: { items: SummaryItem[] }) {
   return (
     <section className="summary-strip surface-card">
       {items.map((item) => (
-        <div
-          className="summary-item min-h-[6rem] px-4 py-4 sm:min-h-[6.75rem] sm:px-5"
-          key={item.label}
-        >
+        <div className="summary-item px-4 py-3 sm:px-5" key={item.label}>
           <p className="label-caps">{translateText(item.label)}</p>
           <p
-            className={`mt-2 font-display text-[1.125rem] leading-7 font-semibold tracking-[-0.018em] tabular-nums sm:text-[1.5rem] sm:leading-8 ${
+            className={`mt-1 font-display text-[1.25rem] leading-7 font-semibold tracking-[-0.018em] tabular-nums ${
               SUMMARY_VALUE_CLASSES[item.tone ?? 'neutral']
             }`}
             title={item.exactValue && item.exactValue !== item.value ? item.exactValue : undefined}
@@ -74,7 +75,9 @@ export function SummaryStrip({ items }: { items: SummaryItem[] }) {
             {item.value}
           </p>
           {item.detail ? (
-            <p className="mt-1 text-xs leading-5 text-ink-muted">{translateText(item.detail)}</p>
+            <p className="mt-0.5 text-[11px] leading-4 text-ink-muted">
+              {translateText(item.detail)}
+            </p>
           ) : null}
         </div>
       ))}
@@ -137,9 +140,11 @@ export function SectionTabs<T extends string>({
   const isTablist = Boolean(onSelect) && tabs.every((tab) => !tab.href)
 
   return (
-    <nav
+    <MetaScroll
       aria-label={t(ariaLabel)}
-      className="section-tabs meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/60 px-1 pb-0"
+      as="nav"
+      className="section-tabs flex gap-1 border-b border-border/60 pb-0"
+      fade="paper"
       role={isTablist ? 'tablist' : undefined}
     >
       {tabs.map((tab) => {
@@ -200,7 +205,7 @@ export function SectionTabs<T extends string>({
           </button>
         )
       })}
-    </nav>
+    </MetaScroll>
   )
 }
 
@@ -283,7 +288,7 @@ export function EntityCell({
 }) {
   const { canOpenAsset, openAsset } = useAssetWorkspace()
   const label = useEntityLabel(subject)
-  const displayTitle = readableEntityTitle(label, subject, title) || 'n/a'
+  const displayTitle = readableEntityTitle(label, subject, title) || t('Not available')
   const displayMeta = useEntityMeta(subject, meta ?? symbol)
   const content = (
     <>

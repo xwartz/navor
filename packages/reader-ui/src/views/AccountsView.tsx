@@ -16,9 +16,11 @@ export function AccountsView({ state }: { state: NavorRendererAppState }) {
 
   return (
     <div className="space-y-5">
-      <ViewHeader description="Capital sleeves and funding progress." title="Portfolio" />
-
-      <DestinationTabs active="accounts" />
+      <ViewHeader
+        description="Capital sleeves and funding progress."
+        tabs={<DestinationTabs active="accounts" />}
+        title="Portfolio"
+      />
 
       <SummaryStrip
         items={[

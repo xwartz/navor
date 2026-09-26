@@ -106,7 +106,7 @@ export function buildSearchHits(state: NavorRendererAppState): SearchHit[] {
       subject: asset.subject,
       title: entityTitle(asset.subject, asset.title),
       meta: entityTitle(asset.subject),
-      excerpt: `${t('Target')} ${asset.target ?? 'n/a'}%`,
+      excerpt: `${t('Target')} ${asset.target ?? t('Not available')}%`,
     })
   }
 

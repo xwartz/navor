@@ -333,7 +333,7 @@ export function DataTable({
                         }`}
                         key={column.key}
                       >
-                        {row.cells[column.key]}
+                        <TableCellValue value={row.cells[column.key]} />
                       </td>
                     ))}
                   </tr>
@@ -375,4 +375,23 @@ function toggleSort(
 
   setSortKey(key)
   setSortDirection('asc')
+}
+
+const MISSING_CELL_VALUES = new Set(['n/a', '', t('Not available'), t('No timestamp')])
+
+function TableCellValue({ value }: { value: ReactNode }) {
+  if (
+    value !== null &&
+    value !== undefined &&
+    !(typeof value === 'string' && MISSING_CELL_VALUES.has(value))
+  ) {
+    return value
+  }
+
+  return (
+    <span className="text-ink-faint/60" title={t('Not available')}>
+      <span aria-hidden>–</span>
+      <span className="sr-only">{t('Not available')}</span>
+    </span>
+  )
 }

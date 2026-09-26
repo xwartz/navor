@@ -2,7 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 import { useEffect } from 'react'
 import { App } from './App'
 import { PriceStatusBar } from './components/PriceStatusBar'
-import { WorkspaceMetaBar } from './components/WorkspaceMetaBar'
+import { WorkspaceStatus } from './components/WorkspaceStatus'
 import { documentTitleFromState } from './document-title'
 import { readerLocale } from './i18n'
 import { useLivePrices } from './use-live-prices'
@@ -35,8 +35,18 @@ export function ReaderApp({ initialState }: ReaderAppProps) {
         onRefresh={refresh}
         state={state}
       />
-      <WorkspaceMetaBar liveEnabled={liveEnabled} loading={loading} state={state} />
-      <App liveEnabled={liveEnabled} state={state} />
+      <App
+        liveEnabled={liveEnabled}
+        renderSidebarStatus={(isRail) => (
+          <WorkspaceStatus
+            isRail={isRail}
+            liveEnabled={liveEnabled}
+            loading={loading}
+            state={state}
+          />
+        )}
+        state={state}
+      />
     </>
   )
 }

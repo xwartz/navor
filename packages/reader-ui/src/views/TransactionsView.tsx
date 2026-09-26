@@ -15,7 +15,7 @@ import {
 } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { t } from '../i18n'
+import { formatFilterMatchCount, t } from '../i18n'
 import { transactionTone, transactionType } from '../transaction-type'
 
 export function TransactionsView({
@@ -40,17 +40,21 @@ export function TransactionsView({
 
   return (
     <div className="space-y-5">
-      <ViewHeader description="All portfolio activity." title="Ledger" />
-
-      <SectionTabs
-        active={activeTab}
-        ariaLabel="Ledger views"
-        onSelect={setActiveTab}
-        tabs={[
-          { id: 'transactions', label: 'Transactions' },
-          { id: 'realized', label: 'Realized PnL' },
-          { id: 'flows', label: 'Cash & flows' },
-        ]}
+      <ViewHeader
+        description="All portfolio activity."
+        tabs={
+          <SectionTabs
+            active={activeTab}
+            ariaLabel="Ledger views"
+            onSelect={setActiveTab}
+            tabs={[
+              { id: 'transactions', label: 'Transactions' },
+              { id: 'realized', label: 'Realized PnL' },
+              { id: 'flows', label: 'Cash & flows' },
+            ]}
+          />
+        }
+        title="Ledger"
       />
 
       <SummaryStrip
@@ -70,7 +74,7 @@ export function TransactionsView({
             detail:
               transactions.length === (state.portfolio.transactions?.length ?? 0)
                 ? undefined
-                : `${transactions.length} match current filters`,
+                : formatFilterMatchCount(transactions.length),
           },
         ]}
       />
@@ -108,7 +112,7 @@ function RealizedPnlTable({ state }: { state: NavorRendererAppState }) {
           cells: {
             date: entry.date,
             asset: <EntityCell interactive subject={entry.asset} />,
-            title: entry.title ?? 'n/a',
+            title: entry.title ?? t('Not available'),
             amount: formatMoney(entry.amount),
           },
           sortValues: {
@@ -125,7 +129,7 @@ function RealizedPnlTable({ state }: { state: NavorRendererAppState }) {
 
 function CashAndFlows({ state }: { state: NavorRendererAppState }) {
   return (
-    <section className="grid gap-5 lg:grid-cols-3">
+    <section className="grid gap-5 @3xl:grid-cols-3">
       <Panel title="Cash">
         <DataTable
           columns={[
@@ -294,11 +298,11 @@ function compactAccount(account: string) {
 
 function marketCategory(account: string) {
   const parts = account.split(':')
-  if (parts[1] === 'Crypto') return 'Digital assets'
-  if (parts[1] === 'Equity' && parts[2] === 'US') return 'US equities'
-  if (parts[1] === 'Equity' && parts[2] === 'CN') return 'A shares'
-  if (parts[1] === 'Equity' && parts[2] === 'HK') return 'Hong Kong equities'
-  if (parts[1] === 'Cash') return 'Cash'
+  if (parts[1] === 'Crypto') return t('Digital assets')
+  if (parts[1] === 'Equity' && parts[2] === 'US') return t('US equities')
+  if (parts[1] === 'Equity' && parts[2] === 'CN') return t('A shares')
+  if (parts[1] === 'Equity' && parts[2] === 'HK') return t('Hong Kong equities')
+  if (parts[1] === 'Cash') return t('Cash')
   return compactAccount(account)
 }
 

@@ -24,7 +24,7 @@ describe('Briefing column layout', () => {
   it('leads the primary column with the decision queue', () => {
     const source = readFileSync(DASHBOARD, 'utf8')
 
-    expect(source).toContain('xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] xl:items-start')
+    expect(source).toContain('@5xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] @5xl:items-start')
     expect(source).toMatch(
       /<div className="space-y-5">\s*<DecisionQueue[\s\S]*?title="Allocation posture"/,
     )

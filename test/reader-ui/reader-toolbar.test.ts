@@ -33,7 +33,17 @@ test('uses entity names instead of raw subject symbols in subject filters', asyn
   expect(source).toContain("import { useEntityLabel } from '../EntityLabelContext'")
   expect(source).toContain("useEntityLabel(facet.key === 'subject' ? value : null)")
   expect(source).toContain("useEntityLabel(facet.key === 'subject' ? option : null)")
-  expect(source).toContain('const label = entity?.title ?? compactValue(option)')
+  expect(source).toContain('formatFacetOption(option)')
+  expect(source).toContain('compactValue(option)')
+})
+
+test('turns the Briefing search field into a command-palette jump', async () => {
+  const source = await readFile(readerToolbarPath, 'utf8')
+
+  expect(source).toContain("const jumpOnly = context.mode === 'brief' && Boolean(onJump)")
+  expect(source).toContain("t('Jump to a view, asset, or record')")
+  expect(source).toContain('if (jumpOnly)')
+  expect(source).toContain('onJump?.()')
 })
 
 test('aligns page-scoped controls with the Reader content column', async () => {

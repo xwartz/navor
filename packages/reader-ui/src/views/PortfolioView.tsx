@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { DataTable } from '../components/DataTable'
 import {
+  averagePrice,
   buildPnlSummaryItem,
   convertToBaseCurrency,
   countOtherCurrencies,
@@ -96,10 +97,9 @@ export function PortfolioView({
     <div className="space-y-5">
       <ViewHeader
         description="Current positions, cost, market value, and unrealized PnL."
+        tabs={<DestinationTabs active="holdings" />}
         title="Portfolio"
       />
-
-      <DestinationTabs active="holdings" />
 
       <SummaryStrip
         items={[
@@ -171,7 +171,7 @@ export function PortfolioView({
                         : resolveEntityLabel(labelIndex, account).title}
                     </h3>
                     <p className="mt-1 text-xs text-ink-faint">
-                      {accountHoldings.length} {t('positions')}
+                      {formatPortfolioPositionCount(accountHoldings.length)}
                     </p>
                   </>
                 }
@@ -269,7 +269,7 @@ function HoldingsTable({
         { key: 'price', label: 'Price', align: 'right', mobileHidden: true, sortable: true },
         {
           key: 'average',
-          label: 'Average cost',
+          label: 'Average price',
           align: 'right',
           mobileHidden: true,
           sortable: true,
@@ -287,13 +287,7 @@ function HoldingsTable({
       rows={holdings.map((holding) => {
         const value = valueBySubject.get(holding.asset)
         const price = priceBySubject.get(holding.asset)
-        const average =
-          holding.cost && holding.quantity !== 0
-            ? {
-                amount: holding.cost.amount / Math.abs(holding.quantity),
-                currency: holding.cost.currency,
-              }
-            : null
+        const average = averagePrice(holding.cost, holding.quantity)
 
         return {
           id: holding.asset,

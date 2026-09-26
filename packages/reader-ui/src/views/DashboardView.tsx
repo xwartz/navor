@@ -15,7 +15,12 @@ import {
   sumMoneyInBase,
 } from '../components/format'
 import { Panel } from '../components/Panel'
-import { DonutChart, ProgressMeter } from '../components/PortfolioVisuals'
+import {
+  DonutChart,
+  ProgressMeter,
+  WeightGap,
+  weightGapScale,
+} from '../components/PortfolioVisuals'
 import {
   DestinationTabs,
   EmptyState,
@@ -27,6 +32,7 @@ import {
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel } from '../entity-labels'
 import {
+  formatDashboardActionInstruction,
   formatDashboardActionReason,
   formatMoreActions,
   formatOpenActionDetail,
@@ -152,10 +158,9 @@ export function DashboardView({
     <div className="space-y-5">
       <ViewHeader
         description="Portfolio posture, target-range exceptions, and the next decisions to make."
+        tabs={<DestinationTabs active="overview" counts={{ drift: openActionCount }} />}
         title="Briefing"
       />
-
-      <DestinationTabs active="overview" counts={{ drift: openActionCount }} />
 
       <SummaryStrip
         items={[
@@ -199,7 +204,7 @@ export function DashboardView({
         ]}
       />
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] xl:items-start">
+      <section className="grid gap-5 @5xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] @5xl:items-start">
         <div className="space-y-5">
           <DecisionQueue
             actions={state.dashboard.actionInbox}
@@ -211,45 +216,47 @@ export function DashboardView({
             description="Capital sleeves and current funding progress."
             title="Allocation posture"
           >
-            <div className="grid gap-5 lg:grid-cols-[minmax(16rem,0.9fr)_minmax(0,1.1fr)] lg:items-start">
-              <DonutChart
-                centerLabel={t('Target')}
-                centerValue="100%"
-                compact
-                items={state.dashboard.accountExecutions.map((account) => ({
-                  id: account.subject,
-                  label: account.title ?? account.subject,
-                  sublabel: formatSubjectSublabel(labelIndex, account.subject),
-                  value: account.target ?? 0,
-                }))}
-              />
+            <div className="@container">
+              <div className="grid gap-5 @xl:grid-cols-[minmax(15rem,0.9fr)_minmax(0,1.1fr)] @xl:items-start">
+                <DonutChart
+                  centerLabel={t('Target')}
+                  centerValue="100%"
+                  compact
+                  items={state.dashboard.accountExecutions.map((account) => ({
+                    id: account.subject,
+                    label: account.title ?? account.subject,
+                    sublabel: formatSubjectSublabel(labelIndex, account.subject),
+                    value: account.target ?? 0,
+                  }))}
+                />
 
-              <div className="space-y-4 border-t border-border pt-4 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-5">
-                <div className="flex items-center justify-between gap-3">
-                  <LabelCaps>{t('Funding progress')}</LabelCaps>
-                  <span className="text-xs text-ink-faint">
-                    {state.dashboard.accountExecutions.length} {t('sleeves')}
-                  </span>
-                </div>
-                {state.dashboard.accountExecutions.map((account) => (
-                  <div key={account.subject}>
-                    <div className="mb-2 flex items-end justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-ink">
-                          {account.title ?? account.subject}
-                        </p>
-                        <p className="text-xs text-ink-faint">
-                          {formatMoneyList(account.investedCost)} /{' '}
-                          {formatMoney(account.targetAmount)}
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-sm tabular-nums text-ink-muted">
-                        {formatPercent(account.investedPercent)}
-                      </span>
-                    </div>
-                    <ProgressMeter value={account.investedPercent} />
+                <div className="space-y-4 border-t border-border pt-4 @xl:border-t-0 @xl:border-l @xl:pt-0 @xl:pl-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <LabelCaps>{t('Funding progress')}</LabelCaps>
+                    <span className="text-xs text-ink-faint">
+                      {state.dashboard.accountExecutions.length} {t('sleeves')}
+                    </span>
                   </div>
-                ))}
+                  {state.dashboard.accountExecutions.map((account) => (
+                    <div key={account.subject}>
+                      <div className="mb-2 flex items-end justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-ink">
+                            {account.title ?? account.subject}
+                          </p>
+                          <p className="text-xs text-ink-faint">
+                            {formatMoneyList(account.investedCost)} /{' '}
+                            {formatMoney(account.targetAmount)}
+                          </p>
+                        </div>
+                        <span className="shrink-0 text-sm tabular-nums text-ink-muted">
+                          {formatPercent(account.investedPercent)}
+                        </span>
+                      </div>
+                      <ProgressMeter value={account.investedPercent} />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </Panel>
@@ -306,52 +313,71 @@ function LargestPositions({
     value: { amount: number; currency: string }
   }>
 }) {
+  const scaleMax = weightGapScale(
+    positions.flatMap(({ drift }) => [drift?.actualWeight, drift?.targetWeight, drift?.planMax]),
+  )
+
   return (
-    <Panel
-      description="Largest marked positions, with the current allocation distance kept visible."
-      title="Largest positions"
-    >
+    <Panel description="Dot is the actual weight; tick is the target." title="Largest positions">
       {positions.length === 0 ? (
         <EmptyState>{t('No exposure data.')}</EmptyState>
       ) : (
-        <div className="divide-y divide-border/50">
-          {positions.map(({ drift, subject, title, value }) => (
-            <button
-              aria-haspopup="dialog"
-              className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-2.5 text-left transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/40"
-              key={subject}
-              onClick={() => onOpenAsset(subject)}
-              type="button"
-            >
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-ink">{title}</p>
-                <p className="mt-0.5 text-xs tabular-nums text-ink-faint">
-                  {drift
-                    ? `${t('Actual')} ${formatPercent(drift.actualWeight)} · ${t(
-                        'Target',
-                      )} ${formatPercent(drift.targetWeight)}`
-                    : t('Cost basis')}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-semibold tabular-nums text-ink">{formatMoney(value)}</p>
-                {drift ? (
-                  <p
-                    className={`mt-0.5 text-xs font-medium tabular-nums ${
-                      (drift.drift ?? 0) > 0
+        <ul className="panel-bleed divide-y divide-border/50">
+          {positions.map(({ drift, subject, title, value }) => {
+            const weightSummary = drift
+              ? `${t('Actual')} ${formatPercent(drift.actualWeight)} · ${t('Target')} ${formatPercent(
+                  drift.targetWeight,
+                )}`
+              : t('Cost basis')
+
+            return (
+              <li key={subject}>
+                <button
+                  aria-haspopup="dialog"
+                  className="grid w-full grid-cols-[minmax(0,1fr)_4.5rem] items-center gap-x-4 gap-y-2 px-5 py-3 text-left transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-paper-subtle/60"
+                  onClick={() => onOpenAsset(subject)}
+                  title={weightSummary}
+                  type="button"
+                >
+                  <span className="flex min-w-0 items-baseline justify-between gap-3">
+                    <span className="truncate text-sm font-semibold text-ink">{title}</span>
+                    <span className="shrink-0 text-sm tabular-nums text-ink-muted">
+                      {formatMoney(value)}
+                    </span>
+                  </span>
+                  <span className="text-right text-sm font-semibold tabular-nums text-ink">
+                    {drift ? formatPercent(drift.actualWeight) : ''}
+                  </span>
+                  <span className="min-w-0">
+                    {drift ? (
+                      <WeightGap
+                        actual={drift.actualWeight}
+                        bandMax={drift.planMax}
+                        bandMin={drift.planMin}
+                        scaleMax={scaleMax}
+                        target={drift.targetWeight}
+                      />
+                    ) : (
+                      <span className="block text-xs text-ink-faint">{t('Cost basis')}</span>
+                    )}
+                  </span>
+                  <span
+                    className={`text-right text-xs font-medium tabular-nums ${
+                      (drift?.drift ?? 0) > 0
                         ? 'text-danger'
-                        : (drift.drift ?? 0) < 0
+                        : (drift?.drift ?? 0) < 0
                           ? 'text-warning'
                           : 'text-ink-faint'
                     }`}
                   >
-                    {formatSignedPercent(drift.drift ?? 0)}
-                  </p>
-                ) : null}
-              </div>
-            </button>
-          ))}
-        </div>
+                    {drift ? formatSignedPercent(drift.drift ?? 0) : ''}
+                  </span>
+                  <span className="sr-only">{weightSummary}</span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
       )}
     </Panel>
   )
@@ -425,7 +451,7 @@ function DecisionQueue({
                     </p>
                     {item.action ? (
                       <p className="mt-1 text-xs font-medium text-accent-ink">
-                        {translateText(item.action)}
+                        {formatDashboardActionInstruction(item.type)}
                       </p>
                     ) : null}
                   </div>

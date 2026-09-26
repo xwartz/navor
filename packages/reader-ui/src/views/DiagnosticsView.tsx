@@ -76,14 +76,15 @@ export function DiagnosticsView({
     <div className="space-y-5">
       <ViewHeader
         description="Input quality and source facts behind this reader. Investment and review actions stay in Briefing."
+        tabs={
+          <SectionTabs
+            active={activeTab}
+            ariaLabel="Health views"
+            onSelect={onActiveTabChange}
+            tabs={HEALTH_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+          />
+        }
         title="Data health"
-      />
-
-      <SectionTabs
-        active={activeTab}
-        ariaLabel="Health views"
-        onSelect={onActiveTabChange}
-        tabs={HEALTH_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
       />
 
       <SummaryStrip
@@ -148,7 +149,7 @@ export function DiagnosticsView({
                 cells: {
                   asset: subject,
                   price: formatMoney(marketPrice?.price),
-                  provider: enrichment?.provider ?? marketPrice?.provider ?? 'No provider',
+                  provider: enrichment?.provider ?? marketPrice?.provider ?? t('No provider'),
                   status: <Chip tone={status === 'fresh' ? 'positive' : 'warning'}>{status}</Chip>,
                   asOf: formatTimestamp(enrichment?.asOf ?? marketPrice?.asOf),
                 },

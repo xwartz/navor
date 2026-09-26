@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  averagePrice,
   buildPnlSummaryItem,
   formatFxCoverage,
   formatMoney,
@@ -18,6 +19,11 @@ describe('reader formatting', () => {
 
   it('keeps missing currency coverage visible', () => {
     expect(formatFxCoverage({ CNY: 6.8 }, ['HKD'])).toBe('FX: CNY 6.80 · missing HKD')
+  })
+
+  it('localizes FX coverage when the reader locale is Chinese', () => {
+    expect(formatFxCoverage({}, ['HKD'], 'zh-CN')).toBe('未配置汇率')
+    expect(formatFxCoverage({ CNY: 6.8 }, ['HKD'], 'zh-CN')).toBe('汇率 CNY 6.80 · 缺失 HKD')
   })
 
   it('keeps converted source currencies from looking unconverted', () => {
@@ -91,6 +97,19 @@ describe('reader formatting', () => {
 
   it('does not round tiny market prices down to zero', () => {
     expect(formatMoney({ amount: 0.000002375, currency: 'USD' })).toBe('0.000002375 USD')
+  })
+
+  it('derives the held unit price from remaining cost and absolute quantity', () => {
+    expect(averagePrice({ amount: 120, currency: 'USD' }, 3)).toEqual({
+      amount: 40,
+      currency: 'USD',
+    })
+    expect(averagePrice({ amount: 120, currency: 'USD' }, -3)).toEqual({
+      amount: 40,
+      currency: 'USD',
+    })
+    expect(averagePrice({ amount: 120, currency: 'USD' }, 0)).toBeNull()
+    expect(averagePrice(null, 3)).toBeNull()
   })
 
   it('caps money at two decimals', () => {

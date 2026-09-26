@@ -1,9 +1,17 @@
 import type { NavorRendererAppState } from '@navor/contract'
-import { useEffect, useRef, useState } from 'react'
+import {
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { AssetWorkspaceProvider } from './AssetWorkspaceProvider'
 import { useAssetWorkspace } from './asset-workspace-context'
 import { AssetWorkspaceOverlay } from './components/AssetWorkspacePanel'
+import { CommandPalette } from './components/CommandPalette'
 import { ReaderToolbar } from './components/ReaderToolbar'
 import { SearchOverview } from './components/SearchOverview'
 import { Sidebar } from './components/Sidebar'
@@ -14,7 +22,7 @@ import { readerLocale, t } from './i18n'
 import { getNavGroups, getViewLabels, type ReaderView } from './navigation'
 import { useReaderNavigationSession } from './navigation-session'
 import { buildSearchHits } from './search'
-import { type DiagnosticsToolbarTab, getToolbarContext } from './toolbar-context'
+import { type DiagnosticsToolbarTab, getToolbarContext, watchlistStage } from './toolbar-context'
 import { transactionType } from './transaction-type'
 import { getReaderView } from './view-catalog'
 import { DiagnosticsView } from './views/DiagnosticsView'
@@ -25,6 +33,7 @@ interface AppProps {
   filters?: ReaderFilters
   initialView?: ReaderView
   liveEnabled?: boolean
+  renderSidebarStatus?: (isRail: boolean) => ReactNode
 }
 
 export type { ReaderFilters } from './filters'
@@ -35,6 +44,7 @@ export function App({
   filters: initialFilters = {},
   initialView = 'overview',
   liveEnabled = false,
+  renderSidebarStatus,
 }: AppProps) {
   if (!state) {
     return (
@@ -61,6 +71,7 @@ export function App({
           filters={initialFilters}
           initialView={initialView}
           liveEnabled={liveEnabled}
+          renderSidebarStatus={renderSidebarStatus}
           state={state}
         />
       </AssetWorkspaceProvider>
@@ -73,11 +84,13 @@ function ReaderAppShell({
   filters: initialFilters,
   initialView,
   liveEnabled,
+  renderSidebarStatus,
 }: {
   state: NavorRendererAppState
   filters: ReaderFilters
   initialView: ReaderView
   liveEnabled: boolean
+  renderSidebarStatus?: (isRail: boolean) => ReactNode
 }) {
   const {
     activeView,
@@ -96,6 +109,8 @@ function ReaderAppShell({
   } = useReaderNavigationSession(initialView, initialFilters)
   const navButtonRef = useRef<HTMLButtonElement>(null)
   const [searchScope, setSearchScope] = useState<'view' | 'workspace'>('view')
+  const [isPaletteOpen, setPaletteOpen] = useState(false)
+  const paletteShortcut = usePaletteShortcut(setPaletteOpen)
   const { selectedAssetSubject } = useAssetWorkspace()
   const diagnosticCount = state ? countDiagnostics(state) : 0
   const toolbarContext = getToolbarContext(activeView, state, activeHealthTab)
@@ -146,6 +161,7 @@ function ReaderAppShell({
           onClose={() => setNavOpen(false)}
           onSelect={selectReaderView}
           onToggleCollapse={() => setNavCollapsed((current) => !current)}
+          renderStatus={renderSidebarStatus}
           triggerRef={navButtonRef}
         />
 
@@ -166,11 +182,42 @@ function ReaderAppShell({
               </button>
             }
             onChange={setFilters}
+            onJump={() => setPaletteOpen(true)}
             onSearchScopeChange={setSearchScope}
             resultCount={filterResultCount}
             searchScope={searchScope}
+            trailing={
+              toolbarContext.mode === 'brief' ? undefined : (
+                <button
+                  aria-haspopup="dialog"
+                  aria-keyshortcuts="Meta+K Control+K"
+                  aria-label={t('Jump to')}
+                  className="control-btn press-scale inline-flex h-10 w-10 items-center gap-2 px-0 text-xs font-semibold text-ink-muted transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 sm:w-auto sm:px-2.5 [@media(hover:hover)]:hover:text-ink"
+                  onClick={() => setPaletteOpen(true)}
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="h-4 w-4 sm:hidden"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle cx="10.75" cy="10.75" r="6.25" />
+                    <path d="m16 16 4 4" />
+                  </svg>
+                  <span className="hidden sm:inline">{t('Jump to')}</span>
+                  <kbd className="hidden h-5 items-center rounded border border-border px-1.5 font-ui text-[10px] font-medium text-ink-faint sm:inline-flex">
+                    {paletteShortcut}
+                  </kbd>
+                </button>
+              )
+            }
           />
-          <main className="flex-1 px-4 py-6 lg:px-8 lg:py-9" id="main-content">
+          <main className="@container flex-1 px-4 py-4 lg:px-8 lg:py-6" id="main-content">
             <div
               className="view-enter mx-auto w-full max-w-[96rem]"
               key={showSearch ? `search:${filters.query}` : activeView}
@@ -199,8 +246,28 @@ function ReaderAppShell({
         </div>
       </div>
       <AssetWorkspaceOverlay />
+      <CommandPalette isOpen={isPaletteOpen} onClose={() => setPaletteOpen(false)} state={state} />
     </>
   )
+}
+
+function usePaletteShortcut(setOpen: Dispatch<SetStateAction<boolean>>) {
+  const [label, setLabel] = useState('⌘K')
+
+  useEffect(() => {
+    if (!/Mac|iPhone|iPad/.test(navigator.userAgent)) setLabel('Ctrl K')
+
+    const toggle = (event: globalThis.KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'k' || !(event.metaKey || event.ctrlKey)) return
+      event.preventDefault()
+      setOpen((current) => !current)
+    }
+
+    window.addEventListener('keydown', toggle)
+    return () => window.removeEventListener('keydown', toggle)
+  }, [setOpen])
+
+  return label
 }
 
 function DiagnosticsReaderView({
@@ -301,13 +368,7 @@ function matchesCurrentViewFilters(
 
   if (view === 'watchlist') {
     const watchlistItem = item as NavorRendererAppState['process']['watchlist'][number]
-    const stage = !state.knowledge.research.some((entry) => entry.subject === watchlistItem.subject)
-      ? 'Capture evidence'
-      : !state.knowledge.theses.some((entry) => entry.subject === watchlistItem.subject)
-        ? 'Form thesis'
-        : !state.knowledge.decisions.some((entry) => entry.subject === watchlistItem.subject)
-          ? 'Decide'
-          : 'Review case'
+    const stage = watchlistStage(watchlistItem.subject, state)
     return matchesFilters({ ...watchlistItem, status: stage }, filters)
   }
 

@@ -5,11 +5,19 @@ import { describe, expect, it } from 'vitest'
 
 import {
   createReaderLocalization,
+  formatAssetCount,
+  formatBaseCurrency,
+  formatDashboardActionInstruction,
   formatDashboardActionLabel,
   formatDashboardActionReason,
+  formatDriftTag,
+  formatFacetOption,
+  formatFilterMatchCount,
+  formatInvalidIf,
   formatMarketAmount,
   formatOpenActionDetail,
   formatPortfolioPositionCount,
+  formatRelatedEntity,
   formatSearchResultCount,
   formatTargetAmount,
   resolveReaderLocale,
@@ -33,8 +41,10 @@ describe('reader localization', () => {
   it('localizes the decision-desk navigation labels', () => {
     const command = getNavGroups('zh-CN')[0]
 
-    expect(command?.label).toBe('投资组合')
+    expect(command?.label).toBe('投资总览')
     expect(command?.items[0]).toEqual({ id: 'overview', label: '投资简报' })
+    expect(command?.items[1]).toEqual({ id: 'holdings', label: '投资组合' })
+    expect(getNavGroups('en')[0]?.label).toBe('Investment overview')
     expect(getNavGroups('zh-CN')[1]?.items[1]).toEqual({ id: 'reviews', label: '复盘与日志' })
   })
 
@@ -48,6 +58,15 @@ describe('reader localization', () => {
     expect(t('sleeves', 'zh-CN')).toBe('个资金分组')
     expect(t('Not available', 'zh-CN')).toBe('暂无')
     expect(t('No health issues need attention.', 'zh-CN')).toBe('暂无需要处理的数据健康问题。')
+    expect(t('Buy', 'zh-CN')).toBe('买入')
+    expect(t('Sell', 'zh-CN')).toBe('卖出')
+    expect(t('Fee', 'zh-CN')).toBe('费用')
+    expect(t('Digital assets', 'zh-CN')).toBe('数字资产')
+    expect(t('Capture evidence', 'zh-CN')).toBe('记录证据')
+    expect(t('No reason recorded', 'zh-CN')).toBe('未记录原因')
+    expect(t('No provider', 'zh-CN')).toBe('无数据源')
+    expect(t('No sleeve target', 'zh-CN')).toBe('无资金分组目标')
+    expect(t('Average price', 'zh-CN')).toBe('均价')
   })
 
   it('keeps locale, messages, and number formatting behind one Reader localization entry', () => {
@@ -87,11 +106,49 @@ describe('reader localization', () => {
     ).toBe('Position is 3.2% above its target amount.')
   })
 
+  it('localizes every dashboard action instruction', () => {
+    expect(
+      (
+        [
+          'review_due',
+          'above_max',
+          'below_min',
+          'currency_mismatch',
+          'over_invested',
+          'missing_price',
+          'stale_price',
+          'failed_price',
+        ] as const
+      ).map((type) => formatDashboardActionInstruction(type, 'zh-CN')),
+    ).toEqual([
+      '复核投资论点',
+      '考虑减仓',
+      '考虑加仓',
+      '检查货币换算',
+      '复核目标金额',
+      '检查价格来源',
+      '检查价格来源',
+      '检查价格来源',
+    ])
+    expect(formatDashboardActionInstruction('over_invested', 'en')).toBe('Review target amount')
+  })
+
   it('uses complete count and amount labels in both locales', () => {
     expect(formatOpenActionDetail(9, 5, 'en')).toBe('9 high-priority · 5 data issues')
     expect(formatPortfolioPositionCount(4, 'en')).toBe('4 positions')
     expect(formatTargetAmount('USD 25,000', 'en')).toBe('Target USD 25,000')
     expect(formatMarketAmount('USD 25,000', 'en')).toBe('Market value USD 25,000')
+    expect(formatAssetCount(1, 'en')).toBe('1 asset')
+    expect(formatAssetCount(3, 'zh-CN')).toBe('3 项资产')
+    expect(formatFilterMatchCount(4, 'zh-CN')).toBe('4 条符合当前筛选')
+    expect(formatInvalidIf('guidance changes', 'zh-CN')).toBe('失效条件 guidance changes')
+    expect(formatDriftTag('+2.1%', 'zh-CN')).toBe('偏离 +2.1%')
+    expect(formatRelatedEntity('Bitcoin', 'zh-CN')).toBe('关联 Bitcoin')
+    expect(formatBaseCurrency('USD', 'zh-CN')).toBe('本位币 USD')
+    expect(formatFacetOption('investment_risk', 'zh-CN')).toBe('配置风险')
+    expect(formatFacetOption('high', 'zh-CN')).toBe('高')
+    expect(formatFacetOption('Buy', 'zh-CN')).toBe('买入')
+    expect(formatFacetOption('Capture evidence', 'zh-CN')).toBe('记录证据')
   })
 
   it('does not use document mutation to localize Reader product copy', () => {

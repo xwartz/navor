@@ -51,10 +51,9 @@ export function PlanView({
     <div className="space-y-5">
       <ViewHeader
         description="Targets, limits, and the action each boundary triggers."
+        tabs={<DestinationTabs active="plan" />}
         title="Portfolio"
       />
-
-      <DestinationTabs active="plan" />
 
       <SummaryStrip
         items={[
@@ -115,7 +114,7 @@ function PlanGroupPanel({
     <Panel description={description} title={title}>
       <div
         className={
-          variant === 'accounts' ? 'grid gap-3 md:grid-cols-2 2xl:grid-cols-4' : 'space-y-3'
+          variant === 'accounts' ? 'grid gap-3 @2xl:grid-cols-2 @6xl:grid-cols-4' : 'space-y-3'
         }
       >
         {groups.map((group) =>
@@ -159,7 +158,7 @@ function AssetPlanCard({ group, filters }: { group: PlanGroup; filters?: ReaderF
 
   return (
     <article className="surface-card px-5 py-4">
-      <div className="grid gap-5 xl:grid-cols-[minmax(13rem,0.8fr)_minmax(18rem,1.15fr)_minmax(15rem,0.8fr)] xl:items-center">
+      <div className="grid gap-5 @5xl:grid-cols-[minmax(13rem,0.8fr)_minmax(18rem,1.15fr)_minmax(15rem,0.8fr)] @5xl:items-center">
         <div className="min-w-0">
           <EntityCell
             interactive

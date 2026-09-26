@@ -5,6 +5,8 @@ import { Panel } from '../components/Panel'
 import { EntityCell, SectionTabs, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
+import { t } from '../i18n'
+import { watchlistStage } from '../toolbar-context'
 import { caseSectionTabs } from './ResearchView'
 
 export function WatchlistView({
@@ -15,19 +17,20 @@ export function WatchlistView({
   filters: ReaderFilters
 }) {
   const items = state.process.watchlist.filter((asset) =>
-    matchesFilters({ ...asset, status: nextRequired(asset.subject, state) }, filters),
+    matchesFilters({ ...asset, status: watchlistStage(asset.subject, state) }, filters),
   )
   return (
     <div className="space-y-5">
       <ViewHeader
         description="Advance each candidate to its next decision."
+        tabs={
+          <SectionTabs
+            active="watchlist"
+            ariaLabel="Investment case views"
+            tabs={caseSectionTabs(false)}
+          />
+        }
         title="Investment cases"
-      />
-
-      <SectionTabs
-        active="watchlist"
-        ariaLabel="Investment case views"
-        tabs={caseSectionTabs(false)}
       />
 
       <Panel
@@ -52,25 +55,18 @@ export function WatchlistView({
                   title={asset.title ?? asset.subject}
                 />
               ),
-              account: asset.account ? <EntityCell subject={asset.account} /> : 'n/a',
-              next: nextRequired(asset.subject, state),
-              reason: asset.watchReason ?? 'No reason recorded',
+              account: asset.account ? <EntityCell subject={asset.account} /> : t('Not available'),
+              next: t(watchlistStage(asset.subject, state)),
+              reason: asset.watchReason ?? t('No reason recorded'),
             },
             sortValues: {
               asset: asset.title ?? asset.subject,
               account: asset.account ?? '',
-              next: nextRequired(asset.subject, state),
+              next: watchlistStage(asset.subject, state),
             },
           }))}
         />
       </Panel>
     </div>
   )
-}
-
-function nextRequired(subject: string, state: NavorRendererAppState) {
-  if (!state.knowledge.research.some((item) => item.subject === subject)) return 'Capture evidence'
-  if (!state.knowledge.theses.some((item) => item.subject === subject)) return 'Form thesis'
-  if (!state.knowledge.decisions.some((item) => item.subject === subject)) return 'Decide'
-  return 'Review case'
 }
