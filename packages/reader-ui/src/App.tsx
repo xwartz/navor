@@ -137,6 +137,7 @@ function ReaderAppShell({
           {t('Skip to content')}
         </a>
         <Sidebar
+          actionCount={state.dashboard.actionInbox.length}
           activeView={activeView}
           diagnosticCount={diagnosticCount}
           isCollapsed={navCollapsed}

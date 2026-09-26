@@ -1,8 +1,13 @@
 export type ReaderLocale = 'en' | 'zh-CN'
 
 const chinese = {
-  Monitor: '工作台',
   Briefing: '投资简报',
+  Summary: '概览',
+  Plans: '执行计划',
+  'Reviews & journal': '复盘与日志',
+  'Section views': '分区视图',
+  'Search scope': '搜索范围',
+  'View all': '查看全部',
   Drift: '偏离',
   Actions: '行动中心',
   Watchlist: '观察列表',
@@ -43,7 +48,6 @@ const chinese = {
   'Active plans': '生效计划',
   'With actions': '含动作',
   'Targets, limits, and the action each boundary triggers.': '目标、边界及其触发动作。',
-  'Portfolio workspace': '组合工作台',
   'Plan date': '计划日期',
   'Account allocation boundaries': '账户配置范围',
   'Asset plans': '资产计划',
@@ -62,8 +66,8 @@ const chinese = {
   'Data health': '数据健康',
   Issues: '问题',
   'Market coverage': '行情覆盖',
-  'Input quality and source facts behind this reader. Investment and review actions stay in Actions.':
-    '阅读器背后的输入质量与源事实。投资和复核事项保留在行动中心。',
+  'Input quality and source facts behind this reader. Investment and review actions stay in Briefing.':
+    '阅读器背后的输入质量与源事实。投资和复核事项保留在投资简报中。',
   'One row per valuation input. A non-fresh quote is an input-quality issue, not a portfolio fact.':
     '每项估值输入一行。非最新报价属于输入质量问题，并非投资组合事实。',
   'Data issues': '数据问题',
@@ -156,9 +160,6 @@ const chinese = {
   'Unrealized PnL': '未实现盈亏',
   'Open positions': '未平仓持仓',
   'Closed positions': '已平仓',
-  'Target-range breaches': '目标区间偏离',
-  'Positions outside target range': '持仓超出目标区间',
-  'All positions within target range': '所有持仓均在目标区间内',
   'Open actions': '待处理事项',
   'Decision basis': '判断依据',
   'Position details': '持仓明细',
@@ -175,7 +176,6 @@ const chinese = {
   'Decision queue': '决策队列',
   'Ranked by risk severity, portfolio exposure, and urgency.':
     '按风险严重程度、投资组合敞口和紧急程度排序。',
-  'more actions': '项待处理事项',
   Liquidity: '流动性',
   'Cash and PnL that affect deployable capital.': '影响可部署资金的现金和盈亏。',
   'Cash by currency': '按币种列示现金',
@@ -197,10 +197,10 @@ const chinese = {
   'All portfolio activity.': '全部投资组合活动。',
   'Target structure: account sleeves and how asset targets resolve into portfolio weight.':
     '目标结构：账户分组及资产目标如何换算为组合权重。',
-  'Action center': '行动中心',
   'Allocation risk': '配置风险',
   'No actions match the current filters.': '没有符合当前筛选条件的待处理事项。',
   'Market mix': '市场分布',
+  'Share of valued holdings, largest first.': '已估值持仓的占比，按从大到小排列。',
   Positions: '持仓明细',
   'Realized PnL': '已实现盈亏',
   Cash: '现金',
@@ -304,8 +304,8 @@ const chinese = {
   'Directory tree under the workspace root.': '工作区根目录下的目录树。',
   'Scan the economic event first, then open a row only when you need its double-entry detail.':
     '先浏览经济事件，仅在需要时打开行查看复式记账明细。',
-  'Strategic mix across accounts. Asset-level distance from target lives on Drift.':
-    '跨账户的战略配置，资产层面的目标偏离见“偏离”页面。',
+  'Strategic mix across accounts. Asset-level distance from target follows below.':
+    '跨账户的战略配置，资产层面的目标偏离见下方。',
   'Account-scoped target × sleeve weight = portfolio weight. Amounts are the resolved capital targets.':
     '账户目标 × 资金分组权重 = 组合权重，金额为解析后的资金目标。',
   'No records match the current filters.': '没有符合当前筛选条件的记录。',
@@ -365,7 +365,6 @@ const chinese = {
   'Account target': '账户目标',
   'Needs attention': '需要关注',
   Realized: '已实现',
-  Priority: '优先级',
   'Try a broader query or remove one of the subject, tag, or date filters.':
     '请扩大搜索范围，或移除对象、标签或日期筛选条件。',
   'Open view': '打开视图',
@@ -530,6 +529,14 @@ export function formatOpenActionDetail(
     return `${urgentCount} high-priority · ${dataCount} data issues`
   if (urgentCount > 0) return `${urgentCount} high priority`
   return `${dataCount} data ${dataCount === 1 ? 'issue' : 'issues'}`
+}
+
+export function formatTargetBreachCount(count: number, locale = readerLocale) {
+  return locale === 'zh-CN' ? `${count} 个超出目标区间` : `${count} outside target range`
+}
+
+export function formatMoreActions(count: number, locale = readerLocale) {
+  return locale === 'zh-CN' ? `另有 ${count} 项 · 查看全部` : `${count} more · View all`
 }
 
 export function formatDashboardActionContext(

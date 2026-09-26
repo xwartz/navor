@@ -1,5 +1,6 @@
 import type { ReaderView } from './navigation'
-import { getReaderRoute, resolveReaderView } from './navigation'
+import { getReaderRoute } from './navigation'
+import { matchReaderRoute } from './view-catalog'
 import type { HealthTab } from './views/DiagnosticsView'
 import type { CaseTab } from './views/ResearchView'
 
@@ -20,11 +21,8 @@ export function readReaderLocation(
   const route = url.hash.replace(/^#/, '')
   const [root, section] = route.split('/')
   const view =
-    root === 'cases'
-      ? 'research'
-      : root === 'health'
-        ? 'diagnostics'
-        : resolveReaderView(url.hash, initialView)
+    matchReaderRoute(route) ??
+    (root === 'cases' ? 'research' : root === 'health' ? 'diagnostics' : initialView)
 
   return {
     view,

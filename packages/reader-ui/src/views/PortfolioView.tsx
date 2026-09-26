@@ -7,6 +7,7 @@ import {
   convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
+  formatMoneyCompact,
   formatPercent,
   groupMoneyValues,
   pickMoneyCurrency,
@@ -16,9 +17,9 @@ import { Panel } from '../components/Panel'
 import { MoneyDelta, RankedExposureList } from '../components/PortfolioVisuals'
 import { QuantityCommodity } from '../components/QuantityCommodity'
 import {
+  DestinationTabs,
   EntityCell,
   GroupedSection,
-  PortfolioSectionNav,
   SummaryStrip,
   ViewHeader,
 } from '../components/ViewScaffold'
@@ -95,11 +96,10 @@ export function PortfolioView({
     <div className="space-y-5">
       <ViewHeader
         description="Current positions, cost, market value, and unrealized PnL."
-        eyebrow="Portfolio"
-        title="Holdings"
+        title="Portfolio"
       />
 
-      <PortfolioSectionNav active="holdings" />
+      <DestinationTabs active="holdings" />
 
       <SummaryStrip
         items={[
@@ -112,7 +112,8 @@ export function PortfolioView({
           },
           {
             label: t('Cost basis'),
-            value: formatMoney(primaryCost),
+            value: formatMoneyCompact(primaryCost),
+            exactValue: formatMoney(primaryCost),
             detail:
               otherCostCount > 0
                 ? formatUnconvertedCurrencyCount(otherCostCount)
@@ -122,7 +123,8 @@ export function PortfolioView({
           },
           {
             label: t('Market value'),
-            value: formatMoney(marketValueInBase.total),
+            value: formatMoneyCompact(marketValueInBase.total),
+            exactValue: formatMoney(marketValueInBase.total),
             detail: marketValueInBase.total
               ? `${t('Converted to')} ${state.drift.baseCurrency}`
               : undefined,
@@ -130,26 +132,6 @@ export function PortfolioView({
           unrealizedPnlItem,
         ]}
       />
-
-      <Panel title="Market mix">
-        <RankedExposureList
-          items={marketMix.values.map(({ source, amount }) => ({
-            id: source.subject,
-            label:
-              assetExecutionBySubject.get(source.subject)?.title ??
-              source.subject.replace(/^Asset:/, ''),
-            sublabel: formatSubjectSublabel(labelIndex, source.subject),
-            value: marketMix.total > 0 ? (amount / marketMix.total) * 100 : 0,
-          }))}
-          limit={10}
-          valueLabel="Weight"
-        />
-        {marketMix.unconvertedCurrencies.length > 0 ? (
-          <p className="mt-3 text-xs text-ink-faint">
-            {formatUnconvertedCurrencyCount(marketMix.unconvertedCurrencies.length)}
-          </p>
-        ) : null}
-      </Panel>
 
       <Panel
         actions={
@@ -195,19 +177,37 @@ export function PortfolioView({
                 }
                 key={account}
               >
-                <div className="p-3">
-                  <HoldingsTable
-                    holdings={accountHoldings}
-                    onOpenAsset={openAsset}
-                    priceBySubject={priceBySubject}
-                    valueBySubject={valueBySubject}
-                    weightBySubject={weightBySubject}
-                  />
-                </div>
+                <HoldingsTable
+                  holdings={accountHoldings}
+                  onOpenAsset={openAsset}
+                  priceBySubject={priceBySubject}
+                  valueBySubject={valueBySubject}
+                  weightBySubject={weightBySubject}
+                />
               </GroupedSection>
             ))}
           </div>
         )}
+      </Panel>
+
+      <Panel description="Share of valued holdings, largest first." title="Market mix">
+        <RankedExposureList
+          items={marketMix.values.map(({ source, amount }) => ({
+            id: source.subject,
+            label:
+              assetExecutionBySubject.get(source.subject)?.title ??
+              source.subject.replace(/^Asset:/, ''),
+            sublabel: formatSubjectSublabel(labelIndex, source.subject),
+            value: marketMix.total > 0 ? (amount / marketMix.total) * 100 : 0,
+          }))}
+          limit={10}
+          valueLabel="Weight"
+        />
+        {marketMix.unconvertedCurrencies.length > 0 ? (
+          <p className="mt-3 text-xs text-ink-faint">
+            {formatUnconvertedCurrencyCount(marketMix.unconvertedCurrencies.length)}
+          </p>
+        ) : null}
       </Panel>
     </div>
   )

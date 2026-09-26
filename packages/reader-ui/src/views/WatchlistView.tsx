@@ -2,9 +2,10 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { DataTable } from '../components/DataTable'
 import { Panel } from '../components/Panel'
-import { EntityCell, ViewHeader } from '../components/ViewScaffold'
+import { EntityCell, SectionTabs, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
+import { caseSectionTabs } from './ResearchView'
 
 export function WatchlistView({
   state,
@@ -20,8 +21,13 @@ export function WatchlistView({
     <div className="space-y-5">
       <ViewHeader
         description="Advance each candidate to its next decision."
-        eyebrow="Monitor"
-        title="Watchlist"
+        title="Investment cases"
+      />
+
+      <SectionTabs
+        active="watchlist"
+        ariaLabel="Investment case views"
+        tabs={caseSectionTabs(false)}
       />
 
       <Panel

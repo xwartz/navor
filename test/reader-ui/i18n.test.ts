@@ -33,8 +33,9 @@ describe('reader localization', () => {
   it('localizes the decision-desk navigation labels', () => {
     const command = getNavGroups('zh-CN')[0]
 
-    expect(command?.label).toBe('工作台')
+    expect(command?.label).toBe('投资组合')
     expect(command?.items[0]).toEqual({ id: 'overview', label: '投资简报' })
+    expect(getNavGroups('zh-CN')[1]?.items[1]).toEqual({ id: 'reviews', label: '复盘与日志' })
   })
 
   it('requires product copy to be registered before it can use the typed translator', () => {

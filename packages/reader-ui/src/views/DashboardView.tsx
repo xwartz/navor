@@ -6,6 +6,7 @@ import {
   convertToBaseCurrency,
   countOtherCurrencies,
   formatMoney,
+  formatMoneyCompact,
   formatMoneyList,
   formatPercent,
   formatSignedPercent,
@@ -16,8 +17,8 @@ import {
 import { Panel } from '../components/Panel'
 import { DonutChart, ProgressMeter } from '../components/PortfolioVisuals'
 import {
+  DestinationTabs,
   EmptyState,
-  InsetList,
   LabelCaps,
   SuccessCallout,
   SummaryStrip,
@@ -25,7 +26,14 @@ import {
 } from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel } from '../entity-labels'
-import { formatDashboardActionReason, formatOpenActionDetail, t, translateText } from '../i18n'
+import {
+  formatDashboardActionReason,
+  formatMoreActions,
+  formatOpenActionDetail,
+  formatTargetBreachCount,
+  t,
+  translateText,
+} from '../i18n'
 
 export function DashboardView({
   state,
@@ -128,13 +136,26 @@ export function DashboardView({
     .sort((left, right) => right.value.amount - left.value.amount)
     .slice(0, 5)
 
+  const headlineValue = hasLiveValuation
+    ? displayedPortfolioValue
+    : hasConvertedCapital
+      ? investedInBase.total
+      : null
+  const actionDetail =
+    urgentActionCount > 0 || dataActionCount > 0
+      ? formatOpenActionDetail(urgentActionCount, dataActionCount)
+      : openActionCount > 0
+        ? t('Review queue')
+        : t('Nothing requires action')
+
   return (
     <div className="space-y-5">
       <ViewHeader
         description="Portfolio posture, target-range exceptions, and the next decisions to make."
-        eyebrow="Monitor"
         title="Briefing"
       />
+
+      <DestinationTabs active="overview" counts={{ drift: openActionCount }} />
 
       <SummaryStrip
         items={[
@@ -144,11 +165,10 @@ export function DashboardView({
               : hasLiveValuation
                 ? t('Holdings market value')
                 : t('Invested capital'),
-            value: hasLiveValuation
-              ? formatMoney(displayedPortfolioValue)
-              : hasConvertedCapital
-                ? formatMoney(investedInBase.total)
-                : formatMoneyList(investedCapital),
+            value: headlineValue
+              ? formatMoneyCompact(headlineValue)
+              : formatMoneyList(investedCapital),
+            exactValue: headlineValue ? formatMoney(headlineValue) : undefined,
             detail: hasLiveValuation
               ? portfolioValueInBase.total
                 ? `${t('Holdings + cash, converted to')} ${state.drift.baseCurrency}`
@@ -168,44 +188,25 @@ export function DashboardView({
           unrealizedPnlItem,
           realizedPnlItem,
           {
-            label: t('Target-range breaches'),
-            value: String(offTrackAssets.length),
-            detail:
-              offTrackAssets.length > 0
-                ? t('Positions outside target range')
-                : t('All positions within target range'),
-            tone: offTrackAssets.length > 0 ? 'warning' : 'positive',
-          },
-          {
             label: t('Open actions'),
             value: String(openActionCount),
             detail:
-              urgentActionCount > 0 && dataActionCount > 0
-                ? formatOpenActionDetail(urgentActionCount, dataActionCount)
-                : urgentActionCount > 0
-                  ? formatOpenActionDetail(urgentActionCount, 0)
-                  : dataActionCount > 0
-                    ? formatOpenActionDetail(0, dataActionCount)
-                    : openActionCount > 0
-                      ? t('Review queue')
-                      : t('Nothing requires action'),
+              offTrackAssets.length > 0
+                ? `${actionDetail} · ${formatTargetBreachCount(offTrackAssets.length)}`
+                : actionDetail,
             tone: openActionCount > 0 ? 'warning' : 'positive',
           },
         ]}
       />
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] xl:items-start">
-        <div className="order-first space-y-5 xl:order-last">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] xl:items-start">
+        <div className="space-y-5">
           <DecisionQueue
             actions={state.dashboard.actionInbox}
             openActionCount={openActionCount}
             onOpenAsset={openAsset}
             selectedAssetSubject={selectedAssetSubject}
           />
-          <LargestPositions onOpenAsset={openAsset} positions={topPositions} />
-        </div>
-
-        <div className="space-y-5">
           <Panel
             description="Capital sleeves and current funding progress."
             title="Allocation posture"
@@ -252,6 +253,10 @@ export function DashboardView({
               </div>
             </div>
           </Panel>
+        </div>
+
+        <div className="space-y-5">
+          <LargestPositions onOpenAsset={openAsset} positions={topPositions} />
 
           <Panel description="Cash and PnL that affect deployable capital." title="Liquidity">
             <div className="space-y-5">
@@ -271,6 +276,7 @@ export function DashboardView({
                 <div className="border-t border-border pt-4">
                   <LabelCaps className="mb-2">{t('PnL by currency')}</LabelCaps>
                   <CurrencyBreakdown
+                    isDelta
                     items={pnlByCurrency}
                     note={
                       state.drift.baseCurrency
@@ -362,8 +368,21 @@ function DecisionQueue({
   openActionCount: number
   selectedAssetSubject: string | null
 }) {
+  const visibleActions = actions.slice(0, DECISION_QUEUE_LIMIT)
+  const hiddenCount = openActionCount - visibleActions.length
+
   return (
     <Panel
+      actions={
+        openActionCount > 0 ? (
+          <a
+            className="-my-2 inline-flex min-h-10 items-center rounded-md px-2.5 text-xs font-semibold text-accent transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft"
+            href="#briefing/actions"
+          >
+            {hiddenCount > 0 ? formatMoreActions(hiddenCount) : t('View all')}
+          </a>
+        ) : undefined
+      }
       description={
         openActionCount > 0
           ? 'Ranked by risk severity, portfolio exposure, and urgency.'
@@ -374,63 +393,54 @@ function DecisionQueue({
       {actions.length === 0 ? (
         <SuccessCallout>{t('Nothing requires action')}</SuccessCallout>
       ) : (
-        <div className="space-y-3">
-          <InsetList>
-            {actions.slice(0, 5).map((item, index) => {
-              const isSelected = selectedAssetSubject === item.subject
+        <ul className="panel-bleed divide-y divide-border/50">
+          {visibleActions.map((item, index) => {
+            const isSelected = selectedAssetSubject === item.subject
 
-              return (
-                <div
-                  className={
+            return (
+              <li key={item.id} title={item.subject}>
+                <button
+                  aria-current={isSelected ? 'true' : undefined}
+                  aria-haspopup="dialog"
+                  className={`grid w-full grid-cols-[1.75rem_minmax(0,1fr)_auto] items-start gap-3 px-5 py-3.5 text-left transition-[background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/35 ${
                     isSelected
-                      ? 'bg-paper-subtle/60 shadow-[inset_3px_0_0_0_var(--color-accent)]'
-                      : '[@media(hover:hover)]:hover:bg-paper-subtle/40'
-                  }
-                  key={item.id}
-                  title={item.subject}
+                      ? 'bg-accent-soft/50 shadow-[inset_3px_0_0_0_var(--color-accent)]'
+                      : '[@media(hover:hover)]:hover:bg-paper-subtle/60'
+                  }`}
+                  onClick={() => onOpenAsset(item.subject)}
+                  type="button"
                 >
-                  <button
-                    aria-current={isSelected ? 'true' : undefined}
-                    aria-haspopup="dialog"
-                    className="flex w-full items-start gap-3 px-4 py-3.5 text-left transition-[background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink"
-                    onClick={() => onOpenAsset(item.subject)}
-                    type="button"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <LabelCaps>
-                        {t('Priority')} {index + 1} · {actionCategoryLabel(item.category)}
-                      </LabelCaps>
-                      <h3 className="mt-1 text-sm font-semibold text-ink">
+                  <span className="pt-px font-mono text-xs tabular-nums text-ink-faint">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                      <h3 className="text-sm font-semibold text-ink">
                         {item.title ?? item.subject}
                       </h3>
-                      <p className="mt-1 text-xs leading-5 text-ink-faint">
-                        {formatDashboardActionReason(item.reason)}
+                      <span className="label-caps">{actionCategoryLabel(item.category)}</span>
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-ink-muted">
+                      {formatDashboardActionReason(item.reason)}
+                    </p>
+                    {item.action ? (
+                      <p className="mt-1 text-xs font-medium text-accent-ink">
+                        {translateText(item.action)}
                       </p>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-2 pt-0.5">
-                      <SeverityChip severity={item.severity} />
-                    </div>
-                  </button>
-                </div>
-              )
-            })}
-          </InsetList>
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-faint">
-            <span>
-              {openActionCount > 5 ? `${openActionCount - 5} ${t('more actions')}` : null}
-            </span>
-            <a
-              className="inline-flex min-h-10 items-center rounded-md px-2.5 font-semibold text-accent transition-[background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 [@media(hover:hover)]:hover:bg-accent-soft"
-              href="#actions"
-            >
-              {t('Action center')}
-            </a>
-          </div>
-        </div>
+                    ) : null}
+                  </div>
+                  <SeverityChip severity={item.severity} />
+                </button>
+              </li>
+            )
+          })}
+        </ul>
       )}
     </Panel>
   )
 }
+
+const DECISION_QUEUE_LIMIT = 6
 
 function actionCategoryLabel(
   category: NavorRendererAppState['dashboard']['actionInbox'][number]['category'],
@@ -447,10 +457,12 @@ function actionCategoryLabel(
 
 function CurrencyBreakdown({
   emptyMessage,
+  isDelta = false,
   items,
   note,
 }: {
   emptyMessage?: import('../i18n').MessageKey
+  isDelta?: boolean
   items: Array<{ amount: number; currency: string }>
   note?: string
 }) {
@@ -459,28 +471,28 @@ function CurrencyBreakdown({
   }
 
   return (
-    <div className="space-y-3">
-      <InsetList>
+    <div className="space-y-2">
+      <dl className="divide-y divide-border/50">
         {items.map((item) => (
           <div
-            className="grid grid-cols-[minmax(0,1fr)_minmax(8rem,auto)] gap-3 px-4 py-2.5"
+            className="grid grid-cols-[minmax(0,1fr)_minmax(8rem,auto)] gap-3 py-2.5"
             key={item.currency}
           >
-            <span className="text-sm font-medium text-ink">{item.currency}</span>
-            <span
+            <dt className="text-sm font-medium text-ink-muted">{item.currency}</dt>
+            <dd
               className={`text-right text-sm font-semibold tabular-nums ${
                 item.amount < 0
                   ? 'text-danger'
-                  : item.amount > 0
+                  : isDelta && item.amount > 0
                     ? 'text-positive'
-                    : 'text-ink-muted'
+                    : 'text-ink'
               }`}
             >
               {formatMoney({ amount: item.amount, currency: item.currency })}
-            </span>
+            </dd>
           </div>
         ))}
-      </InsetList>
+      </dl>
       {note ? <p className="text-xs leading-5 text-ink-faint">{note}</p> : null}
     </div>
   )

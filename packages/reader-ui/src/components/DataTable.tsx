@@ -163,7 +163,7 @@ export function DataTable({
   }
 
   return (
-    <div className="surface-card relative">
+    <div className="surface-card panel-bleed relative">
       {showTableOptions ? (
         <div className="flex items-center justify-between border-b border-border/60 bg-paper-subtle/40 px-4 py-2.5">
           <span className="label-caps">

@@ -3,6 +3,7 @@ import {
   buildPnlSummaryItem,
   formatFxCoverage,
   formatMoney,
+  formatMoneyCompact,
   formatPnlCoverageDetail,
   formatQuantityCommodity,
   formatSignedPercent,
@@ -90,6 +91,16 @@ describe('reader formatting', () => {
 
   it('does not round tiny market prices down to zero', () => {
     expect(formatMoney({ amount: 0.000002375, currency: 'USD' })).toBe('0.000002375 USD')
+  })
+
+  it('caps money at two decimals', () => {
+    expect(formatMoney({ amount: 1049073.1194, currency: 'USD' })).toBe('1,049,073.12 USD')
+  })
+
+  it('compacts only million-scale summary values', () => {
+    expect(formatMoneyCompact({ amount: 1049073.1194, currency: 'USD' })).toBe('1.05M USD')
+    expect(formatMoneyCompact({ amount: -2_340_000_000, currency: 'CNY' })).toBe('-2.34B CNY')
+    expect(formatMoneyCompact({ amount: 49062.745, currency: 'USD' })).toBe('49,062.75 USD')
   })
 
   it('uses a compact readable timestamp for market tables', () => {

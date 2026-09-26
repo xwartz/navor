@@ -2,6 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 import type { ReactNode } from 'react'
 
 import type { ReaderFilters } from './filters'
+import type { MessageKey } from './i18n'
 import { AccountsView } from './views/AccountsView'
 import { AllocationView } from './views/AllocationView'
 import { DashboardView } from './views/DashboardView'
@@ -29,14 +30,19 @@ export type ReaderView =
   | 'journal'
   | 'diagnostics'
 
-export type ReaderViewGroup = 'Monitor' | 'Portfolio' | 'Investment process' | 'Operations'
+export type ReaderViewGroup = 'Portfolio' | 'Investment process' | 'Operations'
 export interface ReaderViewDefinition {
   id: ReaderView
   route: string
-  label: string
+  /** Former canonical routes that still resolve after a view moved under a destination. */
+  aliases?: string[]
+  label: MessageKey
   group: ReaderViewGroup
+  /** Sidebar destination that owns this view as a section tab. */
+  parent?: ReaderView
+  /** Label inside the destination's section tabs, when it differs from `label`. */
+  tabLabel?: MessageKey
   filterSource?: (state: NavorRendererAppState) => unknown[]
-  navigation?: 'visible' | 'hidden'
   render: (state: NavorRendererAppState, filters: ReaderFilters, liveEnabled: boolean) => ReactNode
 }
 
@@ -45,29 +51,25 @@ export const READER_VIEW_CATALOG: ReaderViewDefinition[] = [
     id: 'overview',
     route: 'briefing',
     label: 'Briefing',
-    group: 'Monitor',
+    tabLabel: 'Summary',
+    group: 'Portfolio',
     render: (state, _filters, live) => <DashboardView liveEnabled={live} state={state} />,
   },
   {
     id: 'drift',
-    route: 'actions',
+    route: 'briefing/actions',
+    aliases: ['actions'],
     label: 'Actions',
-    group: 'Monitor',
+    group: 'Portfolio',
+    parent: 'overview',
     filterSource: (state) => state.dashboard.actionInbox,
     render: (state, filters) => <DriftView filters={filters} state={state} />,
-  },
-  {
-    id: 'watchlist',
-    route: 'watchlist',
-    label: 'Watchlist',
-    group: 'Monitor',
-    filterSource: (state) => state.process.watchlist,
-    render: (state, filters) => <WatchlistView filters={filters} state={state} />,
   },
   {
     id: 'holdings',
     route: 'portfolio',
     label: 'Portfolio',
+    tabLabel: 'Positions',
     group: 'Portfolio',
     filterSource: (state) => state.portfolio.holdings,
     render: (state, filters) => <PortfolioView filters={filters} state={state} />,
@@ -77,17 +79,28 @@ export const READER_VIEW_CATALOG: ReaderViewDefinition[] = [
     route: 'portfolio/allocation',
     label: 'Allocation',
     group: 'Portfolio',
+    parent: 'holdings',
     filterSource: (state) => state.allocation.assets,
     render: (state, filters) => <AllocationView filters={filters} state={state} />,
-    navigation: 'hidden',
+  },
+  {
+    id: 'plan',
+    route: 'portfolio/plans',
+    aliases: ['plans'],
+    label: 'Execution plans',
+    tabLabel: 'Plans',
+    group: 'Portfolio',
+    parent: 'holdings',
+    filterSource: (state) => state.plan.entries,
+    render: (state, filters) => <PlanView filters={filters} state={state} />,
   },
   {
     id: 'accounts',
     route: 'portfolio/accounts',
     label: 'Accounts',
     group: 'Portfolio',
+    parent: 'holdings',
     render: (state) => <AccountsView state={state} />,
-    navigation: 'hidden',
   },
   {
     id: 'ledger',
@@ -110,28 +123,33 @@ export const READER_VIEW_CATALOG: ReaderViewDefinition[] = [
     render: (state, filters) => <ResearchView filters={filters} state={state} />,
   },
   {
+    id: 'watchlist',
+    route: 'cases/watchlist',
+    aliases: ['watchlist'],
+    label: 'Watchlist',
+    group: 'Investment process',
+    parent: 'research',
+    filterSource: (state) => state.process.watchlist,
+    render: (state, filters) => <WatchlistView filters={filters} state={state} />,
+  },
+  {
     id: 'reviews',
     route: 'reviews',
-    label: 'Reviews',
+    label: 'Reviews & journal',
+    tabLabel: 'Reviews',
     group: 'Investment process',
     filterSource: (state) => state.process.reviews,
     render: (state, filters) => <ReviewsView filters={filters} state={state} />,
   },
   {
     id: 'journal',
-    route: 'journal',
+    route: 'reviews/journal',
+    aliases: ['journal'],
     label: 'Journal',
     group: 'Investment process',
+    parent: 'reviews',
     filterSource: (state) => state.process.journal,
     render: (state, filters) => <JournalView filters={filters} state={state} />,
-  },
-  {
-    id: 'plan',
-    route: 'plans',
-    label: 'Execution plans',
-    group: 'Operations',
-    filterSource: (state) => state.plan.entries,
-    render: (state, filters) => <PlanView filters={filters} state={state} />,
   },
   {
     id: 'diagnostics',
@@ -158,4 +176,32 @@ export function getReaderView(id: ReaderView) {
   const view = definitions.get(id) ?? definitions.get('overview')
   if (!view) throw new Error('Reader view catalog must define overview.')
   return view
+}
+
+/** The sidebar destination a view belongs to: itself, or the destination that hosts it as a tab. */
+export function getDestinationView(id: ReaderView): ReaderView {
+  return getReaderView(id).parent ?? id
+}
+
+/** Ordered section tabs for the destination that owns `id`; empty when it has no sibling views. */
+export function getDestinationTabs(id: ReaderView) {
+  const destination = getDestinationView(id)
+  const members = READER_VIEW_CATALOG.filter(
+    (view) => view.id === destination || view.parent === destination,
+  )
+
+  return members.length > 1
+    ? members.map((view) => ({
+        id: view.id,
+        route: view.route,
+        label: view.tabLabel ?? view.label,
+      }))
+    : []
+}
+
+export function matchReaderRoute(route: string): ReaderView | null {
+  return (
+    READER_VIEW_CATALOG.find((view) => view.route === route || view.aliases?.includes(route))?.id ??
+    null
+  )
 }

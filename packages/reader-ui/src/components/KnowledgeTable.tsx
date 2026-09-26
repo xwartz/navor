@@ -29,7 +29,7 @@ export function KnowledgeTable({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="surface-card panel-bleed divide-y divide-border/50">
       {rows.map((row) => (
         <KnowledgeRow key={row.id} row={row} />
       ))}
@@ -46,11 +46,13 @@ function KnowledgeRow({ row }: { row: KnowledgeTableRow }) {
   const tags = row.tags?.filter(Boolean) ?? []
 
   return (
-    <article className="surface-card px-5 py-4">
+    <article className="px-5 py-4">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold text-ink">{row.title}</h3>
-          {metaLine ? <p className="mt-1 text-xs leading-5 text-ink-muted">{metaLine}</p> : null}
+          {metaLine ? (
+            <p className="text-[11px] leading-4 tabular-nums text-ink-faint">{metaLine}</p>
+          ) : null}
+          <h3 className="mt-1 text-sm font-semibold text-ink">{row.title}</h3>
           {tags.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {tags.map((tag) => (
@@ -71,7 +73,7 @@ function KnowledgeRow({ row }: { row: KnowledgeTableRow }) {
         ) : null}
       </div>
       {row.body ? (
-        <div className="mt-3 border-t border-border/60 pt-3">
+        <div className="mt-2 max-w-3xl">
           <MarkdownBody body={row.body} />
         </div>
       ) : null}

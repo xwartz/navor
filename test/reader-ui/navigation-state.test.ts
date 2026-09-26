@@ -12,6 +12,17 @@ describe('reader navigation state', () => {
     expect(resolveReaderView('#portfolio/accounts', 'overview')).toBe('accounts')
   })
 
+  it('keeps pre-consolidation task links working', () => {
+    expect(resolveReaderView('#watchlist', 'overview')).toBe('watchlist')
+    expect(resolveReaderView('#journal', 'overview')).toBe('journal')
+    expect(
+      readReaderLocation('https://reader.test/#cases/watchlist', 'overview', () => false),
+    ).toMatchObject({ view: 'watchlist' })
+    expect(
+      readReaderLocation('https://reader.test/#actions', 'overview', () => false),
+    ).toMatchObject({ view: 'drift' })
+  })
+
   it('returns to the initial view when browser history removes the hash', () => {
     expect(resolveReaderView('', 'overview')).toBe('overview')
   })

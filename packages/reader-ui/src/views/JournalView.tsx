@@ -2,7 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { joinKnowledgeMeta, KnowledgeTable } from '../components/KnowledgeTable'
 import { Panel } from '../components/Panel'
-import { ViewHeader } from '../components/ViewScaffold'
+import { DestinationTabs, ViewHeader } from '../components/ViewScaffold'
 import { useEntityLabelIndex } from '../EntityLabelContext'
 import { resolveEntityLabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
@@ -23,9 +23,10 @@ export function JournalView({
     <div className="space-y-5">
       <ViewHeader
         description="Record the reasoning and behaviour behind a decision."
-        eyebrow="Investment process"
-        title="Journal"
+        title="Reviews & journal"
       />
+
+      <DestinationTabs active="journal" />
 
       <Panel
         description="Read chronologically, then filter by asset, directive, or mood."

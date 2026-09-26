@@ -90,14 +90,28 @@ export function ReaderToolbar({
         </label>
 
         {context.mode !== 'brief' ? (
-          <button
-            aria-label={t(searchScope === 'workspace' ? 'Entire workspace' : 'This view')}
-            className="control-btn press-scale h-10 shrink-0 px-2.5 text-xs font-semibold text-ink-muted"
-            onClick={() => onSearchScopeChange(searchScope === 'workspace' ? 'view' : 'workspace')}
-            type="button"
-          >
-            {t(searchScope === 'workspace' ? 'Entire workspace' : 'This view')}
-          </button>
+          <fieldset className="segmented-control shrink-0">
+            <legend className="sr-only">{t('Search scope')}</legend>
+            {(['view', 'workspace'] as const).map((scope) => (
+              <button
+                aria-pressed={searchScope === scope}
+                className={`h-9 rounded-[5px] px-2.5 text-xs font-semibold transition-[background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 ${
+                  searchScope === scope
+                    ? 'bg-paper-elevated text-ink shadow-[var(--shadow-xs)]'
+                    : 'text-ink-muted [@media(hover:hover)]:hover:text-ink'
+                }`}
+                key={scope}
+                onClick={() => onSearchScopeChange(scope)}
+                type="button"
+              >
+                {t(scope === 'workspace' ? 'Entire workspace' : 'This view')}
+              </button>
+            ))}
+          </fieldset>
+        ) : null}
+
+        {context.facets.length > 0 ? (
+          <span aria-hidden className="mx-1 hidden h-5 w-px bg-border sm:block" />
         ) : null}
 
         <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
@@ -164,6 +178,12 @@ function FacetControl({
         type="button"
       >
         <span className="max-w-[10rem] leading-none truncate">{selected}</span>
+        <span
+          aria-hidden
+          className={`ml-1.5 text-[10px] text-ink-faint transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`}
+        >
+          ▾
+        </span>
       </button>
       {isOpen ? (
         <div

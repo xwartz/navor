@@ -2,7 +2,7 @@ import type { NavorRendererAppState } from '@navor/contract'
 
 import { joinKnowledgeMeta, KnowledgeTable } from '../components/KnowledgeTable'
 import { Panel } from '../components/Panel'
-import { ViewHeader } from '../components/ViewScaffold'
+import { DestinationTabs, ViewHeader } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
 
@@ -18,9 +18,10 @@ export function ReviewsView({
     <div className="space-y-5">
       <ViewHeader
         description="Resolve the next scheduled check and record its follow-up."
-        eyebrow="Investment process"
-        title="Reviews"
+        title="Reviews & journal"
       />
+
+      <DestinationTabs active="reviews" />
 
       <Panel
         description="Status and follow-up stay beside the recorded review."

@@ -169,6 +169,22 @@
     outline: 1px solid oklch(from var(--color-border) l c h / 0.55);
   }
 
+  /* A list or table that is a panel's only content spans the panel edge to edge
+     instead of stacking a second framed surface inside the first. */
+  .panel-body > .panel-bleed:only-child {
+    margin: -1.25rem;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .grouped-body > .panel-bleed {
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+  }
+
   .label-caps {
     font-size: 10px;
     font-weight: 600;

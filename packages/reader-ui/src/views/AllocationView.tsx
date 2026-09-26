@@ -6,10 +6,10 @@ import { formatMoney, formatMoneyList, formatPercent } from '../components/forma
 import { Panel } from '../components/Panel'
 import { DonutChart } from '../components/PortfolioVisuals'
 import {
+  DestinationTabs,
   EntityCell,
   GroupedSection,
   LabelCaps,
-  PortfolioSectionNav,
   SummaryStrip,
   ViewHeader,
 } from '../components/ViewScaffold'
@@ -36,11 +36,10 @@ export function AllocationView({
     <div className="space-y-5">
       <ViewHeader
         description="Target structure: account sleeves and how asset targets resolve into portfolio weight."
-        eyebrow="Portfolio"
-        title="Allocation"
+        title="Portfolio"
       />
 
-      <PortfolioSectionNav active="allocation" />
+      <DestinationTabs active="allocation" />
 
       <SummaryStrip
         items={[
@@ -62,7 +61,7 @@ export function AllocationView({
       />
 
       <Panel
-        description="Strategic mix across accounts. Asset-level distance from target lives on Drift."
+        description="Strategic mix across accounts. Asset-level distance from target follows below."
         title="Account targets"
       >
         <div className="grid gap-6 xl:grid-cols-[minmax(16rem,0.75fr)_minmax(0,1.25fr)] xl:items-center">

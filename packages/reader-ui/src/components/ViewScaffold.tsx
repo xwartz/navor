@@ -4,10 +4,13 @@ import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel, useEntityMeta } from '../EntityLabelContext'
 import { readableEntityTitle } from '../entity-labels'
 import { type MessageKey, t, translateText } from '../i18n'
+import { getDestinationTabs, type ReaderView } from '../view-catalog'
 
 export interface SummaryItem {
   label: string
   value: string
+  /** Unabridged value, surfaced as a tooltip when `value` is compacted. */
+  exactValue?: string
   detail?: string
   tone?: 'neutral' | 'accent' | 'positive' | 'warning' | 'danger'
 }
@@ -29,29 +32,24 @@ const SUMMARY_VALUE_CLASSES: Record<NonNullable<SummaryItem['tone']>, string> = 
 }
 
 export function ViewHeader({
-  eyebrow,
   title,
   description,
   meta,
 }: {
-  eyebrow: MessageKey
   title: MessageKey
   description: MessageKey
   meta?: ReactNode
 }) {
   return (
-    <header className="flex flex-col gap-4 border-b border-border/60 pb-6 lg:flex-row lg:items-end lg:justify-between">
-      <div className="max-w-3xl">
-        <p className="font-ui text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
-          {t(eyebrow)}
-        </p>
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0 max-w-3xl">
         <h1
-          className="mt-1.5 font-display text-[1.875rem] leading-[1.06] font-bold tracking-[-0.024em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
+          className="font-display text-[1.75rem] leading-[1.1] font-bold tracking-[-0.022em] text-ink outline-none focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-accent/35"
           tabIndex={-1}
         >
           {t(title)}
         </h1>
-        <p className="mt-2.5 max-w-2xl text-sm leading-[1.65] text-ink-muted">{t(description)}</p>
+        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-ink-muted">{t(description)}</p>
       </div>
       {meta ? <div className="shrink-0 text-sm text-ink-muted">{meta}</div> : null}
     </header>
@@ -63,19 +61,20 @@ export function SummaryStrip({ items }: { items: SummaryItem[] }) {
     <section className="summary-strip surface-card">
       {items.map((item) => (
         <div
-          className="summary-item min-h-[6.5rem] px-4 py-4 sm:min-h-[7.25rem] sm:px-5"
+          className="summary-item min-h-[6rem] px-4 py-4 sm:min-h-[6.75rem] sm:px-5"
           key={item.label}
         >
           <p className="label-caps">{translateText(item.label)}</p>
           <p
-            className={`mt-2 font-display text-[1.375rem] font-semibold tracking-[-0.016em] tabular-nums ${
+            className={`mt-2 font-display text-[1.125rem] leading-7 font-semibold tracking-[-0.018em] tabular-nums sm:text-[1.5rem] sm:leading-8 ${
               SUMMARY_VALUE_CLASSES[item.tone ?? 'neutral']
             }`}
+            title={item.exactValue && item.exactValue !== item.value ? item.exactValue : undefined}
           >
             {item.value}
           </p>
           {item.detail ? (
-            <p className="mt-1.5 text-xs leading-5 text-ink-muted">{translateText(item.detail)}</p>
+            <p className="mt-1 text-xs leading-5 text-ink-muted">{translateText(item.detail)}</p>
           ) : null}
         </div>
       ))}
@@ -83,30 +82,39 @@ export function SummaryStrip({ items }: { items: SummaryItem[] }) {
   )
 }
 
-const PORTFOLIO_TABS = [
-  { id: 'holdings', label: 'Positions', route: 'portfolio' },
-  { id: 'allocation', label: 'Allocation', route: 'portfolio/allocation' },
-  { id: 'accounts', label: 'Accounts', route: 'portfolio/accounts' },
-] as const
+/** Section tabs for a sidebar destination that hosts several routed views. */
+export function DestinationTabs({
+  active,
+  counts,
+}: {
+  active: ReaderView
+  counts?: Partial<Record<ReaderView, number>>
+}) {
+  const tabs = getDestinationTabs(active)
 
-export function PortfolioSectionNav({ active }: { active: (typeof PORTFOLIO_TABS)[number]['id'] }) {
+  if (tabs.length === 0) {
+    return null
+  }
+
   return (
     <SectionTabs
       active={active}
-      ariaLabel="Portfolio workspace"
-      tabs={PORTFOLIO_TABS.map((item) => ({
-        id: item.id,
-        href: `#${item.route}`,
-        label: item.label,
+      ariaLabel="Section views"
+      tabs={tabs.map((tab) => ({
+        id: tab.id,
+        href: `#${tab.route}`,
+        label: tab.label,
+        count: counts?.[tab.id],
       }))}
     />
   )
 }
 
-type SectionTabItem<T extends string> = {
+export type SectionTabItem<T extends string> = {
   id: T
   label: MessageKey
   href?: string
+  count?: number
 }
 
 const SECTION_TAB_CLASS =
@@ -126,15 +134,31 @@ export function SectionTabs<T extends string>({
   onSelect?: (tab: T) => void
   tabs: SectionTabItem<T>[]
 }) {
+  const isTablist = Boolean(onSelect) && tabs.every((tab) => !tab.href)
+
   return (
     <nav
       aria-label={t(ariaLabel)}
-      className="section-tabs meta-scroll -mx-1 flex gap-0.5 overflow-x-auto border-b border-border/60 px-1 pb-0"
-      role={onSelect ? 'tablist' : undefined}
+      className="section-tabs meta-scroll -mx-1 flex gap-1 overflow-x-auto border-b border-border/60 px-1 pb-0"
+      role={isTablist ? 'tablist' : undefined}
     >
       {tabs.map((tab) => {
         const isActive = tab.id === active
         const className = `${SECTION_TAB_CLASS} ${isActive ? SECTION_TAB_ACTIVE : SECTION_TAB_IDLE}`
+        const content = (
+          <>
+            {t(tab.label)}
+            {tab.count ? (
+              <span
+                className={`ml-1.5 rounded-full px-1.5 py-px text-[10px] font-semibold tabular-nums ${
+                  isActive ? 'bg-warning-soft text-warning' : 'bg-paper-subtle text-ink-muted'
+                }`}
+              >
+                {tab.count}
+              </span>
+            ) : null}
+          </>
+        )
 
         if (tab.href) {
           return (
@@ -144,21 +168,35 @@ export function SectionTabs<T extends string>({
               href={tab.href}
               key={tab.id}
             >
-              {t(tab.label)}
+              {content}
             </a>
+          )
+        }
+
+        if (isTablist) {
+          return (
+            <button
+              aria-selected={isActive}
+              className={className}
+              key={tab.id}
+              onClick={() => onSelect?.(tab.id)}
+              role="tab"
+              type="button"
+            >
+              {content}
+            </button>
           )
         }
 
         return (
           <button
-            aria-selected={isActive}
+            aria-current={isActive ? 'page' : undefined}
             className={className}
             key={tab.id}
             onClick={() => onSelect?.(tab.id)}
-            role="tab"
             type="button"
           >
-            {t(tab.label)}
+            {content}
           </button>
         )
       })}
@@ -192,11 +230,12 @@ export function GroupedSection({
   return (
     <section className={`surface-card ${className}`}>
       <div className="border-b border-border/60 bg-paper-subtle/40 px-5 py-3.5">{header}</div>
-      <div className="divide-y divide-border/50">{children}</div>
+      <div className="grouped-body divide-y divide-border/50">{children}</div>
     </section>
   )
 }
 
+/** Divided list; bleeds to the panel edges when it is a panel's only content. */
 export function InsetList({
   children,
   className = '',
@@ -204,7 +243,11 @@ export function InsetList({
   children: ReactNode
   className?: string
 }) {
-  return <div className={`surface-inset divide-y divide-border/50 ${className}`}>{children}</div>
+  return (
+    <div className={`surface-inset panel-bleed divide-y divide-border/50 ${className}`}>
+      {children}
+    </div>
+  )
 }
 
 export function SuccessCallout({ children }: { children: ReactNode }) {

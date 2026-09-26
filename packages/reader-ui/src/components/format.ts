@@ -5,13 +5,45 @@ export function formatMoney(value: { amount: number; currency: string } | null |
     return t('Not available')
   }
 
-  const magnitude = Math.abs(value.amount)
-  const amount =
-    magnitude > 0 && magnitude < 0.01
-      ? formatNumber(value.amount, { maximumSignificantDigits: 6 })
-      : formatNumber(value.amount)
+  return `${formatMoneyAmount(value.amount)} ${value.currency}`
+}
 
-  return `${amount} ${value.currency}`
+/**
+ * Summary-band variant: millions and above collapse to two significant decimals.
+ * Callers must keep the exact `formatMoney` value available, e.g. as a title.
+ */
+export function formatMoneyCompact(value: { amount: number; currency: string } | null | undefined) {
+  if (!value) {
+    return t('Not available')
+  }
+
+  const magnitude = Math.abs(value.amount)
+  const unit = COMPACT_UNITS.find((candidate) => magnitude >= candidate.value)
+
+  if (!unit) {
+    return formatMoney(value)
+  }
+
+  const scaled = formatNumber(value.amount / unit.value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+
+  return `${scaled}${unit.suffix} ${value.currency}`
+}
+
+const COMPACT_UNITS = [
+  { value: 1e12, suffix: 'T' },
+  { value: 1e9, suffix: 'B' },
+  { value: 1e6, suffix: 'M' },
+]
+
+function formatMoneyAmount(amount: number) {
+  const magnitude = Math.abs(amount)
+
+  return magnitude > 0 && magnitude < 0.01
+    ? formatNumber(amount, { maximumSignificantDigits: 6 })
+    : formatNumber(amount, { maximumFractionDigits: 2 })
 }
 
 /** Quantity + commodity with a middle-dot so digit-leading symbols (e.g. 1810.HK) do not blend into the count. */
@@ -29,7 +61,7 @@ export function formatSignedMoney(value: { amount: number; currency: string } | 
 
   const sign = value.amount > 0 ? '+' : value.amount < 0 ? '-' : ''
 
-  return `${sign}${formatNumber(Math.abs(value.amount))} ${value.currency}`
+  return `${sign}${formatMoneyAmount(Math.abs(value.amount))} ${value.currency}`
 }
 
 export function formatMoneyList(values: Array<{ amount: number; currency: string } | null>) {
@@ -148,7 +180,8 @@ export function buildPnlSummaryItem({
 
   return {
     label: t(label),
-    value: formatMoney(displayed),
+    value: formatMoneyCompact(displayed),
+    exactValue: formatMoney(displayed),
     detail: formatPnlCoverageDetail({
       hasBaseTotal: summary.hasBaseTotal,
       unconvertedCurrencies: summary.unconvertedCurrencies,
@@ -334,7 +367,7 @@ function formatMoneyParts(values: Array<{ amount: number; currency: string }>) {
       const sign = value.amount < 0 ? '-' : index === 0 ? '' : '+ '
       const gap = sign && !sign.endsWith(' ') ? '' : ''
 
-      return `${sign}${gap}${Math.abs(value.amount).toLocaleString()} ${value.currency}`
+      return `${sign}${gap}${formatMoneyAmount(Math.abs(value.amount))} ${value.currency}`
     })
     .join(' ')
 }

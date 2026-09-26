@@ -32,7 +32,7 @@ describe('AccountTree funding meter label', () => {
 
     expect(markup).toContain('gap-x-2')
     expect(markup).toContain('Target 25.0%')
-    expect(markup).toContain('173,616.943 USD left')
+    expect(markup).toContain('173,616.94 USD left')
     expect(markup).not.toContain('25.0%173')
   })
 })

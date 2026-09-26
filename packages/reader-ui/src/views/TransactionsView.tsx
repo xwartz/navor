@@ -40,7 +40,7 @@ export function TransactionsView({
 
   return (
     <div className="space-y-5">
-      <ViewHeader description="All portfolio activity." eyebrow="Portfolio" title="Ledger" />
+      <ViewHeader description="All portfolio activity." title="Ledger" />
 
       <SectionTabs
         active={activeTab}

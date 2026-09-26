@@ -2,11 +2,13 @@ import { type ReactNode, type RefObject, useCallback, useEffect, useRef, useStat
 
 import { t } from '../i18n'
 import type { NavGroup, ReaderView } from '../navigation'
+import { getDestinationView } from '../view-catalog'
 import { BrandMark } from './BrandMark'
 
 interface SidebarProps {
   activeView: ReaderView
   onSelect: (view: ReaderView) => void
+  actionCount: number
   diagnosticCount: number
   isCollapsed: boolean
   isOpen: boolean
@@ -19,6 +21,7 @@ interface SidebarProps {
 export function Sidebar({
   activeView,
   onSelect,
+  actionCount,
   diagnosticCount,
   isCollapsed,
   isOpen,
@@ -28,6 +31,10 @@ export function Sidebar({
   onToggleCollapse,
 }: SidebarProps) {
   const asideRef = useRef<HTMLElement>(null)
+  const badgeCounts: Partial<Record<ReaderView, number>> = {
+    overview: actionCount,
+    diagnostics: diagnosticCount,
+  }
   const [isDesktop, setIsDesktop] = useState(true)
   const drawerHidden = !isDesktop && !isOpen
   const isRail = isCollapsed
@@ -196,14 +203,20 @@ export function Sidebar({
                             {item.label}
                           </span>
                         ) : null}
-                        {item.id === 'diagnostics' && diagnosticCount > 0 ? (
+                        {badgeCounts[item.id] ? (
                           <span
                             className={`ml-auto rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-semibold tabular-nums text-warning ${
                               isRail ? 'lg:hidden' : ''
                             }`}
                           >
-                            {diagnosticCount}
+                            {badgeCounts[item.id]}
                           </span>
+                        ) : null}
+                        {isRail && badgeCounts[item.id] ? (
+                          <span
+                            aria-hidden
+                            className="absolute top-1.5 right-2 hidden h-1.5 w-1.5 rounded-full bg-warning lg:block"
+                          />
                         ) : null}
                       </button>
                     </li>
@@ -229,8 +242,7 @@ export function Sidebar({
 }
 
 function isNavItemActive(activeView: ReaderView, itemView: ReaderView) {
-  if (activeView === itemView) return true
-  return itemView === 'holdings' && (activeView === 'allocation' || activeView === 'accounts')
+  return getDestinationView(activeView) === itemView
 }
 
 function CompactNavIcon({ view }: { view: ReaderView }) {

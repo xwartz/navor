@@ -22,7 +22,9 @@ export function Panel({ title, description, children, className = '', actions }:
         </div>
         {actions ? <div className="shrink-0">{actions}</div> : null}
       </div>
-      <div className="space-y-3 p-5 text-sm leading-[1.65] text-ink-muted">{children}</div>
+      <div className="panel-body space-y-3 p-5 text-sm leading-[1.65] text-ink-muted">
+        {children}
+      </div>
     </section>
   )
 }

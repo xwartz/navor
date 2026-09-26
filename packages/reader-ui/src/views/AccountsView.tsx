@@ -3,7 +3,7 @@ import { useAssetWorkspace } from '../asset-workspace-context'
 import { AccountTree } from '../components/AccountTree'
 import { formatMoney, formatMoneyList, groupMoneyValues } from '../components/format'
 import { Panel } from '../components/Panel'
-import { PortfolioSectionNav, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
+import { DestinationTabs, SummaryStrip, ViewHeader } from '../components/ViewScaffold'
 import { t } from '../i18n'
 
 export function AccountsView({ state }: { state: NavorRendererAppState }) {
@@ -16,13 +16,9 @@ export function AccountsView({ state }: { state: NavorRendererAppState }) {
 
   return (
     <div className="space-y-5">
-      <ViewHeader
-        description="Capital sleeves and funding progress."
-        eyebrow="Portfolio"
-        title="Accounts"
-      />
+      <ViewHeader description="Capital sleeves and funding progress." title="Portfolio" />
 
-      <PortfolioSectionNav active="accounts" />
+      <DestinationTabs active="accounts" />
 
       <SummaryStrip
         items={[

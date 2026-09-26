@@ -6,6 +6,7 @@ import { formatMoney, formatPercent } from '../components/format'
 import { MarkdownBody } from '../components/MarkdownBody'
 import { Panel } from '../components/Panel'
 import {
+  DestinationTabs,
   EmptyState,
   EntityCell,
   InsetList,
@@ -50,9 +51,10 @@ export function PlanView({
     <div className="space-y-5">
       <ViewHeader
         description="Targets, limits, and the action each boundary triggers."
-        eyebrow="Operations"
-        title="Execution plans"
+        title="Portfolio"
       />
+
+      <DestinationTabs active="plan" />
 
       <SummaryStrip
         items={[

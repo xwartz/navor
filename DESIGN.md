@@ -39,14 +39,20 @@ The Navor mark is a pine field with a white ledger-built `N` and a small amber n
 
 The shell uses a 248px desktop rail and a fluid workspace. Spacing follows a 4, 8, 12, 16, 20, 28, 36 scale. Summary metrics form one continuous decision band with internal rules, while detail panels use a dense 20px grid. Labels align left, numbers align right, and numeric columns always use tabular figures.
 
-Navigation follows four investor tasks rather than source-file taxonomy:
+The sidebar holds six task destinations rather than source-file taxonomy. Secondary views live as routed section tabs inside their destination, so the rail never grows past what an investor scans at a glance:
 
-1. Monitor: current posture, ranked actions, and watch items.
-2. Portfolio: one portfolio workspace with positions, allocation, and accounts, plus a separate ledger for economic activity.
-3. Investment process: investment cases, reviews, and behavioral journal.
-4. Operations: execution plans and a health workspace with source issues, market coverage, and source files.
+1. Briefing: summary and the full action center. The rail badge shows the open-action count.
+2. Portfolio: positions, allocation, execution plans, and accounts.
+3. Ledger: transactions, realized PnL, and cash flows.
+4. Investment cases: case index, watchlist, theses, decisions, asset evidence, and market evidence.
+5. Reviews & journal: scheduled reviews and the behavioral journal.
+6. Data health: source issues, market coverage, and source files.
 
-The Overview page orders information by decision urgency: portfolio state, open actions, allocation posture, liquidity, recent activity, then contextual evidence. Healthy empty states collapse into a quiet confirmation instead of occupying a full diagnostic panel.
+Every view header carries the destination name as its title, and the section tabs below it name the current view. Moved views keep their former routes (`#actions`, `#plans`, `#watchlist`, `#journal`) as aliases.
+
+The Briefing orders information by decision urgency: four summary metrics (portfolio value, unrealized PnL, realized PnL, open actions with target-range breaches folded into the detail), then the decision queue leading the primary column, allocation posture beneath it, and largest positions with liquidity in the secondary column. Healthy empty states collapse into a quiet confirmation instead of occupying a full diagnostic panel.
+
+Money shows at most two decimals; sub-cent prices keep six significant digits. Summary-band values of one million or more compact to `1.05M USD` and expose the exact value as a tooltip. Tables and detail rows always show the full value.
 
 Allocation follows a plan-to-execution hierarchy: account sleeves and capital first, funded-position deviations second, and the complete asset target ledger last. Transaction history shows economic events as compact rows and reveals double-entry postings on demand. Market data combines price, source, freshness, and timestamp in one coverage table before showing downstream valuation and research.
 
@@ -54,11 +60,13 @@ Investment cases are asset-only by default. Market-level evidence belongs to a s
 
 Asset selection is a persistent desktop-side workspace and a focus-trapped mobile drawer. It keeps market facts, target and drift, open actions, research, decisions, and recent transactions in one contextual read without making the investor lose their place in the source view. Accounts open this same workspace instead of expanding a second compact detail surface inline. Asset rows use the same elevated surface as other data tables, with a quiet pine selection tint only for the active row.
 
-The Portfolio workspace is limited to live positions and allocation. Realized PnL, cash, income, and expenses live under Ledger tabs alongside transaction history, so current exposure and historical economic activity are not mixed in one scroll.
+The Positions tab leads with the working table; the ranked market mix follows it in two columns, reading down the first column before the second. The Portfolio workspace is limited to live positions and allocation. Realized PnL, cash, income, and expenses live under Ledger tabs alongside transaction history, so current exposure and historical economic activity are not mixed in one scroll.
 
 ## 6. Depth and elevation
 
 Depth is created through surface steps rather than decoration. The sidebar remains the dark anchor in both modes, the canvas is the base level, panels are one lightness step above it, and the asset workspace or menus receive the only stronger elevation shadow. Borders are reserved for tables, divisions, and structural keylines.
+
+A panel holds at most one surface level. When a table, divided list, or knowledge feed is a panel's only content it bleeds to the panel edges (`panel-bleed`) instead of drawing a second framed card inside the first. Knowledge entries are divided rows with the date and context line above the title, never stacked cards.
 
 ## 7. Do and do not
 
@@ -88,4 +96,5 @@ At widths below 1024px the rail becomes an off-canvas drawer and the current vie
 - Create a portfolio metric band on the canvas, with 12px uppercase labels, 24px weight 650 tabular values, internal one-pixel dividers, 10px outer radius, and one restrained graphite elevation shadow.
 - Create a detail panel with a 13px weight 650 heading, 16px horizontal header padding, 12px vertical header padding, a graphite surface, 10px radius, and a one-pixel structural keyline.
 - Create a sidebar item on graphite with a 40px minimum height, 6px radius, 13px weight 560 type, pine lozenge active indicator, and a 150ms background and color transition.
-- Create a view title in SF Pro Display at 30px weight 700, line-height 1.08, letter-spacing `-0.022em`, with an 11px uppercase sans-serif eyebrow and a 14px muted description.
+- Create a view title in SF Pro Display at 28px weight 700, line-height 1.1, letter-spacing `-0.022em`, with a 14px muted description and no eyebrow; the destination's section tabs sit directly below it.
+- Create toolbar filters as `control-btn` facets with a trailing `▾`, separated from the "This view / Entire workspace" segmented scope control by a one-pixel rule.

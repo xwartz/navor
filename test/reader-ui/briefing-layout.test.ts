@@ -14,18 +14,23 @@ describe('Briefing column layout', () => {
     expect(source).not.toContain("t('Total PnL')")
   })
 
-  it('keeps the desktop columns as independent vertical flows', () => {
+  it('folds target-range breaches into the open-actions metric', () => {
     const source = readFileSync(DASHBOARD, 'utf8')
 
-    expect(source).toContain('xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] xl:items-start')
-    expect(source).toContain('<div className="order-first space-y-5 xl:order-last">')
-    expect(source).toContain(
-      '<LargestPositions onOpenAsset={openAsset} positions={topPositions} />',
+    expect(source).toContain('formatTargetBreachCount(offTrackAssets.length)')
+    expect(source).not.toContain("t('Target-range breaches')")
+  })
+
+  it('leads the primary column with the decision queue', () => {
+    const source = readFileSync(DASHBOARD, 'utf8')
+
+    expect(source).toContain('xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] xl:items-start')
+    expect(source).toMatch(
+      /<div className="space-y-5">\s*<DecisionQueue[\s\S]*?title="Allocation posture"/,
     )
     expect(source).toMatch(
-      /<div className="space-y-5">\s*<Panel[\s\S]*?title="Allocation posture"[\s\S]*?title="Liquidity"/,
+      /<div className="space-y-5">\s*<LargestPositions[\s\S]*?title="Liquidity"/,
     )
     expect(source).not.toContain('xl:row-start-')
-    expect(source).not.toContain('<div className="contents">')
   })
 })

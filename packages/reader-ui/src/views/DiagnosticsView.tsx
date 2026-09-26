@@ -75,8 +75,7 @@ export function DiagnosticsView({
   return (
     <div className="space-y-5">
       <ViewHeader
-        description="Input quality and source facts behind this reader. Investment and review actions stay in Actions."
-        eyebrow="Operations"
+        description="Input quality and source facts behind this reader. Investment and review actions stay in Briefing."
         title="Data health"
       />
 

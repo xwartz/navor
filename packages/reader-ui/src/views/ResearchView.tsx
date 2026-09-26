@@ -4,23 +4,50 @@ import { useEffect, useState } from 'react'
 import { DataTable } from '../components/DataTable'
 import { joinKnowledgeMeta, KnowledgeTable } from '../components/KnowledgeTable'
 import { Panel } from '../components/Panel'
-import { Chip, EntityCell, SectionTabs, ViewHeader } from '../components/ViewScaffold'
+import {
+  Chip,
+  EntityCell,
+  type SectionTabItem,
+  SectionTabs,
+  ViewHeader,
+} from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
 import { formatReviewDeadline } from '../i18n'
 
 export type CaseTab = 'cases' | 'market' | 'evidence' | 'theses' | 'decisions'
+type CaseSection = CaseTab | 'watchlist'
 
-const CASE_TABS: Array<{
-  id: CaseTab
-  label: 'Cases' | 'Market evidence' | 'Asset evidence' | 'Theses' | 'Decisions'
+const CASE_SECTIONS: Array<{
+  id: CaseSection
+  label: 'Cases' | 'Watchlist' | 'Market evidence' | 'Asset evidence' | 'Theses' | 'Decisions'
 }> = [
   { id: 'cases', label: 'Cases' },
-  { id: 'market', label: 'Market evidence' },
-  { id: 'evidence', label: 'Asset evidence' },
+  { id: 'watchlist', label: 'Watchlist' },
   { id: 'theses', label: 'Theses' },
   { id: 'decisions', label: 'Decisions' },
+  { id: 'evidence', label: 'Asset evidence' },
+  { id: 'market', label: 'Market evidence' },
 ]
+
+/**
+ * Investment-case section tabs. Watchlist is its own routed view, so it is always a link;
+ * case tabs are in-view buttons unless rendered from outside ResearchView.
+ */
+export function caseSectionTabs(inView: boolean): SectionTabItem<CaseSection>[] {
+  return CASE_SECTIONS.map((section) => ({
+    id: section.id,
+    label: section.label,
+    href:
+      section.id === 'watchlist'
+        ? '#cases/watchlist'
+        : inView
+          ? undefined
+          : section.id === 'cases'
+            ? '#cases'
+            : `#cases/${section.id}`,
+  }))
+}
 
 export function ResearchView({
   state,
@@ -115,15 +142,16 @@ export function ResearchView({
     <div className="space-y-5">
       <ViewHeader
         description="One evidence trail from research to a recorded decision."
-        eyebrow="Investment process"
         title="Investment cases"
       />
 
-      <SectionTabs
+      <SectionTabs<CaseSection>
         active={activeTab}
         ariaLabel="Investment case views"
-        onSelect={selectTab}
-        tabs={CASE_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+        onSelect={(tab) => {
+          if (tab !== 'watchlist') selectTab(tab)
+        }}
+        tabs={caseSectionTabs(true)}
       />
 
       {activeTab === 'cases' && (

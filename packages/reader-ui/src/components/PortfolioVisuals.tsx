@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react'
+import { type CSSProperties, type ReactNode, useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -290,36 +290,49 @@ export function RankedExposureList({
     return <p className="text-sm text-ink-muted">{t('No exposure data.')}</p>
   }
 
+  const header = (
+    <div className="label-caps grid grid-cols-[minmax(0,1fr)_3.5rem] gap-4">
+      <span>{t('Exposure')}</span>
+      <span className="text-right">{translateText(valueLabel)}</span>
+    </div>
+  )
+
   return (
-    <div className="space-y-3">
-      <div className="label-caps grid grid-cols-[minmax(0,1fr)_4.5rem] gap-4">
-        <span>{t('Exposure')}</span>
-        <span className="text-right">{translateText(valueLabel)}</span>
+    <div>
+      <div className="mb-1 lg:grid lg:grid-cols-2 lg:gap-x-10">
+        {header}
+        <div className="hidden lg:block">{header}</div>
       </div>
-      {data.map((item) => (
-        <div className="space-y-1.5" key={item.id}>
-          <div className="grid grid-cols-[minmax(0,1fr)_4.5rem] gap-4 text-sm">
+      <div
+        className="grid gap-x-10 lg:grid-flow-col lg:grid-cols-2 lg:[grid-template-rows:repeat(var(--ranked-rows),auto)]"
+        style={{ '--ranked-rows': Math.ceil(data.length / 2) } as CSSProperties}
+      >
+        {data.map((item) => (
+          <div
+            className="grid min-h-10 grid-cols-[minmax(0,9rem)_minmax(0,1fr)_3.5rem] items-center gap-4 border-b border-border/40 py-1.5 text-sm"
+            key={item.id}
+          >
             <div className="min-w-0">
               <p className="truncate font-medium text-ink">{item.label}</p>
               {item.sublabel ? (
-                <p className="truncate text-xs text-ink-faint">{item.sublabel}</p>
+                <p className="truncate font-mono text-[11px] text-ink-faint">{item.sublabel}</p>
               ) : null}
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-paper-subtle">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${(item.value / max) * 100}%`,
+                  backgroundColor: TONE_COLORS[item.tone ?? 'accent'],
+                }}
+              />
             </div>
             <span className="text-right tabular-nums text-ink-muted">
               {formatPercent(item.value)}
             </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-paper">
-            <div
-              className="h-full rounded-full"
-              style={{
-                width: `${(item.value / max) * 100}%`,
-                backgroundColor: TONE_COLORS[item.tone ?? 'accent'],
-              }}
-            />
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }

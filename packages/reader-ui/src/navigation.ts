@@ -1,5 +1,11 @@
 import { type ReaderLocale, translateText } from './i18n'
-import { getReaderView, READER_VIEW_CATALOG, type ReaderView } from './view-catalog'
+import {
+  getReaderView,
+  matchReaderRoute,
+  READER_VIEW_CATALOG,
+  type ReaderView,
+  type ReaderViewGroup,
+} from './view-catalog'
 
 export type { ReaderView } from './view-catalog'
 
@@ -8,26 +14,22 @@ export interface NavGroup {
   items: Array<{ id: ReaderView; label: string }>
 }
 
-export const NAV_GROUPS: NavGroup[] = [
-  'Monitor',
-  'Portfolio',
-  'Investment process',
-  'Operations',
-].map((label) => ({
+const NAV_GROUP_ORDER: ReaderViewGroup[] = ['Portfolio', 'Investment process', 'Operations']
+
+export const NAV_GROUPS: NavGroup[] = NAV_GROUP_ORDER.map((label) => ({
   label,
-  items: READER_VIEW_CATALOG.filter(
-    (view) => view.group === label && view.navigation !== 'hidden',
-  ).map(({ id, label }) => ({
-    id,
-    label,
-  })),
+  items: READER_VIEW_CATALOG.filter((view) => view.group === label && !view.parent).map(
+    ({ id, label }) => ({
+      id,
+      label,
+    }),
+  ),
 }))
 
 export { VIEW_LABELS } from './view-catalog'
 
 export function resolveReaderView(hash: string, fallback: ReaderView): ReaderView {
-  const candidate = hash.replace(/^#/, '')
-  return READER_VIEW_CATALOG.find((view) => view.route === candidate)?.id ?? fallback
+  return matchReaderRoute(hash.replace(/^#/, '')) ?? fallback
 }
 
 export function getReaderRoute(view: ReaderView): string {
