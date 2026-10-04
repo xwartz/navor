@@ -71,12 +71,12 @@ export function ReaderToolbar({
 
   return (
     <section
-      className="toolbar-glass sticky top-0 z-30 border-b border-border/80 px-4 py-3 lg:px-7"
+      className="toolbar-glass relative sm:sticky top-0 z-30 border-b border-border/80 px-4 py-3 lg:px-7"
       ref={toolbarRef}
     >
       <div className="mx-auto flex w-full max-w-[96rem] min-w-0 flex-wrap items-center gap-2">
-        {leading}
-        <label className="relative min-w-[11rem] flex-1 lg:max-w-[19rem]">
+        <div className="contents">{leading}</div>
+        <label className="relative order-1 min-w-0 flex-1 basis-[calc(100%-6rem)] sm:order-none sm:basis-0 sm:min-w-[11rem] lg:max-w-[19rem]">
           <span className="sr-only">{t(searchLabel)}</span>
           <span
             aria-hidden
@@ -103,8 +103,12 @@ export function ReaderToolbar({
           ) : null}
         </label>
 
+        <div className="order-2 flex shrink-0 items-center sm:order-last sm:ml-auto">
+          {trailing}
+        </div>
+
         {context.mode !== 'brief' ? (
-          <fieldset className="segmented-control shrink-0">
+          <fieldset className="segmented-control order-3 shrink-0 sm:order-none">
             <legend className="sr-only">{t('Search scope')}</legend>
             {(['view', 'workspace'] as const).map((scope) => (
               <button
@@ -128,7 +132,7 @@ export function ReaderToolbar({
           <span aria-hidden className="mx-1 hidden h-5 w-px bg-border sm:block" />
         ) : null}
 
-        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+        <div className="order-4 flex min-w-0 max-w-full flex-wrap items-center gap-2 sm:order-none">
           {context.facets.map((facet) => (
             <FacetControl
               facet={facet}
@@ -143,7 +147,7 @@ export function ReaderToolbar({
 
         {active ? (
           <button
-            className="press-scale h-10 shrink-0 rounded-md px-2.5 text-xs font-semibold text-accent transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft"
+            className="press-scale order-5 h-10 shrink-0 rounded-md px-2.5 sm:order-none text-xs font-semibold text-accent transition-[background-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:bg-accent-soft"
             onClick={() => onChange({})}
             type="button"
           >
@@ -151,14 +155,11 @@ export function ReaderToolbar({
           </button>
         ) : null}
 
-        <div className="ml-auto flex shrink-0 items-center gap-3">
-          {resultCount !== null ? (
-            <p className="text-xs tabular-nums text-ink-faint">
-              {resultCount} {t('matching')}
-            </p>
-          ) : null}
-          {trailing}
-        </div>
+        {resultCount !== null ? (
+          <p className="order-6 ml-auto text-xs tabular-nums text-ink-faint sm:order-none">
+            {resultCount} {t('matching')}
+          </p>
+        ) : null}
       </div>
     </section>
   )
@@ -186,7 +187,7 @@ function FacetControl({
   }
 
   return (
-    <div className="relative shrink-0">
+    <div className="relative shrink-0 max-sm:static">
       <button
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -204,11 +205,11 @@ function FacetControl({
       </button>
       {isOpen ? (
         <div
-          className="dropdown-panel absolute left-0 z-40 mt-2 max-h-72 w-56 overflow-y-auto p-1.5"
+          className="dropdown-panel absolute left-0 z-40 mt-2 max-h-72 w-56 overflow-y-auto overscroll-contain p-1.5 max-sm:inset-x-4 max-sm:max-h-[40dvh] max-sm:w-auto"
           role="listbox"
         >
           <button
-            className="w-full rounded px-2.5 py-2 text-left text-xs text-ink-muted transition-colors [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink"
+            className="min-h-10 w-full rounded px-2.5 py-2 text-left text-xs text-ink-muted transition-colors [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink"
             onClick={() => choose('')}
             type="button"
           >
@@ -250,7 +251,7 @@ function FacetOption({
   return (
     <button
       aria-selected={selected}
-      className={`mt-0.5 w-full rounded px-2.5 py-2 text-left text-xs transition-colors ${selected ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+      className={`mt-0.5 min-h-10 w-full rounded px-2.5 py-2 text-left text-xs transition-colors ${selected ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
       onClick={onChoose}
       role="option"
       type="button"

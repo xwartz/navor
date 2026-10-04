@@ -88,7 +88,7 @@ A panel holds at most one surface level. When a table, divided list, or knowledg
 
 ## 8. Responsive behavior
 
-At widths below 1024px the rail becomes an off-canvas drawer and the current view button stays in the workspace. At 375px summary metrics form a compact two-by-two decision band, panels lose nonessential outer padding, metadata scrolls horizontally, and tables retain horizontal overflow instead of truncating financial values. Every action remains at least 40px high.
+At widths below 1024px the rail becomes an off-canvas drawer and the current view button stays in the workspace. At 375px summary metrics form a compact two-by-two decision band, panels lose nonessential outer padding, metadata scrolls horizontally, and tables retain horizontal overflow instead of truncating financial values. Every action remains at least 40px high. Below 640px the toolbar scrolls with the page so multi-row filters do not obscure the working table. Navigation, search, and the jump control share the first row; scope and facets follow. Facet menus span the content width, cap their height to 40dvh, and scroll independently. Panel headers may wrap their actions onto a second line, with 16px body padding and matching edge-to-edge table margins. Summary values use responsive type sizing to keep amounts and currencies readable at 320px. Mobile toolbars use an opaque surface without backdrop blur.
 
 ## 9. Agent prompt guide
 
