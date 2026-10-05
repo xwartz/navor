@@ -1,5 +1,9 @@
 # @navor/contract
 
+## 0.6.8
+
+No changes in this release.
+
 ## 0.6.7
 
 No changes in this release.

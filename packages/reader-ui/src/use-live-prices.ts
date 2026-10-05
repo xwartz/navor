@@ -1,99 +1,38 @@
-import type { PriceProxyResponseBody } from '@navor/adapters'
 import type { NavorRendererAppState } from '@navor/contract'
-import { applyLivePrices } from '@navor/renderer/apply-live-prices'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { createReaderRefresh, type ReaderRefreshResult, watchReaderRefresh } from './reader-refresh'
+import { readerStateSourceFromDocument } from './state-delivery'
 
-export interface UseLivePricesResult {
-  state: NavorRendererAppState | null
-  loading: boolean
-  error: string | null
-  liveEnabled: boolean
+export interface UseLivePricesResult extends ReaderRefreshResult {
   refresh: () => Promise<void>
 }
 
 export function useLivePrices(baseState: NavorRendererAppState | null): UseLivePricesResult {
-  const [state, setState] = useState(baseState)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [liveEnabled, setLiveEnabled] = useState(false)
+  const controller = useRef<ReturnType<typeof createReaderRefresh> | null>(null)
+  const [result, setResult] = useState<ReaderRefreshResult>({
+    state: baseState,
+    loading: false,
+    error: null,
+    liveEnabled: false,
+  })
 
   useEffect(() => {
-    setState(baseState)
-    setLiveEnabled(false)
-    setError(null)
+    const active = createReaderRefresh({
+      initialState: baseState,
+      source: readerStateSourceFromDocument(document) ?? null,
+      onChange: setResult,
+    })
+    controller.current = active
+    setResult({ state: baseState, loading: false, error: null, liveEnabled: false })
+    const stopWatching = watchReaderRefresh(() => active.refresh(), window, document)
+    void active.refresh()
+    return () => {
+      stopWatching()
+      active.dispose()
+      controller.current = null
+    }
   }, [baseState])
 
-  const quoteEntries = useMemo(
-    () =>
-      baseState?.priceManifest.entries.filter(
-        (entry): entry is { subject: string; symbol: string; yahooSymbol: string } =>
-          Boolean(entry.yahooSymbol),
-      ) ?? [],
-    [baseState],
-  )
-
-  const refresh = useCallback(async () => {
-    if (!baseState || quoteEntries.length === 0) {
-      return
-    }
-
-    const endpoint = baseState.priceManifest.livePricesPath ?? '/api/prices'
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          entries: quoteEntries.map((entry) => ({
-            subject: entry.subject,
-            yahooSymbol: entry.yahooSymbol,
-          })),
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Price proxy returned ${response.status}.`)
-      }
-
-      const payload = (await response.json()) as PriceProxyResponseBody
-      setState(
-        applyLivePrices(
-          baseState,
-          {
-            prices: payload.prices,
-            failures: payload.failures,
-          },
-          {
-            stalePriceAfterDays: baseState.priceManifest.stalePriceAfterDays,
-          },
-        ),
-      )
-      setLiveEnabled(true)
-    } catch (refreshError) {
-      setError(refreshError instanceof Error ? refreshError.message : String(refreshError))
-      setLiveEnabled(false)
-    } finally {
-      setLoading(false)
-    }
-  }, [baseState, quoteEntries])
-
-  useEffect(() => {
-    if (!baseState || quoteEntries.length === 0) {
-      return
-    }
-
-    void refresh()
-  }, [baseState, quoteEntries, refresh])
-
-  return {
-    state,
-    loading,
-    error,
-    liveEnabled,
-    refresh,
-  }
+  const refresh = useCallback(() => controller.current?.refresh() ?? Promise.resolve(), [])
+  return { ...result, refresh }
 }

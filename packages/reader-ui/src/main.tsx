@@ -2,7 +2,11 @@ import type { NavorRendererAppState } from '@navor/contract'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ReaderApp } from './ReaderApp'
-import { readerStateSourceFromDocument } from './state-delivery'
+import {
+  fetchReaderState,
+  readerAssetSources,
+  readerStateSourceFromDocument,
+} from './state-delivery'
 import './styles.css'
 
 const SERVICE_WORKER_UPDATE_INTERVAL_MS = 60 * 60 * 1000
@@ -11,18 +15,33 @@ function registerServiceWorkerUpdates() {
   if (!('serviceWorker' in navigator)) return
 
   const hadController = Boolean(navigator.serviceWorker.controller)
+  const loadedAssets = JSON.stringify(readerAssetSources(document))
   let reloading = false
 
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (hadController && !reloading) {
-      reloading = true
-      window.location.reload()
-    }
+    if (!hadController || reloading) return
+    void (async () => {
+      try {
+        const url = new URL(window.location.href)
+        url.hash = ''
+        url.searchParams.set('navor_refresh', String(Date.now()))
+        const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(10000) })
+        if (!response.ok) return
+        const nextDocument = new DOMParser().parseFromString(await response.text(), 'text/html')
+        const nextAssets = readerAssetSources(nextDocument)
+        if (nextAssets.length > 0 && JSON.stringify(nextAssets) !== loadedAssets && !reloading) {
+          reloading = true
+          window.location.reload()
+        }
+      } catch {
+        // Offline checks retain the running app. Ledger refresh has its own retry lifecycle.
+      }
+    })()
   })
 
   void navigator.serviceWorker.register('/sw.js').then((registration) => {
     const checkForUpdate = () => {
-      void registration.update()
+      void registration.update().catch(() => {})
     }
 
     checkForUpdate()
@@ -51,13 +70,11 @@ async function loadReaderState(): Promise<NavorRendererAppState | null> {
     return null
   }
 
-  const response = await fetch(source)
-
-  if (!response.ok) {
-    return null
+  try {
+    return await fetchReaderState(source)
+  } catch {
+    return fetchReaderState(source, { fresh: false }).catch(() => null)
   }
-
-  return (await response.json()) as NavorRendererAppState
 }
 
 const root = document.getElementById('root')

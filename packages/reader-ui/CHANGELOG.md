@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.8
+
+### Patch Changes
+
+- Refresh deployed workspace data and prices in place when returning to the Reader, reconnecting, or refreshing. Preserve navigation and filters, bypass stale ledger caches, and reload only when application code changes.
+- @navor/adapters@0.6.8
+  - @navor/contract@0.6.8
+  - @navor/core@0.6.8
+  - @navor/renderer@0.6.8
+
 ## 0.6.7
 
 ### Patch Changes
