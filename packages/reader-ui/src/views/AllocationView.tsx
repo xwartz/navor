@@ -168,40 +168,38 @@ function AccountAssetGroup({ group }: { group: AssetGroup }) {
         </div>
       }
     >
-      <div className="p-3">
-        <DataTable
-          columns={[
-            { key: 'asset', label: 'Asset', sortable: true, sticky: true },
-            { key: 'accountTarget', label: 'Account target', align: 'right', sortable: true },
-            { key: 'portfolioWeight', label: 'Portfolio weight', align: 'right', sortable: true },
-            { key: 'targetAmount', label: 'Target amount', align: 'right', sortable: true },
-          ]}
-          defaultSortDirection="desc"
-          defaultSortKey="portfolioWeight"
-          emptyMessage="No assets in this account."
-          rows={group.assets.map((asset) => ({
-            id: asset.subject,
-            cells: {
-              asset: (
-                <EntityCell
-                  interactive
-                  subject={asset.subject}
-                  title={asset.title ?? asset.subject}
-                />
-              ),
-              accountTarget: formatPercent(asset.target),
-              portfolioWeight: formatPercent(asset.derivedPortfolioWeight),
-              targetAmount: formatOverviewMoney(asset.targetAmount),
-            },
-            sortValues: {
-              asset: asset.title ?? asset.subject,
-              accountTarget: asset.target ?? 0,
-              portfolioWeight: asset.derivedPortfolioWeight ?? 0,
-              targetAmount: asset.targetAmount?.amount ?? 0,
-            },
-          }))}
-        />
-      </div>
+      <DataTable
+        columns={[
+          { key: 'asset', label: 'Asset', sortable: true, sticky: true },
+          { key: 'accountTarget', label: 'Account target', align: 'right', sortable: true },
+          { key: 'portfolioWeight', label: 'Portfolio weight', align: 'right', sortable: true },
+          { key: 'targetAmount', label: 'Target amount', align: 'right', sortable: true },
+        ]}
+        defaultSortDirection="desc"
+        defaultSortKey="portfolioWeight"
+        emptyMessage="No assets in this account."
+        rows={group.assets.map((asset) => ({
+          id: asset.subject,
+          cells: {
+            asset: (
+              <EntityCell
+                interactive
+                subject={asset.subject}
+                title={asset.title ?? asset.subject}
+              />
+            ),
+            accountTarget: formatPercent(asset.target),
+            portfolioWeight: formatPercent(asset.derivedPortfolioWeight),
+            targetAmount: formatOverviewMoney(asset.targetAmount),
+          },
+          sortValues: {
+            asset: asset.title ?? asset.subject,
+            accountTarget: asset.target ?? 0,
+            portfolioWeight: asset.derivedPortfolioWeight ?? 0,
+            targetAmount: asset.targetAmount?.amount ?? 0,
+          },
+        }))}
+      />
     </GroupedSection>
   )
 }

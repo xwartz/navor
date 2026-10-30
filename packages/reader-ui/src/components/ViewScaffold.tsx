@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { useAssetWorkspace } from '../asset-workspace-context'
 import { useEntityLabel, useEntityMeta } from '../EntityLabelContext'
@@ -62,25 +62,29 @@ export function ViewHeader({
 
 export function SummaryStrip({ items }: { items: SummaryItem[] }) {
   return (
-    <section className="summary-strip surface-card">
-      {items.map((item) => (
-        <div className="summary-item px-4 py-3 sm:px-5" key={item.label}>
-          <p className="label-caps">{translateText(item.label)}</p>
-          <p
-            className={`mt-1 font-display text-[1.25rem] leading-7 font-semibold tracking-[-0.018em] tabular-nums ${
-              SUMMARY_VALUE_CLASSES[item.tone ?? 'neutral']
-            }`}
-            title={item.exactValue && item.exactValue !== item.value ? item.exactValue : undefined}
-          >
-            {item.value}
-          </p>
-          {item.detail ? (
-            <p className="mt-0.5 text-[11px] leading-4 text-ink-muted">
-              {translateText(item.detail)}
+    <section className="summary-shell surface-card">
+      <div className="summary-strip" style={{ '--summary-count': items.length } as CSSProperties}>
+        {items.map((item) => (
+          <div className="summary-item px-4 py-3 sm:px-5" key={item.label}>
+            <p className="label-caps">{translateText(item.label)}</p>
+            <p
+              className={`mt-1 font-display text-[1.25rem] leading-7 font-semibold tracking-[-0.018em] tabular-nums ${
+                SUMMARY_VALUE_CLASSES[item.tone ?? 'neutral']
+              }`}
+              title={
+                item.exactValue && item.exactValue !== item.value ? item.exactValue : undefined
+              }
+            >
+              {item.value}
             </p>
-          ) : null}
-        </div>
-      ))}
+            {item.detail ? (
+              <p className="mt-0.5 text-[11px] leading-4 text-ink-muted">
+                {translateText(item.detail)}
+              </p>
+            ) : null}
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

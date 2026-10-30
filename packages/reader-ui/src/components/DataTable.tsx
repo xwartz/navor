@@ -165,12 +165,12 @@ export function DataTable({
   return (
     <div className="surface-card panel-bleed relative">
       {showTableOptions ? (
-        <div className="flex items-center justify-between border-b border-border/60 bg-paper-subtle/40 px-4 py-2.5">
+        <div className="flex items-center justify-between border-b border-border/60 px-4 py-1.5">
           <span className="label-caps">
             {rows.length} {t('records')}
           </span>
           <details className="group relative">
-            <summary className="control-btn press-scale flex h-8 cursor-pointer list-none items-center gap-1.5 px-2 text-[11px] font-semibold text-ink-muted marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [&::-webkit-details-marker]:hidden">
+            <summary className="control-btn press-scale flex h-8 cursor-pointer border-transparent! bg-transparent! shadow-none! [@media(hover:hover)]:hover:bg-paper-subtle! list-none items-center gap-1.5 px-2 text-[11px] font-semibold text-ink-muted marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [&::-webkit-details-marker]:hidden">
               <span>{t('Columns')}</span>
               <span
                 aria-hidden
@@ -224,7 +224,7 @@ export function DataTable({
           </details>
         </div>
       ) : null}
-      <div className="overflow-x-auto" ref={scrollRef}>
+      <div className="scroll-x overflow-x-auto" ref={scrollRef}>
         <table className="w-full min-w-max border-collapse text-sm">
           <thead>
             <tr>
@@ -239,14 +239,14 @@ export function DataTable({
                         : 'none'
                       : undefined
                   }
-                  className={`border-b border-border/60 bg-paper-subtle/50 px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint ${
+                  className={`border-b border-border/60 bg-paper-subtle/50 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint ${
                     column.sticky ? 'sticky left-0 z-10 shadow-[4px_0_8px_oklch(0_0_0/0.06)]' : ''
                   } ${column.align === 'right' ? 'text-right' : 'text-left'}`}
                   key={column.key}
                 >
                   {column.sortable ? (
                     <button
-                      className={`inline-flex min-h-8 w-full items-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink ${
+                      className={`group/sort inline-flex min-h-8 w-full items-center gap-1.5 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [@media(hover:hover)]:hover:text-ink ${
                         column.align === 'right'
                           ? 'justify-end text-right'
                           : 'justify-start text-left'
@@ -257,7 +257,11 @@ export function DataTable({
                       <span>{t(column.label)}</span>
                       <span
                         aria-hidden
-                        className="text-[10px] normal-case tracking-normal text-ink-faint"
+                        className={`text-[10px] normal-case tracking-normal ${
+                          sortKey === column.key
+                            ? 'text-accent-ink'
+                            : 'text-ink-faint/0 group-focus-visible/sort:text-ink-faint [@media(hover:hover)]:group-hover/sort:text-ink-faint [@media(hover:none)]:text-ink-faint/60'
+                        }`}
                       >
                         {sortKey === column.key ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
                       </span>
@@ -277,7 +281,7 @@ export function DataTable({
                 <Fragment key={row.id}>
                   <tr
                     aria-expanded={renderExpandedRow ? expanded : undefined}
-                    className={`group border-b border-border/50 transition-colors ${interactive ? 'cursor-pointer' : ''}`}
+                    className={`group border-b border-border/50 last:border-b-0 transition-colors ${interactive ? 'cursor-pointer outline-none focus-visible:[&>td]:bg-accent-soft focus-visible:[&>td:first-child]:shadow-[inset_2px_0_0_var(--color-accent)]' : ''}`}
                     onClick={
                       interactive
                         ? (event) => {
@@ -322,7 +326,7 @@ export function DataTable({
                   >
                     {visibleColumns.map((column) => (
                       <td
-                        className={`px-4 ${density === 'compact' ? 'py-2' : 'py-3.5'} align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper-subtle/60 ${
+                        className={`px-4 ${density === 'compact' ? 'py-1.5' : 'py-2.5'} align-middle transition-[background-color] [@media(hover:hover)]:group-hover:bg-paper-subtle/60 ${
                           column.sticky
                             ? 'sticky left-0 z-10 bg-paper-elevated shadow-[4px_0_8px_oklch(0_0_0/0.06)]'
                             : ''
@@ -353,9 +357,9 @@ export function DataTable({
       {canScroll && !atScrollEnd ? (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 flex w-12 items-center justify-end bg-gradient-to-l from-paper-elevated via-paper-elevated/85 to-transparent pr-1 text-sm text-ink-faint sm:hidden"
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 flex w-12 items-center justify-end bg-gradient-to-l from-paper-elevated via-paper-elevated/85 to-transparent pr-1 text-sm text-ink-faint"
         >
-          →
+          <span className="sm:hidden">→</span>
         </div>
       ) : null}
     </div>

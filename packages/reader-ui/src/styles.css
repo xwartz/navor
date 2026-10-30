@@ -254,6 +254,10 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  .summary-shell {
+    container-type: inline-size;
+  }
+
   .summary-strip {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -298,6 +302,22 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Wide tables keep a quiet, always-discoverable horizontal scrollbar. */
+  .scroll-x {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(from var(--color-border-strong) l c h / 0.7) transparent;
+  }
+
+  .scroll-x::-webkit-scrollbar {
+    display: block;
+    height: 6px;
+  }
+
+  .scroll-x::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: oklch(from var(--color-border-strong) l c h / 0.7);
+  }
+
   /* Opt-in press for compact controls only. Full-bleed list rows must not scale. */
   .press-scale:active:not(:disabled) {
     transform: scale(0.97);
@@ -332,9 +352,12 @@
     .panel-body > .panel-bleed:only-child {
       margin: -1.25rem;
     }
+  }
 
+  /* One row only when every metric fits; otherwise a 2x2 band, never a 3+1 orphan. */
+  @container (min-width: 46rem) {
     .summary-strip {
-      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+      grid-template-columns: repeat(var(--summary-count, 4), minmax(0, 1fr));
     }
 
     .summary-item,
