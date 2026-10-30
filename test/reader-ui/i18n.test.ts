@@ -12,7 +12,7 @@ import {
   formatDashboardActionReason,
   formatDriftTag,
   formatFacetOption,
-  formatFilterMatchCount,
+  formatFilteredOfTotal,
   formatInvalidIf,
   formatMarketAmount,
   formatOpenActionDetail,
@@ -140,7 +140,8 @@ describe('reader localization', () => {
     expect(formatMarketAmount('USD 25,000', 'en')).toBe('Market value USD 25,000')
     expect(formatAssetCount(1, 'en')).toBe('1 asset')
     expect(formatAssetCount(3, 'zh-CN')).toBe('3 项资产')
-    expect(formatFilterMatchCount(4, 'zh-CN')).toBe('4 条符合当前筛选')
+    expect(formatFilteredOfTotal(20, 'zh-CN')).toBe('筛选结果，共 20 项')
+    expect(formatFilteredOfTotal(20, 'en')).toBe('Filtered from 20')
     expect(formatInvalidIf('guidance changes', 'zh-CN')).toBe('失效条件 guidance changes')
     expect(formatDriftTag('+2.1%', 'zh-CN')).toBe('偏离 +2.1%')
     expect(formatRelatedEntity('Bitcoin', 'zh-CN')).toBe('关联 Bitcoin')

@@ -28,7 +28,12 @@ import { useEntityLabelIndex } from '../EntityLabelContext'
 import { formatSubjectSublabel, resolveEntityLabel } from '../entity-labels'
 import type { ReaderFilters } from '../filters'
 import { hasActiveFilters, matchesFilters } from '../filters'
-import { formatPortfolioPositionCount, formatUnconvertedCurrencyCount, t } from '../i18n'
+import {
+  formatFilteredOfTotal,
+  formatPortfolioPositionCount,
+  formatUnconvertedCurrencyCount,
+  t,
+} from '../i18n'
 
 export function PortfolioView({
   state,
@@ -107,7 +112,7 @@ export function PortfolioView({
             label: t('Holdings'),
             value: String(holdings.length),
             detail: filtersActive
-              ? formatPortfolioPositionCount(state.portfolio.holdings.length)
+              ? formatFilteredOfTotal(state.portfolio.holdings.length)
               : undefined,
           },
           {
@@ -283,6 +288,7 @@ function HoldingsTable({
       defaultSortKey="pnl"
       emptyMessage="No holdings match the current filters."
       onRowClick={(row) => onOpenAsset(row.id)}
+      showRecordCount={false}
       storageKey="holdings"
       rows={holdings.map((holding) => {
         const value = valueBySubject.get(holding.asset)
@@ -294,7 +300,11 @@ function HoldingsTable({
           cells: {
             asset: <EntityCell interactive meta={holding.commodity} subject={holding.asset} />,
             quantity: (
-              <QuantityCommodity commodity={holding.commodity} quantity={holding.quantity} />
+              <QuantityCommodity
+                commodity={holding.commodity}
+                quantity={holding.quantity}
+                showCommodity={false}
+              />
             ),
             price: formatMoney(price),
             average: formatMoney(average),

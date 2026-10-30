@@ -185,7 +185,6 @@ const chinese = {
   'FX required for a base total.': '汇总本位币金额需要汇率。',
   'PnL by currency': '按币种列示盈亏',
   'Base currency:': '本位币：',
-  'Investment risk': '投资风险',
   'Data integrity': '数据完整性',
   'Process due': '流程待办',
   High: '高',
@@ -633,8 +632,8 @@ export function formatAssetCount(count: number, locale = readerLocale) {
   return locale === 'zh-CN' ? `${count} 项资产` : `${count} ${count === 1 ? 'asset' : 'assets'}`
 }
 
-export function formatFilterMatchCount(count: number, locale = readerLocale) {
-  return locale === 'zh-CN' ? `${count} 条符合当前筛选` : `${count} match current filters`
+export function formatFilteredOfTotal(total: number, locale = readerLocale) {
+  return locale === 'zh-CN' ? `筛选结果，共 ${total} 项` : `Filtered from ${total}`
 }
 
 export function formatInvalidIf(condition: string, locale = readerLocale) {

@@ -178,6 +178,7 @@ function AccountAssetGroup({ group }: { group: AssetGroup }) {
         defaultSortDirection="desc"
         defaultSortKey="portfolioWeight"
         emptyMessage="No assets in this account."
+        showRecordCount={false}
         rows={group.assets.map((asset) => ({
           id: asset.subject,
           cells: {

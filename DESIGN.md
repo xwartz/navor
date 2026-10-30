@@ -37,7 +37,7 @@ The Navor mark is a pine field with a white ledger-built `N` and a small amber n
 
 ## 5. Layout principles
 
-The shell uses a 248px desktop rail and a fluid workspace. Spacing follows a 4, 8, 12, 16, 20, 28, 36 scale. Summary metrics form one continuous decision band with internal rules, while detail panels use a dense 20px grid. Labels align left, numbers align right, and numeric columns always use tabular figures. The summary band lays every metric on one row only when its container is at least 46rem wide; otherwise it forms a 2x2 band, never a 3+1 orphan. Table rows use 10px vertical padding (6px compact), sort glyphs appear only on the active column or on hover and focus, keyboard-focused rows take a pine tint with an inset leading rule, and wide tables keep a thin horizontal scrollbar plus an end fade at every width.
+The shell uses a 248px desktop rail and a fluid workspace. Spacing follows a 4, 8, 12, 16, 20, 28, 36 scale. Summary metrics form one continuous decision band with internal rules, while detail panels use a dense 20px grid. Labels align left, numbers align right, and numeric columns always use tabular figures. The summary band lays every metric on one row only when its container is at least 46rem wide; otherwise it forms a 2x2 band, never a 3+1 orphan. Table rows use 10px vertical padding (6px compact), sort glyphs appear only on the active column or on hover and focus, column options sit in a compact control pinned to the header row's trailing corner rather than a separate toolbar band, the record count (when no nearby header already states it) is a quiet footer, keyboard-focused rows take a pine tint with an inset leading rule, and wide tables keep a thin horizontal scrollbar plus an end fade at every width.
 
 The sidebar holds six task destinations rather than source-file taxonomy. Secondary views live as routed section tabs inside their destination, so the rail never grows past what an investor scans at a glance:
 
@@ -84,6 +84,8 @@ A panel holds at most one surface level. When a table, divided list, or knowledg
 - Do not animate layout, width, height, or numeric position.
 - Do not animate analytical charts on initial render. Stable geometry is more valuable than decorative motion.
 - Do not repeat the same market input across separate status and value tables.
+- Do not state the same count or identifier twice in one reading line: a table drops its record count when a summary metric or group header already gives it, and a quantity drops its commodity when the row already names the ticker. A filtered summary value shows the filtered count, with the unfiltered total as its detail.
+- Do use one label for one concept across views; the same action category never reads differently on Summary and Actions.
 - Do not reuse semantic status colors as a categorical palette.
 
 ## 8. Responsive behavior

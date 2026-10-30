@@ -473,7 +473,7 @@ function actionCategoryLabel(
 ) {
   switch (category) {
     case 'investment_risk':
-      return t('Investment risk')
+      return t('Allocation risk')
     case 'data_integrity':
       return t('Data integrity')
     case 'process_due':

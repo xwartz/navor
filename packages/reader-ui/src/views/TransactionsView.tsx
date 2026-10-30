@@ -15,7 +15,7 @@ import {
 } from '../components/ViewScaffold'
 import type { ReaderFilters } from '../filters'
 import { matchesFilters } from '../filters'
-import { formatFilterMatchCount, t } from '../i18n'
+import { formatFilteredOfTotal, t } from '../i18n'
 import { transactionTone, transactionType } from '../transaction-type'
 
 export function TransactionsView({
@@ -59,7 +59,14 @@ export function TransactionsView({
 
       <SummaryStrip
         items={[
-          { label: 'Transactions', value: String(state.portfolio.transactions?.length ?? 0) },
+          {
+            label: 'Transactions',
+            value: String(transactions.length),
+            detail:
+              transactions.length === (state.portfolio.transactions?.length ?? 0)
+                ? undefined
+                : formatFilteredOfTotal(state.portfolio.transactions?.length ?? 0),
+          },
           {
             label: 'Buys',
             value: String(typeCounts.Buy ?? 0),
@@ -71,10 +78,6 @@ export function TransactionsView({
           {
             label: 'Income and fees',
             value: String((typeCounts.Income ?? 0) + (typeCounts.Fee ?? 0)),
-            detail:
-              transactions.length === (state.portfolio.transactions?.length ?? 0)
-                ? undefined
-                : formatFilterMatchCount(transactions.length),
           },
         ]}
       />
@@ -201,6 +204,7 @@ function TransactionLedger({ transactions }: { transactions: PortfolioTransactio
         return transaction ? <TransactionDetails transaction={transaction} /> : null
       }}
       rows={rows}
+      showRecordCount={false}
       storageKey="ledger"
     />
   )

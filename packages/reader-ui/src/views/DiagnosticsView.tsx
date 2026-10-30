@@ -112,9 +112,6 @@ export function DiagnosticsView({
 
       {activeTab === 'issues' && (
         <Panel
-          actions={
-            <span className="text-xs tabular-nums text-ink-faint">{visibleDiagnostics.length}</span>
-          }
           description="Resolve the source fact before it changes a decision or valuation."
           title="Data issues"
         >
@@ -140,6 +137,7 @@ export function DiagnosticsView({
               { key: 'asOf', label: 'As of', align: 'right', sortable: true },
             ]}
             emptyMessage="No price records match the current filters."
+            showRecordCount={false}
             rows={priceSubjects.map((subject) => {
               const marketPrice = priceBySubject.get(subject)
               const enrichment = enrichmentBySubject.get(subject)

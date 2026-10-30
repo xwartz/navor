@@ -20,6 +20,8 @@ interface DataTableProps {
   renderExpandedRow?: (row: DataTableRow) => ReactNode
   storageKey?: string
   showTableOptions?: boolean
+  /** Turn off when a summary metric or group header already states the row count. */
+  showRecordCount?: boolean
 }
 
 export interface DataTableColumn {
@@ -49,6 +51,7 @@ export function DataTable({
   renderExpandedRow,
   storageKey,
   showTableOptions = columns.length > 3,
+  showRecordCount = true,
 }: DataTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(defaultSortKey)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(defaultSortDirection)
@@ -165,64 +168,70 @@ export function DataTable({
   return (
     <div className="surface-card panel-bleed relative">
       {showTableOptions ? (
-        <div className="flex items-center justify-between border-b border-border/60 px-4 py-1.5">
-          <span className="label-caps">
-            {rows.length} {t('records')}
-          </span>
-          <details className="group relative">
-            <summary className="control-btn press-scale flex h-8 cursor-pointer border-transparent! bg-transparent! shadow-none! [@media(hover:hover)]:hover:bg-paper-subtle! list-none items-center gap-1.5 px-2 text-[11px] font-semibold text-ink-muted marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 [&::-webkit-details-marker]:hidden">
-              <span>{t('Columns')}</span>
-              <span
-                aria-hidden
-                className="text-ink-faint transition-transform duration-150 group-open:rotate-180"
+        /* Pinned to the header row's trailing corner so options never cost a toolbar band. */
+        <details className="group absolute top-1.5 right-2 z-20">
+          <summary
+            aria-label={t('Columns')}
+            className="press-scale grid h-8 w-8 cursor-pointer list-none place-items-center rounded-md bg-[color-mix(in_oklch,var(--color-paper-subtle)_50%,var(--color-paper-elevated))] text-ink-faint transition-[background-color,color,transform] marker:content-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 group-open:bg-paper-subtle group-open:text-ink [@media(hover:hover)]:hover:bg-paper-subtle [@media(hover:hover)]:hover:text-ink [&::-webkit-details-marker]:hidden"
+            title={t('Columns')}
+          >
+            <svg
+              aria-hidden="true"
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="1.5"
+              viewBox="0 0 16 16"
+            >
+              <path d="M2.5 4.5h11M2.5 11.5h11" />
+              <circle cx="10" cy="4.5" fill="var(--color-paper-elevated)" r="1.75" />
+              <circle cx="6" cy="11.5" fill="var(--color-paper-elevated)" r="1.75" />
+            </svg>
+          </summary>
+          <div className="dropdown-panel absolute right-0 z-20 mt-1.5 w-52 p-2">
+            <p className="label-caps px-2 py-1">{t('Table options')}</p>
+            <button
+              aria-pressed={density === 'compact'}
+              className={`mt-1 w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'compact' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+              onClick={() => setDensity('compact')}
+              type="button"
+            >
+              {t('Compact rows')}
+            </button>
+            <button
+              aria-pressed={density === 'comfortable'}
+              className={`w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'comfortable' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
+              onClick={() => setDensity('comfortable')}
+              type="button"
+            >
+              {t('Comfortable rows')}
+            </button>
+            <div className="my-2 border-t border-border" />
+            {columns.map((column) => (
+              <label
+                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-xs text-ink-muted [@media(hover:hover)]:hover:bg-paper"
+                key={column.key}
               >
-                ▾
-              </span>
-            </summary>
-            <div className="dropdown-panel absolute right-0 z-20 mt-2 w-52 p-2">
-              <p className="label-caps px-2 py-1">{t('Table options')}</p>
-              <button
-                aria-pressed={density === 'compact'}
-                className={`mt-1 w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'compact' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
-                onClick={() => setDensity('compact')}
-                type="button"
-              >
-                {t('Compact rows')}
-              </button>
-              <button
-                aria-pressed={density === 'comfortable'}
-                className={`w-full rounded px-2 py-2 text-left text-xs transition-colors ${density === 'comfortable' ? 'bg-accent-soft font-semibold text-accent-ink' : 'text-ink-muted [@media(hover:hover)]:hover:bg-paper [@media(hover:hover)]:hover:text-ink'}`}
-                onClick={() => setDensity('comfortable')}
-                type="button"
-              >
-                {t('Comfortable rows')}
-              </button>
-              <div className="my-2 border-t border-border" />
-              {columns.map((column) => (
-                <label
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-xs text-ink-muted [@media(hover:hover)]:hover:bg-paper"
-                  key={column.key}
-                >
-                  <input
-                    checked={visibleKeys.has(column.key)}
-                    disabled={column.hideable === false}
-                    onChange={() =>
-                      setVisibleKeys((current) => {
-                        if (column.hideable === false) return current
-                        const next = new Set(current)
-                        if (next.has(column.key) && next.size > 1) next.delete(column.key)
-                        else next.add(column.key)
-                        return next
-                      })
-                    }
-                    type="checkbox"
-                  />
-                  <span>{t(column.label)}</span>
-                </label>
-              ))}
-            </div>
-          </details>
-        </div>
+                <input
+                  checked={visibleKeys.has(column.key)}
+                  disabled={column.hideable === false}
+                  onChange={() =>
+                    setVisibleKeys((current) => {
+                      if (column.hideable === false) return current
+                      const next = new Set(current)
+                      if (next.has(column.key) && next.size > 1) next.delete(column.key)
+                      else next.add(column.key)
+                      return next
+                    })
+                  }
+                  type="checkbox"
+                />
+                <span>{t(column.label)}</span>
+              </label>
+            ))}
+          </div>
+        </details>
       ) : null}
       <div className="scroll-x overflow-x-auto" ref={scrollRef}>
         <table className="w-full min-w-max border-collapse text-sm">
@@ -239,7 +248,7 @@ export function DataTable({
                         : 'none'
                       : undefined
                   }
-                  className={`border-b border-border/60 bg-paper-subtle/50 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint ${
+                  className={`border-b border-border/60 bg-paper-subtle/50 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint ${showTableOptions ? 'last:pr-12' : ''} ${
                     column.sticky ? 'sticky left-0 z-10 shadow-[4px_0_8px_oklch(0_0_0/0.06)]' : ''
                   } ${column.align === 'right' ? 'text-right' : 'text-left'}`}
                   key={column.key}
@@ -354,6 +363,11 @@ export function DataTable({
           </tbody>
         </table>
       </div>
+      {showTableOptions && showRecordCount ? (
+        <p className="label-caps border-t border-border/50 px-4 py-2 tabular-nums">
+          {rows.length} {t('records')}
+        </p>
+      ) : null}
       {canScroll && !atScrollEnd ? (
         <div
           aria-hidden
