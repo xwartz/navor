@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.9
+
+### Patch Changes
+
+- Polish the Reader tables and summaries: denser rows, column options pinned to the header corner, record counts as a quiet footer, visible keyboard focus on rows, and a scroll cue on wide tables. The summary band no longer leaves a single metric on its own row, repeated counts and tickers are removed, filtered summaries show the total as detail, and the allocation risk category uses one label everywhere.
+- @navor/adapters@0.6.9
+  - @navor/contract@0.6.9
+  - @navor/core@0.6.9
+  - @navor/renderer@0.6.9
+
 ## 0.6.8
 
 ### Patch Changes

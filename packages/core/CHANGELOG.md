@@ -1,5 +1,9 @@
 # @navor/core
 
+## 0.6.9
+
+No changes in this release.
+
 ## 0.6.8
 
 No changes in this release.
