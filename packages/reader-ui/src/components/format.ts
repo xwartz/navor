@@ -96,6 +96,47 @@ export function groupMoneyValues(
   return Array.from(totals.entries()).map(([currency, amount]) => ({ amount, currency }))
 }
 
+export function convertFromBaseCurrency(
+  value: { amount: number; currency: string },
+  currency: string,
+  fxRates: Record<string, number> | null | undefined,
+) {
+  if (value.currency === currency) {
+    return value
+  }
+
+  const rate = fxRates?.[currency]
+
+  if (!rate) {
+    return null
+  }
+
+  return {
+    amount: value.amount * rate,
+    currency,
+  }
+}
+
+// Unrealized PnL arrives in the base currency; express each position in its ledger (cost)
+// currency so it groups with realized PnL, which is always posted in the ledger currency.
+export function toLedgerCurrencyPnl(
+  value: {
+    cost: { amount: number; currency: string } | null
+    pnl: { amount: number; currency: string } | null
+  },
+  fxRates: Record<string, number> | null | undefined,
+) {
+  if (!value.pnl) {
+    return null
+  }
+
+  if (!value.cost) {
+    return value.pnl
+  }
+
+  return convertFromBaseCurrency(value.pnl, value.cost.currency, fxRates) ?? value.pnl
+}
+
 export function pickMoneyCurrency(
   values: Array<{ amount: number; currency: string }>,
   currency: string | null | undefined,

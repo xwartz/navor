@@ -13,6 +13,7 @@ import {
   groupMoneyValues,
   pickMoneyCurrency,
   sumMoneyInBase,
+  toLedgerCurrencyPnl,
 } from '../components/format'
 import { Panel } from '../components/Panel'
 import {
@@ -59,8 +60,10 @@ export function DashboardView({
   )
   const unrealizedPnl = state.market.portfolioValues.map((value) => value.pnl)
   const realizedPnl = (state.portfolio.realizedPnl ?? []).map((entry) => entry.amount)
-  const totalPnl = [...unrealizedPnl, ...realizedPnl]
-  const pnlByCurrency = groupMoneyValues(totalPnl)
+  const pnlByCurrency = groupMoneyValues([
+    ...state.market.portfolioValues.map((value) => toLedgerCurrencyPnl(value, state.drift.fxRates)),
+    ...realizedPnl,
+  ])
   const otherPnlCount = countOtherCurrencies(
     pnlByCurrency,
     pickMoneyCurrency(pnlByCurrency, state.drift.baseCurrency),

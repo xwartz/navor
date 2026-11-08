@@ -10,6 +10,7 @@ import {
   formatSignedPercent,
   formatTimestamp,
   formatWorkspacePath,
+  toLedgerCurrencyPnl,
 } from '../../packages/reader-ui/src/components/format'
 
 describe('reader formatting', () => {
@@ -142,5 +143,28 @@ describe('reader formatting', () => {
     expect(formatSignedPercent(-1.5)).toBe('-1.5%')
     expect(formatSignedPercent(0)).toBe('0.0%')
     expect(formatSignedPercent(null)).toBe('Not available')
+  })
+
+  it('expresses unrealized PnL in the position ledger currency', () => {
+    const fxRates = { CNY: 6.77, HKD: 7.84, USDT: 1 }
+
+    expect(
+      toLedgerCurrencyPnl(
+        { cost: { amount: 1000, currency: 'USDT' }, pnl: { amount: 120, currency: 'USD' } },
+        fxRates,
+      ),
+    ).toEqual({ amount: 120, currency: 'USDT' })
+    expect(
+      toLedgerCurrencyPnl(
+        { cost: { amount: 21000, currency: 'HKD' }, pnl: { amount: 100, currency: 'USD' } },
+        fxRates,
+      ),
+    ).toEqual({ amount: 784, currency: 'HKD' })
+    expect(
+      toLedgerCurrencyPnl(
+        { cost: { amount: 500, currency: 'JPY' }, pnl: { amount: 10, currency: 'USD' } },
+        fxRates,
+      ),
+    ).toEqual({ amount: 10, currency: 'USD' })
   })
 })
