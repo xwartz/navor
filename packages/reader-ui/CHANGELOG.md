@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.10
+
+### Patch Changes
+
+- 16add88: Group unrealized PnL by each position's ledger currency in the dashboard's "PnL by currency" breakdown, so it no longer mixes base-currency unrealized PnL with ledger-currency realized PnL.
+- @navor/adapters@0.6.10
+  - @navor/contract@0.6.10
+  - @navor/core@0.6.10
+  - @navor/renderer@0.6.10
+
 ## 0.6.9
 
 ### Patch Changes
