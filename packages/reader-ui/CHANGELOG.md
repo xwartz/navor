@@ -1,5 +1,15 @@
 # @navor/reader-ui
 
+## 0.6.11
+
+### Patch Changes
+
+- ee70747: Stop polling the workspace and live prices every 60 seconds; the Reader now refreshes only when the page regains focus, becomes visible, or comes back online.
+- @navor/adapters@0.6.11
+  - @navor/contract@0.6.11
+  - @navor/core@0.6.11
+  - @navor/renderer@0.6.11
+
 ## 0.6.10
 
 ### Patch Changes

@@ -1,5 +1,9 @@
 # @navor/contract
 
+## 0.6.11
+
+No changes in this release.
+
 ## 0.6.10
 
 No changes in this release.
