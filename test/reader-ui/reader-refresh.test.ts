@@ -167,35 +167,34 @@ describe('Reader workspace refresh', () => {
     expect(isReaderStateRequest('/api/prices?navor_refresh=1')).toBe(false)
   })
 
-  it('checks visible pages on focus, reconnect and timers, and cleans up on unmount', () => {
+  it('checks visible pages on focus and reconnect only, and cleans up on unmount', () => {
     vi.useFakeTimers()
     const windowEvents = new EventTarget()
     const documentEvents = Object.assign(new EventTarget(), { visibilityState: 'visible' })
-    const target = Object.assign(windowEvents, { setInterval, clearInterval })
     const refresh = vi.fn().mockResolvedValue(undefined)
     const stop = watchReaderRefresh(
       refresh,
-      target as unknown as Window,
+      windowEvents as unknown as Window,
       documentEvents as unknown as Document,
     )
     windowEvents.dispatchEvent(new Event('focus'))
     documentEvents.dispatchEvent(new Event('visibilitychange'))
     expect(refresh).toHaveBeenCalledTimes(1)
     documentEvents.visibilityState = 'hidden'
-    vi.advanceTimersByTime(60000)
+    documentEvents.dispatchEvent(new Event('visibilitychange'))
     expect(refresh).toHaveBeenCalledTimes(1)
     documentEvents.visibilityState = 'visible'
+    vi.advanceTimersByTime(5000)
     documentEvents.dispatchEvent(new Event('visibilitychange'))
     expect(refresh).toHaveBeenCalledTimes(2)
     windowEvents.dispatchEvent(new Event('online'))
     expect(refresh).toHaveBeenCalledTimes(3)
-    vi.advanceTimersByTime(60000)
-    expect(refresh).toHaveBeenCalledTimes(4)
+    vi.advanceTimersByTime(10 * 60000)
+    expect(refresh).toHaveBeenCalledTimes(3)
     stop()
     windowEvents.dispatchEvent(new Event('focus'))
     windowEvents.dispatchEvent(new Event('online'))
-    vi.advanceTimersByTime(60000)
-    expect(refresh).toHaveBeenCalledTimes(4)
+    expect(refresh).toHaveBeenCalledTimes(3)
   })
 })
 

@@ -110,10 +110,7 @@ export function createReaderRefresh(options: {
 
 export function watchReaderRefresh(
   refresh: () => Promise<void>,
-  target: Pick<
-    Window,
-    'addEventListener' | 'removeEventListener' | 'setInterval' | 'clearInterval'
-  >,
+  target: Pick<Window, 'addEventListener' | 'removeEventListener'>,
   document: Pick<Document, 'visibilityState' | 'addEventListener' | 'removeEventListener'>,
 ) {
   let lastCheck = -Infinity
@@ -129,11 +126,9 @@ export function watchReaderRefresh(
   target.addEventListener('focus', check)
   target.addEventListener('online', online)
   document.addEventListener('visibilitychange', check)
-  const timer = target.setInterval(check, 60000)
   return () => {
     target.removeEventListener('focus', check)
     target.removeEventListener('online', online)
     document.removeEventListener('visibilitychange', check)
-    target.clearInterval(timer)
   }
 }
